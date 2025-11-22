@@ -1,0 +1,73 @@
+/* 引入 Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3. 自定义 CSS (从原文件搬运) */
+body {
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+    margin: 0;
+    overflow: hidden;
+    transition: background-color 0.5s ease;
+}
+
+/* 玻璃拟态 (Glassmorphism) 基础类 */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.dark .glass {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 左侧侧边栏液态透明效果 */
+.liquid-sidebar {
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+}
+.dark .liquid-sidebar {
+    background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+/* 隐藏滚动条但保留功能 */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 聊天气泡动态阴影 */
+.bubble-shadow {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+.bubble-shadow:hover {
+    box-shadow: 0 8px 25px rgba(0, 177, 235, 0.15);
+    transform: translateY(-1px);
+}
+
+/* 暗黑模式扩散动画 */
+/* ... View Transitions CSS ... */
+
+/* 动画和过渡效果的 CSS */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.5s ease;
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.list-enter-active, .list-leave-active {
+  transition: all 0.5s ease;
+}
+.list-enter-from, .list-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}

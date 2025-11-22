@@ -1,6 +1,20 @@
-import './assets/main.css'
+// src/main.js
+import { createApp } from 'vue';
+import App from './App.vue';
+import ElementPlus from 'element-plus';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'; // 导入所有图标
+import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css'; 
 
-import { createApp } from 'vue'
-import App from './App.vue'
+import './style.css'; 
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+// 关键步骤：全局注册所有 Element Plus Icons
+// 确保所有组件都能直接使用 <IconName /> 或 <el-icon><IconName /></el-icon>
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component);
+}
+
+app.use(ElementPlus);
+app.mount('#app');
