@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, nextTick } from 'vue';
 import { ElMessage } from 'element-plus';
-
+import { marked } from 'marked';
 import { Service, Picture, Promotion } from '@element-plus/icons-vue'; // Service 用于代替 ph-robot
 
 const props = defineProps({
@@ -56,6 +56,14 @@ const send = () => {
     });
 };
 
+const parseMarkdown = (content) => {
+    // 使用导入的 marked 库进行解析
+    if (typeof marked.parse === 'function') {
+        return marked.parse(content);
+    }
+    return content;
+};
+
 const triggerFileUpload = () => {
     ElMessage.info('图片上传功能演示：点击发送会自动模拟图片回复');
 };
@@ -92,8 +100,8 @@ const triggerFileUpload = () => {
                             ? 'bg-[#00b1eb] text-white rounded-tr-none'
                             : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-600'">
 
-                        <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div>
-
+                        <!-- <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div> -->
+                        <div v-if="msg.type === 'text'" v-html="parseMarkdown(msg.content)" class="markdown-body"></div>
                         <el-image v-else-if="msg.type === 'image'" :src="msg.content" :preview-src-list="[msg.content]"
                             class="rounded-lg max-h-60 w-auto" fit="cover">
                         </el-image>

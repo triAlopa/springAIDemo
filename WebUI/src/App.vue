@@ -5,6 +5,8 @@ import LoginView from './components/LoginView.vue';
 import TheSidebar from './components/TheSidebar.vue';
 import TheChatWindow from './components/TheChatWindow.vue';
 import UserCapsule from './components/UserCapsule.vue';
+import { chat, test } from '@/api/msgdemo.js';
+
 
 // --- 模拟数据 (Mock Data) ---
 const MOCK_HISTORY = [
@@ -44,7 +46,7 @@ const currentUser = reactive({
 // 聊天数据
 const chatHistory = ref([...MOCK_HISTORY]);
 const currentChatId = ref(1);
-const messagesStore = reactive({...MOCK_MESSAGES});
+const messagesStore = reactive({ ...MOCK_MESSAGES });
 
 // 计算属性
 const currentMessages = computed(() => {
@@ -82,7 +84,7 @@ const updateThemeClass = () => {
 const toggleTheme = ({ x, y }) => {
     // 使用 View Transitions API
     const isSupported = document.startViewTransition;
-    
+
     if (!isSupported) {
         isDark.value = !isDark.value;
         updateThemeClass();
@@ -160,15 +162,15 @@ const handleDeleteChat = (id) => {
     });
 };
 
-const handleSendMessage = (text) => {
+const handleSendMessage = async (text) => {
     // 1. 添加用户消息
     if (!messagesStore[currentChatId.value]) {
         messagesStore[currentChatId.value] = [];
     }
-    
+
     const now = new Date();
     const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
-    
+
     messagesStore[currentChatId.value].push({
         role: 'user',
         type: 'text',
@@ -185,15 +187,34 @@ const handleSendMessage = (text) => {
     // 2. 模拟 AI 回复
     // 注意：在 SFC 中，你需要手动引入 Phorphr-icons 的类名，
     // 或者在 main.js 中全局注册/改用 ElementPlus icon/自定义 SVG
-    setTimeout(() => {
-        messagesStore[currentChatId.value].push({
-            role: 'ai',
-            type: 'text',
-            content: 'BOSS AI 收到你的消息: "' + text + '"\n这是一个模拟的回复。后端接入时替换此逻辑。',
-            time: timeString
+    // setTimeout(() => {
+    //     messagesStore[currentChatId.value].push({
+    //         role: 'ai',
+    //         type: 'text',
+    //         content: 'BOSS AI 收到你的消息: "' + text + '"\n这是一个模拟的回复。后端接入时替换此逻辑。',
+    //         time: timeString
+    //     });
+    // }, 1000);
+
+
+    // console.log(JSON.stringify({ "prompt": text, "chatId": currentChatId.value }));
+
+
+    const res = test(text, currentChatId.value).then(res => {
+        setTimeout(() => {
+            messagesStore[currentChatId.value].push({
+                role: 'ai',
+                type: 'text',
+                content: res,
+                time: timeString
+            });
         });
-    }, 1000);
+
+    })
+
+
 };
+
 
 onMounted(() => {
     // 检查是否有暗黑模式偏好，并初始化 isDark
@@ -206,44 +227,32 @@ onMounted(() => {
 <template>
     <div class="h-screen w-full flex flex-col justify-center items-center overflow-hidden relative">
         <!-- 背景装饰球 -->
-        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] pointer-events-none animate-float"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-purple-300/30 rounded-full blur-[100px] pointer-events-none animate-float" style="animation-delay: 1s;"></div>
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-300/30 rounded-full blur-[100px] pointer-events-none animate-float">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-purple-300/30 rounded-full blur-[100px] pointer-events-none animate-float"
+            style="animation-delay: 1s;"></div>
 
         <transition name="el-fade-in-linear" mode="out-in">
-            
+
             <!-- 1. 登录页 -->
-            <login-view 
-                v-if="!isLoggedIn" 
-                @login-success="handleLoginSuccess"
-            ></login-view>
+            <login-view v-if="!isLoggedIn" @login-success="handleLoginSuccess"></login-view>
 
             <!-- 2. 聊天主界面 (占比85%) -->
-            <div v-else class="w-[95%] lg:w-[85%] h-[90vh] flex rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-gray-700 relative z-10 transition-all duration-300">
-                
+            <div v-else
+                class="w-[95%] lg:w-[85%] h-[90vh] flex rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-gray-700 relative z-10 transition-all duration-300">
+
                 <!-- 左侧侧边栏 -->
-                <the-sidebar
-                    :history="chatHistory"
-                    :current-chat-id="currentChatId"
-                    @select-chat="handleSelectChat"
-                    @create-chat="handleCreateChat"
-                    @delete-chat="handleDeleteChat"
-                ></the-sidebar>
+                <the-sidebar :history="chatHistory" :current-chat-id="currentChatId" @select-chat="handleSelectChat"
+                    @create-chat="handleCreateChat" @delete-chat="handleDeleteChat"></the-sidebar>
 
                 <!-- 右侧聊天窗口 -->
-                <the-chat-window
-                    :messages="currentMessages"
-                    :current-chat-title="currentChatTitle"
-                    @send-message="handleSendMessage"
-                >
+                <the-chat-window :messages="currentMessages" :current-chat-title="currentChatTitle"
+                    @send-message="handleSendMessage">
                     <!-- 把右上角的胶囊塞进去 -->
                     <template #header-right>
-                        <user-capsule 
-                            :user="currentUser" 
-                            :is-dark="isDark" 
-                            @toggle-theme="toggleTheme"
-                            @logout="handleLogout"
-                            @check-in="handleCheckIn"
-                        ></user-capsule>
+                        <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"
+                            @logout="handleLogout" @check-in="handleCheckIn"></user-capsule>
                     </template>
                 </the-chat-window>
 
