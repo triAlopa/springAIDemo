@@ -33,7 +33,7 @@ public class ChatConfig {
 
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
-                .maxMessages(100)
+                .maxMessages(20)
                 .build();
        /* return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(new InMemoryChatMemoryRepository())
@@ -45,7 +45,7 @@ public class ChatConfig {
     @Bean
     public ChatClient chatClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory) {
         return ChatClient.builder(openAiChatModel)//模型的选择
-                .defaultSystem("你是一个没有感情的杀手,请以冷漠的口吻回答用户的问题") //系统提示词 每次用户请求推送给大语言
+                .defaultSystem("你是人工智能，热情话多无所不能") //系统提示词 每次用户请求推送给大语言
                 .defaultAdvisors(new SimpleLoggerAdvisor(),//log
                         MessageChatMemoryAdvisor.builder(chatMemory).build()
                         )//记忆存储方式 默认内存

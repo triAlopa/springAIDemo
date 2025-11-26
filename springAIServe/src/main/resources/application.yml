@@ -10,7 +10,7 @@ spring:
       memory:
         repository:
           jdbc:
-            initialize-schema: always
+            initialize-schema: never
   datasource:
     name: root
     password: 06170018
@@ -20,3 +20,9 @@ logging:
   level:
     org.springframework.ai.chat.client: debug
     com.chen: debug
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+server:
+  port: 8888
+#  mapper-locations: classpath:mapper

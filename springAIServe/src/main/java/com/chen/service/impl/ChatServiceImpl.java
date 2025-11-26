@@ -1,0 +1,49 @@
+package com.chen.service.impl;
+
+import com.chen.mapper.MessageMapper;
+import com.chen.pojo.MessageContentDTO;
+import com.chen.pojo.Result;
+import com.chen.service.ChatService;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+
+import java.util.List;
+
+@Service
+public class ChatServiceImpl implements ChatService {
+
+    @Autowired
+    private MessageMapper messageMapper;
+
+
+    private final ChatClient chatClient;
+
+    public ChatServiceImpl(ChatClient chatClient) {
+        this.chatClient = chatClient;
+    }
+
+    @Override
+    public Flux<String> requestChat(MessageContentDTO content) {
+        return chatClient.prompt()
+                .user(content.getPrompt())
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, content.getChatId()))
+                .stream()
+                .content();
+    }
+
+    @Override
+    public Result getSessionMemory(String chatId) {
+        List<Message> messages = messageMapper.getMessages(chatId);
+
+        if (messages == null || messages.isEmpty()) {
+            return new Result("404", "没有数据", null);
+        }
+
+
+
+    }
+}
