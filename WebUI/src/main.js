@@ -2,6 +2,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import ElementPlus from 'element-plus';
+import router from './router/index.js';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'; // 导入所有图标
 import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css'; 
@@ -17,4 +18,5 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 app.use(ElementPlus);
+app.use(router);
 app.mount('#app');

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chen.mapper.AIMessageMapper">
+
+
+    <select id="getMessages" resultType="com.chen.message.AIMessage">
+        SELECT *
+              FROM tb_ai_message
+              WHERE ai_session_id = #{sessionId}
+              ORDER BY created_time asc
+    </select>
+</mapper>

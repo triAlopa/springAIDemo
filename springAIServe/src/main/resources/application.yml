@@ -15,14 +15,14 @@ spring:
     name: root
     password: 06170018
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://localhost:3306/aichat
 logging:
   level:
     org.springframework.ai.chat.client: debug
-    com.chen: debug
+    com.chen.mapper: debug
+
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-server:
-  port: 8888
-#  mapper-locations: classpath:mapper
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath:mapper/*

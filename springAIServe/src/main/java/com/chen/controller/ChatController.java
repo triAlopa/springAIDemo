@@ -6,7 +6,9 @@ import com.chen.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -37,14 +39,19 @@ public class ChatController {
         log.info("用户请求访问:{}", content);
 
         return chatService.requestChat(content)
-                .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build());
+                .map(chunk-> ServerSentEvent.<String>builder().data(chunk).build());
     }
 
-    @Operation(description = "用户聊天")
-    @PostMapping(value = "/getSession", produces = "text/event-stream;charset=utf-8")
-    public Result demo2( @RequestParam String chatId) {
+    @Operation(description = "测试")
+    @GetMapping(value = "/getSession")
+    public Result demo2(@RequestParam String chatId, HttpServletRequest httpServletRequest) {
 
         log.info("用户请求访问:{}的用户聊天记录", chatId);
+
+        System.out.println(httpServletRequest.getSession().getId());
+
+        System.out.println(httpServletRequest.toString());
+
 
         return chatService.getSessionMemory(chatId);
     }

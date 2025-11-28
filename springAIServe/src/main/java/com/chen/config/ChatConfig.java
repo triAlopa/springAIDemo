@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 public class ChatConfig {
 
-    @Bean
+   /* @Bean
     public JdbcChatMemoryRepository chatMemoryRepository(JdbcTemplate jdbcTemplate, DataSource dataSource) {
         JdbcChatMemoryRepositoryDialect.from(dataSource);
         return JdbcChatMemoryRepository.builder()
@@ -26,20 +26,20 @@ public class ChatConfig {
                 .dialect(new MysqlChatMemoryRepositoryDialect()) //Mysql 方言
                 .dataSource(dataSource)
                 .build();
-    }
+    }*/
 
-    @Bean
+   /* @Bean
     public ChatMemory chatMemory(JdbcChatMemoryRepository chatMemoryRepository) {
 
         return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(chatMemoryRepository)
                 .maxMessages(20)
                 .build();
-       /* return MessageWindowChatMemory.builder()
+       *//* return MessageWindowChatMemory.builder()
                 .chatMemoryRepository(new InMemoryChatMemoryRepository())
-                .build();*/
+                .build();*//*
         
-    }
+    }*/
 
 
     @Bean

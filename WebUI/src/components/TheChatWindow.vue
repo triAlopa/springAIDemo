@@ -57,6 +57,8 @@ const send = () => {
 };
 
 const parseMarkdown = (content) => {
+     
+    content=content.replace(/(\d+)\./g, '$1\\.');
     // 使用导入的 marked 库进行解析
     if (typeof marked.parse === 'function') {
         return marked.parse(content);
@@ -107,7 +109,7 @@ const triggerFileUpload = () => {
                         </el-image>
 
                         <div class="text-[10px] mt-1 opacity-60 text-right"
-                            :class="msg.role === 'user' ? 'text-blue-100' : 'text-gray-400'">
+                            :class="msg.role === 'user' ? 'text-slate-600' : 'text-gray-400'">
                             {{ msg.time }}
                         </div>
                     </div>
