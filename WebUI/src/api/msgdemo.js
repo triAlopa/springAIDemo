@@ -17,7 +17,8 @@ export const chat = (prompt, chatId) => request.get(`/ai/chat?prompt=${prompt}&c
 // );
 
 
-export  const response=async (text,chatId) => await fetch('/api/user/ai/chat', {
+//发送信息接口
+export  const sendApi=async (text,chatId) => await fetch('/api/user/ai/chat', {
     method: 'POST',
     headers: {
         'Content-type': 'Application/json',

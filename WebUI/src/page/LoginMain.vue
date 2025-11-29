@@ -1,13 +1,11 @@
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import LoginView from '../components/LoginView.vue';
 
 import { useRouter } from 'vue-router';
 
 
-
-const isLoggedIn = ref(false);
 const isDark = ref(false);
 
 
@@ -15,7 +13,6 @@ const isDark = ref(false);
 const router = useRouter();
 // 方法
 const handleLoginSuccess = () => {
-    isLoggedIn.value = true;
     router.push('/chat');
 };
 
@@ -50,10 +47,8 @@ onMounted(() => {
         <transition name="el-fade-in-linear" mode="out-in">
 
             <!-- 1. 登录页 -->
-            <login-view  @login-success="handleLoginSuccess"></login-view>
+            <login-view @login-success="handleLoginSuccess"></login-view>
 
-            <!-- 2. 聊天主界面 (占比85%) -->
-            
         </transition>
     </div>
 </template>

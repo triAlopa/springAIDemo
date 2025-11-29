@@ -3,6 +3,7 @@ package com.chen.message;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.chen.mapper.AIMessageMapper;
+import com.chen.pojo.entity.AIMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;

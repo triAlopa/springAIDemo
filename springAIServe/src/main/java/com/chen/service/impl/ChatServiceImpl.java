@@ -1,12 +1,13 @@
 package com.chen.service.impl;
 
 import com.chen.mapper.AIMessageMapper;
-import com.chen.pojo.MessageContentDTO;
+import com.chen.pojo.dto.MessageContentDTO;
 import com.chen.pojo.Result;
 import com.chen.service.ChatService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -24,12 +25,14 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Flux<String> requestChat(MessageContentDTO content) {
+    public Flux<ServerSentEvent<String>> requestChat(MessageContentDTO content) {
+
         return chatClient.prompt()
                 .user(content.getPrompt())
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, content.getChatId()))
                 .stream()
-                .content();
+                .content()
+                .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build());
     }
 
     @Override

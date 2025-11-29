@@ -4,7 +4,7 @@
 <mapper namespace="com.chen.mapper.AIMessageMapper">
 
 
-    <select id="getMessages" resultType="com.chen.message.AIMessage">
+    <select id="getMessages" resultType="com.chen.pojo.entity.AIMessage">
         SELECT *
               FROM tb_ai_message
               WHERE ai_session_id = #{sessionId}

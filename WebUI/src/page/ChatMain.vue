@@ -5,7 +5,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus �
 import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
-import { chat, response } from '@/api/msgdemo.js';
+import { chat, sendApi} from '@/api/msgdemo.js';
 import { data } from 'autoprefixer';
 
 // --- 模拟数据 (Mock Data) ---
@@ -38,7 +38,6 @@ const MOCK_MESSAGES = {
 // --- End Mock Data ---
 
 
-const isLoggedIn = ref(true);
 const isDark = ref(false);
 
 // 用户状态
@@ -72,7 +71,7 @@ const handleLogout = () => {
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
-        isLoggedIn.value = false;
+        //TODO 
     });
 };
 
@@ -201,7 +200,7 @@ const handleSendMessage = async (text) => {
 
     // 3. 使用原生 Fetch API 处理流
     try {
-        const result = await response(text, currentChatId.value);
+        const result = await sendApi(text, currentChatId.value);
 
         if (!result.ok) {
             throw new Error(`HTTP error! status: ${result.status}`);
@@ -210,33 +209,6 @@ const handleSendMessage = async (text) => {
         const reader = result.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let buffer = '';
-
-
-        /* while (true) {
-            const { done, value } = await reader.read();
-
-            if (done) {
-                console.log("stream finshed")
-                break;
-            }
-            buffer += decoder.decode(value, { stream: true })
-
-            while (buffer.includes('\n\n')) {
-                console.log(buffer);
-                const endIndex = buffer.indexOf('\n\n');
-                const dataString = buffer.substring(0, endIndex);
-                buffer = buffer.substring(endIndex + 2);
-
-                if (dataString.startsWith('data:')) {
-                    const data = dataString.substring(5).trim();
-                    if (!data) {
-                        continue;
-                    }
-                    aiMessage.content += data;
-                }
-            }
-
-        } */
         while (true) {
             const { done, value } = await reader.read();
 
@@ -288,8 +260,7 @@ const handleSendMessage = async (text) => {
             }
         }
     } catch (error) {
-        console.error('Fetch Stream Error:', error);
-        ElMessage.error(`\n[连接或流式错误: ${error.message}]`);
+        ElMessage.error(`[连接或流式错误: ${error.message}]`);
     }
 
 };

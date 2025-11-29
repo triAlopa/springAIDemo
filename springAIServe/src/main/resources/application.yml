@@ -20,6 +20,11 @@ logging:
   level:
     org.springframework.ai.chat.client: debug
     com.chen.mapper: debug
+chatai:
+  jwt:
+    user-signKey: "y3QUMAp4Lk6mHtATNFsgT0GLfo9fOUN2"
+    user-ttl: 10800000
+    user-token-name: authorization
 
 mybatis:
   configuration:
