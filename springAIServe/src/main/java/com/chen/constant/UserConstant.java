@@ -24,6 +24,7 @@ public class UserConstant {
      * 注册或者登录校验错误字段
      */
     public class RegisterOrLOGIN{
+        //TODO INVALID
         public static final  String nickNameUNVALID= "用户名称不能为空!";
         public static final  String genderUNVALID= "性别不能为空!";
         public static final  String passwordUNVALID= "用户名密码不能为空!";
@@ -31,8 +32,9 @@ public class UserConstant {
         public static final  String birthdayNVALID= "生日不能为空!";
         public static final  String emailUNVALIDWITHREGX= "邮箱格式不正确！";
 
-
         public static final  String UNREGISTER= "不能重复注册!";
+        public static final  String UNCODE= "验证码失效或者未发送成功，请重新发送";
+
     }
 
 }

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { registerApi } from '@/api/user.js';
+import { registerApi ,requestCodeAPi} from '@/api/user.js';
 import { rule } from 'postcss';
 
 // Define events to emit to the parent component
@@ -132,8 +132,8 @@ const submit = async (roleFromRef) => {
                 .then(result => {
                     if (result.code != 200) {
                         //前后端统一使用 409作为重复注册状态码
-                        if(result.code==409){
-                            ElMessage.error("重复注册的账号："+result.msg)
+                        if (result.code == 409) {
+                            ElMessage.error("重复注册的账号：" + result.msg)
                             return;
                         }
                         console.log(result.msg)
@@ -165,6 +165,23 @@ const submit = async (roleFromRef) => {
             ElMessage.success(isRegister.value ? '注册成功并登录' : '登录成功')
         }, 800)
     } */
+}
+
+const sendEmailCode = async () => {
+    var regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g;
+    if (!regex.exec(registerForm.email)) {
+        ElMessage.warning("请输入正确格式的验证码！")
+    }
+    if(!registerForm.nickName){
+        ElMessage.warning("请输入你的昵称")
+    }
+
+     await requestCodeAPi(registerForm.email,registerForm.nickName)
+    .then(result=>{
+       ElMessage.info(result.data)
+    }).catch(error=>{
+        console.log(error)
+    })
 }
 </script>
 
@@ -229,7 +246,7 @@ const submit = async (roleFromRef) => {
                         <el-form-item prop="emailCode" style="margin: 15px 0px;">
                             <el-input v-model="registerForm.emailCode" placeholder="邮箱验证码">
                                 <template #append>
-                                    <el-button size="small">发送</el-button>
+                                    <el-button size="small" @click="sendEmailCode">发送</el-button>
                                 </template>
                             </el-input>
                         </el-form-item>
