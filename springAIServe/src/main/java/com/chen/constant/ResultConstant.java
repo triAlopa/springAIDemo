@@ -20,6 +20,8 @@ public class ResultConstant {
     public static final String SUCCESS ="请求成功" ;
     public static final String UNAUTHMSG ="用户未授权登录" ;
     public static final String REGISTERERROR ="用户注册请求出错" ;
+    public static final String USER_IEXIST_EMAIL="用户输入邮箱不存在" ;
+    public static final String USER_INPUT_PASS_ERR="用户输入邮箱不存在" ;
 
 
 }

@@ -41,9 +41,9 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(AccountRegisterException.class)
     public Result accountRegister(AccountRegisterException e) {
 
-        log.error("用户注册异常: {}",e.getMessage());
+        log.error("用户注册异常: {}",e.getErrorMsg());
 
-        return Result.fil(ResultConstant.REGISTERERROR,ResultConstant.HTTPSTATUS.BADREQUEST);
+        return Result.fil(e.getErrorMsg(),e.getErrorCode());
     }
 
     /**
@@ -54,7 +54,7 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(DuplicateKeyException.class)
     public Result accountISRegister(DuplicateKeyException e) {
 
-        log.error("用户注册异常: {}",e.getMessage());
+        log.error("用户注册异常:----》重复注册 {}",e.getMessage());
 
         int index = e.getMessage().indexOf(" for key ");
 
@@ -71,7 +71,7 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Result accountRegisterWithFormErr(MethodArgumentNotValidException e) {
 
-        log.error("用户注册异常: {}",e.getMessage());
+        log.error("用户注册参数表单异常: {}",e.getMessage());
         StringBuffer sb = new StringBuffer();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             sb.append(error.getDefaultMessage()+", ");

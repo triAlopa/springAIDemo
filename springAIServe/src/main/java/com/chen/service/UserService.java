@@ -8,4 +8,8 @@ public interface UserService {
     void insertSingleUser(UserDTO user, HttpServletResponse response);
 
     void sendEmailCode(String nickName, String email);
+
+    String generateLoginCode(String email);
+
+    void querySingleUser(UserDTO user);
 }

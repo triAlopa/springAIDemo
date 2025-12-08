@@ -2,6 +2,7 @@ package com.chen.service.impl;
 
 import ch.qos.logback.core.util.MD5Util;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.support.json.JSONUtils;
@@ -33,8 +34,10 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static com.chen.constant.RedisConstant.USER_REGISTER;
-import static com.chen.constant.RedisConstant.USER_REGISTER_TTL;
+import static com.chen.constant.RedisConstant.*;
+import static com.chen.constant.ResultConstant.HTTPSTATUS.BADREQUEST;
+import static com.chen.constant.ResultConstant.USER_IEXIST_EMAIL;
+import static com.chen.constant.ResultConstant.USER_INPUT_PASS_ERR;
 import static com.chen.constant.UserConstant.*;
 import static com.chen.constant.UserConstant.RegisterOrLOGIN.*;
 
@@ -63,17 +66,21 @@ public class UserServiceImpl implements UserService {
 
         if (userDTO == null || userDTO.getEmail() == null) {
             //zui弱智的校验，但是要加
-            throw new AccountRegisterException("非法操作");
+            throw new AccountRegisterException(INPUT_PARAMS_ERR, BADREQUEST);
         }
 
         //邮箱验证码验证
-        String key=USER_REGISTER+userDTO.getEmail();
+        String key = USER_REGISTER + userDTO.getEmail();
         String originCode = stringRedisTemplate.opsForValue().get(key);
-        if(StrUtil.isBlank(originCode)) {
-            throw new AccountRegisterException(UNCODE);
+        if (StrUtil.isBlank(originCode)) {
+//            throw new AccountRegisterException(UNCODE);
+            throw new AccountRegisterException(UNCODE, BADREQUEST);
         }
         //TODO 邮箱验证码的验证是否一致
-        if(originCode.equals(userDTO)) {}
+        if (!originCode.equals(userDTO.getEmailCode())) {
+//            throw new AccountRegisterException(INPUT_CODE_ERR);
+            throw new AccountRegisterException(INPUT_CODE_ERR, BADREQUEST);
+        }
 
         //校验用户是否注册
         User checkUser = userMapper.selectByEmail(userDTO.getEmail());
@@ -85,7 +92,7 @@ public class UserServiceImpl implements UserService {
         String password = userDTO.getPassword();
         if (StrUtil.isBlank(password)) {
             //密码为空
-            throw new AccountRegisterException(passwordUNVALID);
+            throw new AccountRegisterException(PASSWORD_INVALID, BADREQUEST);
         }
         //密文存储
         password = DigestUtils.md5DigestAsHex(password.getBytes());
@@ -102,6 +109,7 @@ public class UserServiceImpl implements UserService {
         BeanUtil.copyProperties(userDTO, user);
 
         userMapper.insert(user);
+        // TODO token 返回
     }
 
     @Override
@@ -117,8 +125,14 @@ public class UserServiceImpl implements UserService {
             //1.生成随机验证码
             String code = RandomUtil.randomString(6);
             //2.保留时间 超时失效
-            String key=USER_REGISTER+email;
-            stringRedisTemplate.opsForValue().set(key,code,USER_REGISTER_TTL, TimeUnit.MILLISECONDS);
+            //反序列化 email就是去除双引号....
+            String parseEmail = (String) JSONUtils.parse(email);
+            String key = USER_REGISTER + parseEmail;
+            Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(key, code, USER_REGISTER_TTL, TimeUnit.MILLISECONDS);
+            if (BooleanUtil.isFalse(flag)) {
+                //当前用户验证码未过期
+                throw new AccountRegisterException(REPEAT_REQUEST_CODE, BADREQUEST);
+            }
             //设置html处理变量
             Context context = new Context();
             context.setVariable("code", code);
@@ -128,12 +142,44 @@ public class UserServiceImpl implements UserService {
             //确认发送文本
             mimeMessageHelper.setText(template, true);
             //收件人
-            String parseEmail = (String) JSONUtils.parse(email);
             mimeMessageHelper.setTo(parseEmail);
             //发送
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
+            log.error("send email code error", e);
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String generateLoginCode(String email) {
+        String code = RandomUtil.randomString(4);
+
+        String key = USER_LOGIN + email;
+        //TODO 加入防暴力破解的次数限制
+        stringRedisTemplate.opsForValue().set(key, code);
+
+        return code;
+    }
+
+    @Override
+    public void querySingleUser(UserDTO user) {
+        if (user == null || user.getEmail() == null) {
+            throw new LoginException(INPUT_PARAMS_ERR);
+        }
+
+        String email = user.getEmail();
+        User selected = userMapper.selectByEmail(email);
+        if (selected == null) {
+            throw new LoginException(USER_IEXIST_EMAIL);
+        }
+
+        String inputPassword = DigestUtils.md5DigestAsHex(user.getPassword().getBytes());
+
+        if (!selected.getPassword().equals(inputPassword)) {
+            throw new LoginException(USER_INPUT_PASS_ERR);
+        }
+
+        // TODO token 返回
     }
 }
