@@ -116,4 +116,9 @@ class SpringAiDemoApplicationTests {
       System.out.println(pattern.matcher("1111").matches());
   }
 
+  @Test
+    void testJwtProperties(){
+      System.out.println(jwtProperties);
+  }
+
 }

@@ -25,12 +25,11 @@ public class GlobalExceptionHandle {
      * @return
      */
     @ExceptionHandler(LoginException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result loginException(LoginException e) {
 
-        log.error("用户未登录: {}",e.getMessage());
+        log.error("用户未登录: {}",e.getErrorMsg());
 
-        return Result.fil(ResultConstant.UNAUTHMSG,ResultConstant.HTTPSTATUS.UNAUTHORIZED);
+        return Result.fil(e.getErrorMsg(),e.getErrorCode());
     }
 
     /**
@@ -60,7 +59,7 @@ public class GlobalExceptionHandle {
 
         String errMsg = e.getMessage().substring(index-20, index).split("'")[1];
 
-        return Result.fil(errMsg,ResultConstant.HTTPSTATUS.REPEATREGISTER);
+        return Result.fil(errMsg,ResultConstant.HTTPSTATUS.REPEAT_REGISTER);
     }
 
     /**
@@ -78,14 +77,14 @@ public class GlobalExceptionHandle {
         });
 
 
-        return Result.fil(sb.toString(),ResultConstant.HTTPSTATUS.REPEATREGISTER);
+        return Result.fil(sb.toString(),ResultConstant.HTTPSTATUS.REPEAT_REGISTER);
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result unknownException(Exception e) {
         log.error("业务逻辑出错: {}",e.getMessage());
-        return Result.fil(ResultConstant.UNKNOWNMESSAGE,ResultConstant.HTTPSTATUS.UNKNOWNERROR);
+        return Result.fil(ResultConstant.UNKNOWNMESSAGE,ResultConstant.HTTPSTATUS.UNKNOWN_ERROR);
     }
 
 }

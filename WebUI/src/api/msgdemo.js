@@ -1,5 +1,6 @@
 import request from "@/utils/request"
 
+
 //http://localhost:8080/ai/chat?prompt=%E4%BD%A0%E5%A5%BD&chatId=1
 export const chat = (prompt, chatId) => request.get(`/ai/chat?prompt=${prompt}&chatId=${chatId}`);
 
@@ -18,9 +19,10 @@ export const chat = (prompt, chatId) => request.get(`/ai/chat?prompt=${prompt}&c
 
 
 //发送信息接口
-export  const sendApi=async (text,chatId) => await fetch('/api/user/ai/chat', {
+export  const sendApi=async (text,chatId,userToken) => await fetch('/api/user/ai/send', {
     method: 'POST',
     headers: {
+        'authorization':userToken,
         'Content-type': 'Application/json',
         'accept': 'text/event-stream'
     },

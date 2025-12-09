@@ -5,7 +5,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus �
 import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
-import { chat, sendApi} from '@/api/msgdemo.js';
+import { chat, sendApi } from '@/api/msgdemo.js';
 import { data } from 'autoprefixer';
 
 // --- 模拟数据 (Mock Data) ---
@@ -200,7 +200,10 @@ const handleSendMessage = async (text) => {
 
     // 3. 使用原生 Fetch API 处理流
     try {
-        const result = await sendApi(text, currentChatId.value);
+        let userForJson = localStorage.getItem("userInfo")
+
+        let userToken = JSON.parse(userForJson)
+        const result = await sendApi(text, currentChatId.value,userToken);
 
         if (!result.ok) {
             throw new Error(`HTTP error! status: ${result.status}`);
@@ -254,9 +257,9 @@ const handleSendMessage = async (text) => {
                     /*  const index = dataString.indexOf('data:');
                      dataString = dataString.substring(0, index) + dataString.substring(index); */
                 }
-                    // 直接追加提取后的内容
-                    aiMessage.content += dataString;
-                    console.log('add')
+                // 直接追加提取后的内容
+                aiMessage.content += dataString;
+                console.log('add')
             }
         }
     } catch (error) {

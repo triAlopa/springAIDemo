@@ -1,15 +1,21 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { registerApi ,requestCodeAPi} from '@/api/user.js';
-import { rule } from 'postcss';
+import { registerApi, requestCodeAPi, loginApi, loginCodeApi } from '@/api/user.js';
+import { useRouter } from 'vue-router'
 
 // Define events to emit to the parent component
 const emit = defineEmits(['login-success'])
+//创建路由控制者
+const router = useRouter();
+
 
 const isRegister = ref(false)
 const typedText = ref('')
 const fullText = "欢迎来到 BOSS AI。\n这里是思维的延伸，创意的起点。\n准备好开始探索了吗？"
+
+const emailCodeDisabled = ref(false)
+
 
 // Typing effect logic
 let typeInterval = null
@@ -43,11 +49,14 @@ onMounted(() => {
 })
 
 const form = reactive({
+    nickName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    captcha: '',
-    emailCode: ''
+    gender: '',
+    emailCode: '',
+    birthday: '',
+    loginCode: ''
 })
 
 const registerForm = reactive({
@@ -60,18 +69,51 @@ const registerForm = reactive({
     birthday: ''
 })
 
+const loginForm = reactive({
+    email: '',
+    password: '',
+    loginCode: ''
+})
 
-const captchaUrl = ref('https://dummyimage.com/100x40/e0e0e0/555555&text=A3d9')
+
+const captchaUrl = ref('https://dummyimage.com/100x40/e0e0e0/555555&text=点击我获取')
 
 const toggleMode = () => {
     isRegister.value = !isRegister.value
-    registerForm.email = ''
-    registerForm.password = ''
+    console.log(isRegister.value)
+    roleFromRef.value.resetFields();
+    Object.assign(form, {
+        nickName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        gender: '',
+        emailCode: '',
+        birthday: '',
+        loginCode: ''
+    })
+
+
 }
 
 const refreshCaptcha = () => {
-    const random = Math.floor(Math.random() * 1000)
-    captchaUrl.value = `https://dummyimage.com/100x40/e0e0e0/555555&text=${random}`
+
+    if (!form.email) {
+        ElMessage.error('输入你的邮箱')
+        return;
+    }
+
+    loginCodeApi(form.email)
+        .then(result => {
+            if (result.code == 200) {
+                let code=result.data
+                captchaUrl.value = `https://dummyimage.com/100x40/e0e0e0/555555&text=${code}`
+            }else{
+                ElMessage.error(result.msg)
+            }
+        }).catch(error=>{
+            ElMessage.error(error)
+        })
 }
 
 const validatorEmail = (rule, value, callback) => {
@@ -88,13 +130,56 @@ const validatorPassword = (rule, value, callback) => {
         callback(new Error('重复输入密码'))
     }
 
-    if (value != registerForm.password) {
+    if (value != form.password) {
         callback(new Error('密码不一致！'))
     }
     callback();
 }
 const roleFromRef = ref()
 //注册表单校验规则
+/* const registerRules = ref({
+    nickName: [
+        { required: true, message: '请输入你的昵称', trigger: 'blur' },
+        { min: 2, max: 32, message: '请在2~32位之间', trigger: 'blur' }
+    ],
+    email: [
+        { required: true, message: '请输入你的邮箱', trigger: 'blur' },
+        { validator: validatorEmail, message: '邮箱格式错误', trigger: 'blur' }
+    ],
+    emailCode: [
+        { required: true, message: '请输入邮箱验证码', trigger: 'change' }
+    ],
+    gender: [
+        { required: true, message: '请输入你的性别', trigger: 'change' }
+    ],
+    password: [
+        { required: true, message: '请输入你的密码', trigger: 'blur' }
+    ],
+    confirmPassword: [
+        { required: true, message: '请重复输入你的密码', trigger: 'blur' },
+        { validator: validatorPassword, message: '密码不一致！', trigger: 'change' }
+    ],
+    birthday: [
+        { required: true, message: '请输入生日', trigger: 'blur' }
+    ],
+
+})
+
+//注册表单校验规则
+const loginRules = ref({
+    email: [
+        { required: true, message: '请输入你的邮箱', trigger: 'blur' },
+        { validator: validatorEmail, message: '邮箱格式错误', trigger: 'blur' }
+    ],
+    password: [
+        { required: true, message: '请输入你的密码', trigger: 'blur' }
+    ],
+    loginCode: [
+        { required: true, message: '请输入登录验证码', trigger: 'blur' }
+    ],
+
+}) */
+
 const rules = ref({
     nickName: [
         { required: true, message: '请输入你的昵称', trigger: 'blur' },
@@ -119,8 +204,13 @@ const rules = ref({
     ],
     birthday: [
         { required: true, message: '请输入生日', trigger: 'blur' }
+    ],
+    loginCode: [
+        { required: true, message: '请输入登录验证码', trigger: 'blur' }
     ]
+
 })
+
 
 const submit = async (roleFromRef) => {
 
@@ -128,31 +218,24 @@ const submit = async (roleFromRef) => {
 
     await roleFromRef.validate(async (valid, value) => {
         if (valid) {
-            await registerApi(registerForm)
-                .then(result => {
-                    if (result.code != 200) {
-                        //前后端统一使用 409作为重复注册状态码
-                        if (result.code == 409) {
-                            ElMessage.error("重复注册的账号：" + result.msg)
-                            return;
-                        }
-                        console.log(result.msg)
-                        ElMessage.warning('注册失败，请检查数据！');
-                        return;
-                    } else {
-                        setTimeout(() => {
-                            emit('login-success')
-                            ElMessage.success(isRegister.value ? '注册成功并登录' : '登录成功')
-                        }, 800)
-                    }
-                }).catch(error => {
-                    ElMessage.warning(error);
-                })
+            if (isRegister.value) {
+                console.log('register')
+                registerUser();
+            } else {
+                console.log('login')
+                loginUser();
+            }
         } else {
             ElMessage.error('非法注册!');
             return;
         }
     })
+
+
+   
+
+    
+
 
 
     /* if (result.code == 200) {
@@ -167,22 +250,96 @@ const submit = async (roleFromRef) => {
     } */
 }
 
+async function registerUser() {
+        await registerApi(form)
+            .then(result => {
+                if (result.code != 200) {
+                    //前后端统一使用 409作为重复注册状态码
+                    if (result.code == 409) {
+                        ElMessage.error("重复注册的账号：" + result.msg)
+                        return;
+                    } else if (result.code == 400) {
+                        //注册表单参数填入错误
+                        ElMessage.error(result.msg)
+                        return;
+                    }
+                    console.log(result.msg)
+                    ElMessage.warning('注册失败，请检查数据！');
+                } else {
+                    setTimeout(() => {
+                        let info=JSON.stringify(result.data);
+                        localStorage.setItem("userInfo",info)
+                        router.replace('/chat')
+                        ElMessage.success('注册成功并登录')
+                    }, 800)
+                }
+            }).catch(error => {
+                ElMessage.warning(error);
+            })
+    }
+ async function loginUser() {
+        loginForm.email = form.email;
+        loginForm.password = form.password;
+        loginForm.loginCode = form.loginCode;
+        await loginApi(loginForm)
+            .then(result => {
+                if (result.code != 200) {
+                    console.log(result.msg)
+                    ElMessage.warning('登录失败，请检查数据！' + result.msg);
+                } else {
+                    setTimeout(() => {
+                        let info=JSON.stringify(result.data);
+                        localStorage.setItem("userInfo",info)
+                        router.replace('/chat')
+                        ElMessage.success('登录成功')
+                    }, 800)
+                }
+            }).catch(error => {
+                ElMessage.warning(error);
+            })
+    }
+
+
 const sendEmailCode = async () => {
     var regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g;
-    if (!regex.exec(registerForm.email)) {
+    if (!regex.exec(form.email)) {
         ElMessage.warning("请输入正确格式的验证码！")
     }
-    if(!registerForm.nickName){
+    if (!form.nickName) {
         ElMessage.warning("请输入你的昵称")
     }
 
-     await requestCodeAPi(registerForm.email,registerForm.nickName)
-    .then(result=>{
-       ElMessage.info(result.data)
-    }).catch(error=>{
-        console.log(error)
-    })
+    await requestCodeAPi(form.email, form.nickName)
+        .then(result => {
+            ElMessage.info(result.data)
+            sendEmailWithSeconds()
+        }).catch(error => {
+            console.log(error)
+        })
 }
+/**
+ * 倒计时逻辑
+ */
+const emailFont = ref('发送')
+function sendEmailWithSeconds() {
+    emailFont.value = 120
+    emailCodeDisabled.value = true
+    let timer = setInterval(() => {
+        emailFont.value -= 1;
+        if (emailFont.value <= 0) {
+            clearInterval(timer);
+            emailFont.value = '发送'
+            emailCodeDisabled.value = false
+        }
+    }, 1000)
+
+    setTimeout(() => {
+        clearInterval(timer);
+        emailFont.value = '发送'
+        emailCodeDisabled.value = false
+    }, 2 * 60 * 1000)
+}
+
 </script>
 
 <template>
@@ -210,25 +367,24 @@ const sendEmailCode = async () => {
             <div class="flex-1 flex flex-col justify-center">
                 <h2 class="text-2xl font-bold mb-6 text-center">{{ isRegister ? '加入我们' : '欢迎回来' }}</h2>
 
-                <el-form :model="registerForm" class="space-y-4" :rules="rules" ref="roleFromRef">
+                <el-form :model="form" class="space-y-4" :rules="rules" ref="roleFromRef">
                     <!-- 注册表单 -->
-                    <el-form-item prop="nickName" style="margin: 15px 0px;">
-                        <el-input v-model="registerForm.nickName" placeholder="用户名称" size="large">
+                    <el-form-item v-if="isRegister" prop="nickName" style="margin: 15px 0px;">
+                        <el-input v-model="form.nickName" placeholder="用户名称" size="large">
                             <template #prefix><el-icon>
                                     <User />
                                 </el-icon></template>
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="email" style="margin: 15px 0px;">
-                        <el-input v-model="registerForm.email" placeholder="邮箱" size="large">
+                        <el-input v-model="form.email" placeholder="邮箱" size="large">
                             <template #prefix><el-icon>
                                     <Message />
                                 </el-icon></template>
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="password" style="margin: 15px 0px;">
-                        <el-input v-model="registerForm.password" type="password" placeholder="密码" size="large"
-                            show-password>
+                        <el-input v-model="form.password" type="password" placeholder="密码" size="large" show-password>
                             <template #prefix><el-icon>
                                     <Lock />
                                 </el-icon></template>
@@ -236,36 +392,36 @@ const sendEmailCode = async () => {
                     </el-form-item>
                     <div v-if="isRegister">
                         <el-form-item prop="confirmPassword" style="margin: 15px 0px;">
-                            <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码"
-                                show-password size="large">
+                            <el-input v-model="form.confirmPassword" type="password" placeholder="确认密码" show-password
+                                size="large">
                                 <template #prefix><el-icon>
                                         <Lock />
                                     </el-icon></template>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="emailCode" style="margin: 15px 0px;">
-                            <el-input v-model="registerForm.emailCode" placeholder="邮箱验证码">
+                            <el-input v-model="form.emailCode" placeholder="邮箱验证码">
                                 <template #append>
-                                    <el-button size="small" @click="sendEmailCode">发送</el-button>
+                                    <el-button size="small" @click="sendEmailCode" :disabled="emailCodeDisabled">{{
+                                        emailFont }}</el-button>
                                 </template>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="gender" style="margin: 15px 0px;">
-                            <el-radio-group v-model="registerForm.gender">
+                            <el-radio-group v-model="form.gender">
                                 <el-radio value="1" size="small">男</el-radio>
                                 <el-radio value="0" size="small">女</el-radio>
                             </el-radio-group>
                         </el-form-item>
                         <el-form-item prop="birthday" style="margin-top: 15px; margin-bottom: -8px;">
-                            <el-date-picker v-model="registerForm.birthday" type="date" placeholder="生日"
-                                size="defualut" />
+                            <el-date-picker v-model="form.birthday" type="date" placeholder="生日" size="defualut" />
                         </el-form-item>
                     </div>
 
-                    <el-form-item prop="name" style="margin: 7px 0px;">
+                    <el-form-item :required="!isRegister" prop="loginCode" style="margin: 7px 0px;">
                         <div class="flex gap-2" v-if="!isRegister">
 
-                            <el-input v-model="form.captcha" placeholder="验证码" class="flex-1">
+                            <el-input v-model="form.loginCode" placeholder="验证码" class="flex-1">
                             </el-input>
                             <div @click="refreshCaptcha"
                                 class="w-20 h-9 bg-gray-200 cursor-pointer flex items-center justify-center text-xs tracking-widest font-bold italic select-none rounded overflow-hidden">

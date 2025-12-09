@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import App from '../App.vue';
 import ChatMain from '../page/ChatMain.vue';
 import LoginMain from '../page/LoginMain.vue';
-import TestComponent from '../components/test.vue';
 
 
 
@@ -13,9 +12,18 @@ const router = createRouter({
     history: createWebHistory(),
     // 路由规则：path 与组件的映射
     routes: [
-        { path: '/Login', component: LoginMain },
-        { path: '/', redirect: '/Login' },
-        { path: '/chat', component: ChatMain }
+        { 
+            path: '/Login', 
+            component: LoginMain
+         },
+        { 
+            path: '/', 
+            redirect: '/Login' 
+        },
+        { 
+            path: '/chat', 
+            component: ChatMain 
+        }
     ]
 })
 

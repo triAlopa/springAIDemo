@@ -21,3 +21,24 @@ export const requestCodeAPi = (email,nickName) => request.post(
     }
 );
 
+export const loginApi = (loginForm) => request.post(
+    '/user/login',
+    loginForm,
+    {
+
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+);
+
+export const loginCodeApi = (email) => request.get(
+    `/user/login/${email}`,
+    {
+
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+);
+

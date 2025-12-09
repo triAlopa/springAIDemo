@@ -3,6 +3,7 @@ package com.chen.constant;
 public class UserConstant {
     public static final String EMAIL = "email";
     public static final String NICKNAME = "nickName";
+    public static final String USER_ID="userId";
 
     /**
      * 1.用户账号状态有效

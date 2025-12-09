@@ -20,6 +20,9 @@ import static com.chen.constant.UserConstant.RegisterOrLOGIN.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+/**
+ * 前端交互使用
+ */
 public class UserDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

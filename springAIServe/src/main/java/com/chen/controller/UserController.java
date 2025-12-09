@@ -3,6 +3,10 @@ package com.chen.controller;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,36 +17,51 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/user")
-@Tag(name = "用户操作接口")
-
+@Tag(name = "用户相关API", description = "用户注册登录对应接口")
 public class UserController {
 
     @Resource
     private UserService userService;
 
     @PostMapping("/register")
-    public Result<UserDTO> register(@Validated(UserDTO.onRegister.class) @RequestBody UserDTO user,
+    @Operation(summary = "用户申请注册", description = "用户申请注册")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "成功"),
+            @ApiResponse(responseCode = "400", description = "用户填入表单&业务逻辑错误")
+    })
+    public Result<String> register(@Validated(UserDTO.onRegister.class) @RequestBody @Schema UserDTO user,
                                     HttpServletResponse response) {
 
         log.info("用户请求注册：{}", user);
 
-        userService.insertSingleUser(user, response);
+        String token = userService.insertSingleUser(user, response);
 
-        return Result.success();
+        return Result.success(token);
     }
 
     @PostMapping("/login")
-    public Result<UserDTO> login(@Validated(UserDTO.onLogin.class) @RequestBody UserDTO user) {
+    @Operation(summary = "用户登录", description = "用户填入信息获取数据库进行校验")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "成功"),
+            @ApiResponse(responseCode = "500", description = "用户填入表单&业务逻辑错误"),
+            @ApiResponse(responseCode = "404", description = "找不到用户")
+    })
+    public Result<String> login(@Validated(UserDTO.onLogin.class) @RequestBody UserDTO user) {
 
         log.info("用户请求登录：{}", user);
 
-        userService.querySingleUser(user);
+        String token = userService.querySingleUser(user);
 
-        return Result.success();
+        return Result.success(token);
     }
 
 
     @PostMapping("/emailCode/{nickName}")
+    @Operation(summary = "用户注册邮箱验证", description = "请求发送邮箱验证")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "成功"),
+            @ApiResponse(responseCode = "500", description = "邮件发送者配置错误")
+    })
     public Result<String> sendEmailCode(@PathVariable String nickName, @RequestBody String email) {
 
         log.info("注册昵称为{} ,请求发送邮箱{} 验证码", nickName, email);
@@ -53,6 +72,11 @@ public class UserController {
     }
 
     @GetMapping("/login/{email}")
+    @Operation(summary = "用户登录验证码", description = "请求后端绑定对应的验证码")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "成功"),
+            @ApiResponse(responseCode = "500", description = "redis繁忙 业务逻辑")
+    })
     public Result<String> sendLoginCode(@PathVariable(name = "email") String email) {
 
         log.info("登录邮箱为{} ,请求生成验证码", email);

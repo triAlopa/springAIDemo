@@ -1,7 +1,14 @@
 import axios from 'axios'
 
+let userForJson = localStorage.getItem("userInfo")
+
+let userToken = JSON.parse(userForJson)
+
 //创建axios实例对象
 const request = axios.create({
+  headers: {
+    Authorization: userToken
+  },
   baseURL: '/api',
   timeout: 600000,
   withCredentials: true, //允许携带cookie
