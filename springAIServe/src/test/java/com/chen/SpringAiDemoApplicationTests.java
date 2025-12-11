@@ -1,16 +1,20 @@
 package com.chen;
 
+import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.AIMessageMapper;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
 import com.chen.pojo.properties.JwtProperties;
+import com.chen.service.UserService;
+import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,11 +23,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.chen.constant.RedisConstant.USER_LOGIN;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -121,4 +132,50 @@ class SpringAiDemoApplicationTests {
       System.out.println(jwtProperties);
   }
 
+  @Resource
+  private StringRedisTemplate stringRedisTemplate;
+  @Test
+    void testRedis(){
+     /*  LocalDateTime now = LocalDateTime.now();
+      String key_prefix = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+":";
+      Random r=new Random();
+      String key_suffix="3406339653"+r.nextInt(10)+"@qq.com";
+      String key = key_prefix+key_suffix;
+     stringRedisTemplate.opsForValue().set(key,"1111");*/
+
+//      Boolean delete = stringRedisTemplate.delete("2025-12-11:*");
+
+   /*   DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+
+      script.setLocation(new ClassPathResource("lua/DeleteLoginCode.lua"));
+      script.setResultType(Long.class);
+
+      Long execute = stringRedisTemplate.execute(script, Collections.emptyList(), "2025-12-11:*");
+      System.out.println(execute);*/
+
+  }
+
+  @Autowired
+  private Task2Service task2Service;
+  @Autowired
+  private UserService userService;
+
+  @Test
+    void testTask(){
+
+      /// ////用于验证....
+      /*for (int i = 0; i < 10; i++) {
+          String code = RandomUtil.randomString(4);
+
+          //生成一天的相同前缀，统一删除
+          String pattern = "yyyy-MM-dd";
+          String time_prefix = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ofPattern(pattern)) + ":";
+
+          String key = USER_LOGIN + time_prefix + "340633"+i+"9653@qq.com";
+          // 加入防暴力破解的次数限制
+          stringRedisTemplate.opsForValue().set(key, code);
+          System.out.println(code);
+      }*/
+      task2Service.delUserLoginCode();
+  }
 }

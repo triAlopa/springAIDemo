@@ -66,6 +66,6 @@ springdoc:
 #      packages-to-scan: com.chen
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
-  enable: true
+  enable: false
   setting:
     language: zh_cn

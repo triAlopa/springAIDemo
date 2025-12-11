@@ -5,19 +5,21 @@ export const registerApi = (registerForm) => request.post(
     '/user/register',
     registerForm,
     {
-
         headers: {
             'Content-Type': 'application/json'
-        }
-    }
+        },
+        needAuth: false
+    },
+
 );
-export const requestCodeAPi = (email,nickName) => request.post(
-    `/user/emailCode/${nickName}`,
-    email,
+export const requestCodeAPi = (email, nickName) => request.post(
+    `/user/emailCode/${nickName}?email=${email}`,
+    null,
     {
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        needAuth: false  
     }
 );
 
@@ -28,7 +30,8 @@ export const loginApi = (loginForm) => request.post(
 
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        needAuth: false
     }
 );
 
@@ -38,7 +41,19 @@ export const loginCodeApi = (email) => request.get(
 
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        needAuth: false
     }
 );
 
+
+
+export const userInfoApi = () => request.get(
+    `/user/info`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+         needAuth: true
+    }
+);

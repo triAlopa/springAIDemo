@@ -48,9 +48,13 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         String userTokenName = jwtProperties.getUserTokenName();
         String token = request.getHeader(userTokenName);
+
+        // 对无token的用户处理不够的妥当 cause by SSE
+        String uri = request.getRequestURI();
+        if ("/user/ai/send".equals(uri)) return true;
+
         //没有token
-        //TODO 对无token的用户处理不够的妥当
-        if (StrUtil.isBlank(token)||"null".equals(token)) {
+        if (StrUtil.isBlank(token) || "null".equals(token)) {
             throw new LoginException(UNAUTHMSG, UNAUTHORIZED);
         }
         Jws<Claims> claims = null;
@@ -58,20 +62,20 @@ public class LoginInterceptor implements HandlerInterceptor {
             claims = JwtUtil.parseUserToken(jwtProperties.getUserSignKey(), token);
         } catch (Exception e) {
             //token解析错误，伪装或者失效
-            log.warn("用户token：{}解析错误",token);
-            return false;
+            log.warn("用户token：{}解析错误", token);
+            throw new LoginException(UNAUTHMSG, UNAUTHORIZED);
         }
         String email = claims.getPayload().get(EMAIL, String.class);
 
         User user = userMapper.selectByEmail(email);
 
         //用户不存在，拦截请求
-        if(user==null){
+        if (user == null) {
             return false;
         }
 
         UserDTO userDTO = new UserDTO();
-        BeanUtil.copyProperties(user,userDTO,true);
+        BeanUtil.copyProperties(user, userDTO, true);
         //该线程存储使用该用户//结束移除
         CurrentUserHolder.setCurrentUser(userDTO);
         return true;

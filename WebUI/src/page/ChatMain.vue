@@ -6,6 +6,7 @@ import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
 import { chat, sendApi } from '@/api/msgdemo.js';
+import { userInfoApi } from '@/api/user.js';
 import { data } from 'autoprefixer';
 
 // --- 模拟数据 (Mock Data) ---
@@ -166,6 +167,8 @@ const handleDeleteChat = (id) => {
 
 const handleSendMessage = async (text) => {
 
+    //我没本事\\\\直接这样子校验把
+    quetyUserInfo();
 
     // 1. 添加用户消息
     if (!messagesStore[currentChatId.value]) {
@@ -200,11 +203,12 @@ const handleSendMessage = async (text) => {
 
     // 3. 使用原生 Fetch API 处理流
     try {
-        let userForJson = localStorage.getItem("userInfo")
+        let userForJson = localStorage.getItem("userToken")
 
         let userToken = JSON.parse(userForJson)
-        const result = await sendApi(text, currentChatId.value,userToken);
+        const result = await sendApi(text, currentChatId.value, userToken);
 
+        console.log(result)
         if (!result.ok) {
             throw new Error(`HTTP error! status: ${result.status}`);
         }
@@ -268,8 +272,23 @@ const handleSendMessage = async (text) => {
 
 };
 
+const quetyUserInfo = async () => {
+    await userInfoApi()
+        .then(result => {
+            if (result.code == 200) {
+                // TODO userInfo反馈前端
+                console.log()
+            } else {
+                ElMessage.error(result.msg + '111');
+            }
+        }).catch(error => {
+            console.log(error);
+        })
+}
+
 
 onMounted(() => {
+    quetyUserInfo();
     // 检查是否有暗黑模式偏好，并初始化 isDark
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         isDark.value = true;

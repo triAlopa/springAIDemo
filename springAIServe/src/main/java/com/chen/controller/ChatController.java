@@ -23,11 +23,11 @@ public class ChatController {
 
     @Operation(description = "用户发出信息")
     @PostMapping(value = "/send", produces = "text/event-stream;charset=utf-8")
-    public Flux<ServerSentEvent<String>> Send( @RequestBody MessageContentDTO content) {
+    public Flux<ServerSentEvent<String>> Send( @RequestBody MessageContentDTO content,HttpServletRequest request) {
 
         log.info("用户请求访问:{}", content);
 
-        return chatService.requestChat(content);
+        return chatService.requestChat(content,request);
 
     }
 

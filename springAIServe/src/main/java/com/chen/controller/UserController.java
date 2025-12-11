@@ -2,7 +2,9 @@ package com.chen.controller;
 
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserDTO;
+import com.chen.pojo.vo.UserVo;
 import com.chen.service.UserService;
+import com.chen.util.CurrentUserHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +27,13 @@ public class UserController {
     @Resource
     private UserService userService;
 
+    /**
+     * 用户申请注册
+     *
+     * @param user
+     * @param response
+     * @return
+     */
     @PostMapping("/register")
     @Operation(summary = "用户申请注册", description = "用户申请注册")
     @ApiResponses({
@@ -30,7 +41,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "用户填入表单&业务逻辑错误")
     })
     public Result<String> register(@Validated(UserDTO.onRegister.class) @RequestBody @Schema UserDTO user,
-                                    HttpServletResponse response) {
+                                   HttpServletResponse response) {
 
         log.info("用户请求注册：{}", user);
 
@@ -39,6 +50,12 @@ public class UserController {
         return Result.success(token);
     }
 
+    /**
+     * 用户登录
+     *
+     * @param user
+     * @return
+     */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "用户填入信息获取数据库进行校验")
     @ApiResponses({
@@ -55,14 +72,23 @@ public class UserController {
         return Result.success(token);
     }
 
-
+    /**
+     * 用户注册邮箱验证
+     *
+     * @param nickName
+     * @param email
+     * @return
+     */
     @PostMapping("/emailCode/{nickName}")
     @Operation(summary = "用户注册邮箱验证", description = "请求发送邮箱验证")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "500", description = "邮件发送者配置错误")
     })
-    public Result<String> sendEmailCode(@PathVariable String nickName, @RequestBody String email) {
+    public Result<String> sendEmailCode(@Schema @PathVariable @NotNull String nickName, @RequestParam("email") @Schema @Email(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "邮箱格式错误!"
+    ) String email) {
 
         log.info("注册昵称为{} ,请求发送邮箱{} 验证码", nickName, email);
 
@@ -77,13 +103,31 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "500", description = "redis繁忙 业务逻辑")
     })
-    public Result<String> sendLoginCode(@PathVariable(name = "email") String email) {
+    public Result<String> sendLoginCode(@PathVariable(name = "email") @Email(
+            regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
+            message = "邮箱格式错误!"
+    ) String email) {
 
         log.info("登录邮箱为{} ,请求生成验证码", email);
 
         String code = userService.generateLoginCode(email);
 
         return Result.success(code);
+    }
+
+    @Operation(summary = "获取用户信息",description = "根据前端请求头携带token,获取用户的信息,返回前端展示")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "获取成功"),
+            @ApiResponse(responseCode = "401", description = "获取失败")
+    })
+    @GetMapping("/info")
+    public Result<UserVo> getUserInfo() {
+
+        log.info("获取本人的用户信息");
+
+        UserVo userVo=userService.queryUserInfo();
+
+        return Result.success(userVo);
     }
 
 }

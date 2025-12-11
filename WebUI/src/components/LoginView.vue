@@ -106,12 +106,12 @@ const refreshCaptcha = () => {
     loginCodeApi(form.email)
         .then(result => {
             if (result.code == 200) {
-                let code=result.data
+                let code = result.data
                 captchaUrl.value = `https://dummyimage.com/100x40/e0e0e0/555555&text=${code}`
-            }else{
+            } else {
                 ElMessage.error(result.msg)
             }
-        }).catch(error=>{
+        }).catch(error => {
             ElMessage.error(error)
         })
 }
@@ -232,9 +232,9 @@ const submit = async (roleFromRef) => {
     })
 
 
-   
 
-    
+
+
 
 
 
@@ -251,68 +251,75 @@ const submit = async (roleFromRef) => {
 }
 
 async function registerUser() {
-        await registerApi(form)
-            .then(result => {
-                if (result.code != 200) {
-                    //前后端统一使用 409作为重复注册状态码
-                    if (result.code == 409) {
-                        ElMessage.error("重复注册的账号：" + result.msg)
-                        return;
-                    } else if (result.code == 400) {
-                        //注册表单参数填入错误
-                        ElMessage.error(result.msg)
-                        return;
-                    }
-                    console.log(result.msg)
-                    ElMessage.warning('注册失败，请检查数据！');
-                } else {
-                    setTimeout(() => {
-                        let info=JSON.stringify(result.data);
-                        localStorage.setItem("userInfo",info)
-                        router.replace('/chat')
-                        ElMessage.success('注册成功并登录')
-                    }, 800)
+    await registerApi(form)
+        .then(result => {
+            if (result.code != 200) {
+                //前后端统一使用 409作为重复注册状态码
+                if (result.code == 409) {
+                    ElMessage.error("重复注册的账号：" + result.msg)
+                    return;
+                } else if (result.code == 400) {
+                    //注册表单参数填入错误
+                    ElMessage.error(result.msg)
+                    return;
                 }
-            }).catch(error => {
-                ElMessage.warning(error);
-            })
-    }
- async function loginUser() {
-        loginForm.email = form.email;
-        loginForm.password = form.password;
-        loginForm.loginCode = form.loginCode;
-        await loginApi(loginForm)
-            .then(result => {
-                if (result.code != 200) {
-                    console.log(result.msg)
-                    ElMessage.warning('登录失败，请检查数据！' + result.msg);
-                } else {
-                    setTimeout(() => {
-                        let info=JSON.stringify(result.data);
-                        localStorage.setItem("userInfo",info)
-                        router.replace('/chat')
-                        ElMessage.success('登录成功')
-                    }, 800)
-                }
-            }).catch(error => {
-                ElMessage.warning(error);
-            })
-    }
+                console.log(result.msg)
+                ElMessage.warning('注册失败，请检查数据！');
+            } else {
+                setTimeout(() => {
+                    let info = JSON.stringify(result.data);
+                    localStorage.setItem("userToken", info)
+                    router.replace('/chat')
+                    ElMessage.success('注册成功并登录')
+                }, 800)
+            }
+        }).catch(error => {
+            ElMessage.warning(error);
+        })
+}
+async function loginUser() {
+    loginForm.email = form.email;
+    loginForm.password = form.password;
+    loginForm.loginCode = form.loginCode;
+    await loginApi(loginForm)
+        .then(result => {
+            if (result.code != 200) {
+                console.log(result.msg)
+                ElMessage.warning('登录失败，请检查数据！' + result.msg);
+            } else {
+                setTimeout(() => {
+                    let info = JSON.stringify(result.data);
+                    localStorage.setItem("userToken", info)
+                    router.replace('/chat')
+                    ElMessage.success('登录成功')
+                }, 800)
+            }
+        }).catch(error => {
+            ElMessage.warning(error);
+        })
+}
 
 
 const sendEmailCode = async () => {
     var regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/g;
     if (!regex.exec(form.email)) {
-        ElMessage.warning("请输入正确格式的验证码！")
+        ElMessage.warning("请输入正确格式的邮箱！")
+        return;
     }
     if (!form.nickName) {
         ElMessage.warning("请输入你的昵称")
+        return;
     }
 
     await requestCodeAPi(form.email, form.nickName)
         .then(result => {
-            ElMessage.info(result.data)
-            sendEmailWithSeconds()
+            if (result.code == 200) {
+                ElMessage.info(result.data)
+                sendEmailWithSeconds()
+            }else{
+                console.log(result)
+                ElMessage.warning(result.msg)
+            }
         }).catch(error => {
             console.log(error)
         })

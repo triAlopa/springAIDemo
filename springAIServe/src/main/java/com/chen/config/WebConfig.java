@@ -26,10 +26,29 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/login",             // 只能匹配 /user/login
                         "/user/login/**",// 匹配 /user/login/xxx，但不包括 /user/login 本身
 
+                        // Swagger UI
+                        "/swagger-ui.html",
                         "/swagger-ui/**",
+                        "/swagger-ui/index.html",
+
                         // Swagger API文档
+                        "/v3/api-docs",
                         "/v3/api-docs/**",  // 匹配所有分组文档
 
+                        "/resources/**",
+                        "/resources",
+
+                        // Swagger资源配置
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/swagger-resources/configuration/ui",
+                        "/swagger-resources/configuration/security",
+
+                        // Springfox兼容（如果使用）
+                        "/swagger**",
+
+                        // Webjars资源
+                        "/webjars/**",
 
                         // Knife4j（增强版Swagger）
                         "/doc.html",

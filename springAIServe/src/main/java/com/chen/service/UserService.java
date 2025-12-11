@@ -1,6 +1,7 @@
 package com.chen.service;
 
 import com.chen.pojo.dto.UserDTO;
+import com.chen.pojo.vo.UserVo;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface UserService {
@@ -12,4 +13,7 @@ public interface UserService {
     String generateLoginCode(String email);
 
     String querySingleUser(UserDTO user);
+
+    UserVo queryUserInfo();
+
 }

@@ -3,6 +3,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.chen.mapper.UserMapper">
 
-
-
+<!--保持高扩展性即复用性，先决定所有字段查出来-->
+    <select id="selectById" resultType="com.chen.pojo.entity.User">
+        select id, nick_name, gender, birthday, password, email, image,
+               points, enable, is_del, register_time, cancel_time
+            from tb_ai_user
+        where id=#{userId}
+    </select>
 </mapper>

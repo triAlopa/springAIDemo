@@ -13,7 +13,9 @@ import com.chen.mapper.UserMapper;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
+import com.chen.pojo.vo.UserVo;
 import com.chen.service.UserService;
+import com.chen.util.CurrentUserHolder;
 import com.chen.util.JwtUtil;
 import jakarta.annotation.Resource;
 import jakarta.mail.MessagingException;
@@ -34,6 +36,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -162,7 +165,7 @@ public class UserServiceImpl implements UserService {
             //确认发送文本
             mimeMessageHelper.setText(template, true);
             //收件人
-            mimeMessageHelper.setTo(parseEmail);
+            mimeMessageHelper.setTo(email);
             //发送
             javaMailSender.send(mimeMessage);
         } catch (Exception e) {
@@ -175,7 +178,11 @@ public class UserServiceImpl implements UserService {
     public String generateLoginCode(String email) {
         String code = RandomUtil.randomString(4);
 
-        String key = USER_LOGIN + email;
+        //生成一天的相同前缀，统一删除
+        String pattern = "yyyy-MM-dd";
+        String time_prefix = LocalDateTime.now().format(DateTimeFormatter.ofPattern(pattern)) + ":";
+
+        String key = USER_LOGIN + time_prefix + email;
         //TODO 加入防暴力破解的次数限制
         stringRedisTemplate.opsForValue().set(key, code);
 
@@ -199,7 +206,7 @@ public class UserServiceImpl implements UserService {
 
         //密码不正确
         if (!selected.getPassword().equals(inputPassword)) {
-            throw new LoginException(USER_INPUT_PASS_ERR);
+            throw new LoginException(USER_INPUT_PASS_ERR,BAD_REQUEST);
         }
 
         // 生成token 返回
@@ -213,5 +220,18 @@ public class UserServiceImpl implements UserService {
         log.info("已经为id：{}的用户生成对应token", selected.getId());
 
         return token;
+    }
+
+    @Override
+    public UserVo queryUserInfo() {
+        //获取该线程的userDto
+        UserDTO userDTO = CurrentUserHolder.getCurrentUser();
+        Integer userId = userDTO.getId();
+
+        User user = userMapper.selectById(userId);
+        UserVo userVo = new UserVo();
+        BeanUtil.copyProperties(user, userVo);
+
+        return userVo;
     }
 }

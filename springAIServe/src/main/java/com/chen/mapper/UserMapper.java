@@ -20,4 +20,6 @@ public interface UserMapper {
 
     @Select("select * from tb_ai_user where email=#{email}")
     User selectByEmail(String email);
+
+    User selectById(Integer userId);
 }
