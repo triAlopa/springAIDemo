@@ -147,8 +147,7 @@ public class UserServiceImpl implements UserService {
             String code = RandomUtil.randomString(6);
             //2.保留时间 超时失效
             //反序列化 email就是去除双引号....
-            String parseEmail = (String) JSONUtils.parse(email);
-            String key = USER_REGISTER + parseEmail;
+            String key = USER_REGISTER + email;
             Boolean flag = stringRedisTemplate.opsForValue().setIfAbsent(key, code, USER_REGISTER_TTL, TimeUnit.MILLISECONDS);
             if (BooleanUtil.isFalse(flag)) {
                 //当前用户验证码未过期
