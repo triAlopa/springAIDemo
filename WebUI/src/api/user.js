@@ -19,7 +19,7 @@ export const requestCodeAPi = (email, nickName) => request.post(
         headers: {
             'Content-Type': 'application/json'
         },
-        needAuth: false  
+        needAuth: false
     }
 );
 
@@ -54,6 +54,18 @@ export const userInfoApi = () => request.get(
         headers: {
             'Content-Type': 'application/json'
         },
-         needAuth: true
+        needAuth: true
+    }
+);
+
+
+export const userChangePassApi = (passworldForm) => request.post(
+    `/user/modifyPass`,
+        passworldForm,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
     }
 );

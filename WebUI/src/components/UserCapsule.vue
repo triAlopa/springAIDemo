@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 // ...
-import { Sunny, Moon } from '@element-plus/icons-vue';
+import { Sunny, Moon, Message } from '@element-plus/icons-vue';
 const props = defineProps({
     user: {
         type: Object,
@@ -13,7 +13,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['toggle-theme', 'logout', 'check-in']);
+const emit = defineEmits(['toggle-theme', 'logout', 'check-in','changePass']);
 
 const handleToggleTheme = (event) => {
     // 获取点击位置坐标，用于实现扩散动画
@@ -44,11 +44,14 @@ const handleToggleTheme = (event) => {
             <template #reference>
                 <div class="flex items-center gap-3 pl-1 pr-4 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full shadow-sm cursor-pointer hover:shadow-md hover:border-blue-300 transition-all group">
                     <div class="w-8 h-8 rounded-full overflow-hidden border border-gray-100">
-                        <img :src="user.avatar" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                        <img :src="user.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-bold text-gray-700 dark:text-gray-200">{{ user.name }}</span>
-                        <span class="text-[10px] text-gray-400">Lv.{{ user.level }}</span>
+                    <div class="flex flex-col" >
+                        <span class="text-xs font-bold text-gray-700 dark:text-gray-200">{{ user.nickName }}</span>
+                        <span class="text-[10px] text-gray-400">
+                            <el-tag v-if="user.gender==1" type="primary" size="small" round>男</el-tag>
+                            <el-tag v-else-if="user.gender==0" type="danger" size="small" round>女</el-tag>
+                        </span>
                     </div>
                     <el-icon class="text-xs text-gray-400"><CaretBottom /></el-icon>
                 </div>
@@ -57,15 +60,15 @@ const handleToggleTheme = (event) => {
             <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden">
                 <div class="h-20 bg-gradient-to-r from-pink-300 to-blue-300 relative">
                     <div class="absolute -bottom-8 left-6 w-16 h-16 rounded-full border-2 border-white dark:border-gray-800 overflow-hidden shadow-lg z-10">
-                        <img :src="user.avatar" class="w-full h-full object-cover">
+                        <img :src="user.image" class="w-full h-full object-cover">
                     </div>
                 </div>
                 
                 <div class="pt-10 px-6 pb-6">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="font-bold text-lg dark:text-white">{{ user.name }}</h3>
-                            <div class="text-xs text-gray-400 mt-1">硬币: {{ user.coins }} <span class="mx-1">|</span> 积分: {{ user.points }}</div>
+                            <h3 class="font-bold text-lg dark:text-white">{{ user.nickName }}</h3>
+                            <div class="text-xs text-gray-400 mt-1">积分: {{ user.points }} </div>
                         </div>
                         <button 
                             @click="$emit('check-in')"
@@ -79,31 +82,29 @@ const handleToggleTheme = (event) => {
 
                     <div class="flex justify-between mt-6 px-2">
                         <div class="text-center cursor-pointer hover:text-[#00b1eb] transition-colors">
-                            <div class="font-bold text-lg dark:text-gray-200">104</div>
-                            <div class="text-xs text-gray-400">关注</div>
-                        </div>
-                        <div class="text-center cursor-pointer hover:text-[#00b1eb] transition-colors">
-                            <div class="font-bold text-lg dark:text-gray-200">7</div>
-                            <div class="text-xs text-gray-400">粉丝</div>
-                        </div>
-                        <div class="text-center cursor-pointer hover:text-[#00b1eb] transition-colors">
-                            <div class="font-bold text-lg dark:text-gray-200">68</div>
-                            <div class="text-xs text-gray-400">动态</div>
+                            <div class="text-xs text-gray-400">性别</div>
+                            <div class="font-bold text-lg dark:text-gray-200">{{user.gender===1?'男':'女'}}</div>
                         </div>
                     </div>
 
                     <div class="mt-6 space-y-1">
                         <div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors group">
                             <span class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                               <el-icon class="group-hover:text-[#00b1eb]"><User /></el-icon>个人中心
+                               <el-icon class="group-hover:text-[#00b1eb]">
+                                <Message /></el-icon>{{ user.email }}
                             </span>
-                            <el-icon class="text-xs text-gray-400"><Right /></el-icon>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors group">
+                            <span class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                               <el-icon class="group-hover:text-[#00b1eb]">
+                                <Calendar /></el-icon>您已经注册了{{ user.useDays}}天
+                            </span>
                         </div>
                          <div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors group">
                             <span class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                               <el-icon class="group-hover:text-[#00b1eb]"><Setting /></el-icon>设置
+                               <el-icon class="group-hover:text-[#00b1eb]"><Setting /></el-icon>修改密码
                             </span>
-                            <el-icon class="text-xs text-gray-400"><Right /></el-icon>
+                            <el-icon class="text-xs text-gray-400"><Right @click="$emit('changePass')" /></el-icon>
                         </div>
                     </div>
                     

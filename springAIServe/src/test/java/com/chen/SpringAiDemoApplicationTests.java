@@ -3,8 +3,11 @@ package com.chen;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.AIMessageMapper;
+import com.chen.mapper.AISessionMapper;
+import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
+import com.chen.pojo.entity.AISession;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.service.UserService;
 import com.chen.task.Task2Service;
@@ -177,5 +180,18 @@ class SpringAiDemoApplicationTests {
           System.out.println(code);
       }*/
       task2Service.delUserLoginCode();
+  }
+
+  @Resource
+  private AISessionMapper sessionMapper;
+  @Test
+    void testMapper(){
+
+      AISessionDTO sessionDTO = AISessionDTO
+              .builder()
+              .userId(null)
+              .isDel(1).build();
+      List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
+      System.out.println(aiSessions);
   }
 }

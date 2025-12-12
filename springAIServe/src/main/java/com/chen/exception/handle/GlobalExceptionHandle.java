@@ -1,6 +1,7 @@
 package com.chen.exception.handle;
 
 import com.chen.constant.ResultConstant;
+import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
 import com.chen.pojo.Result;
@@ -90,6 +91,13 @@ public class GlobalExceptionHandle {
         log.warn("用户表单出错: {}",e.getMessage());
 
         return Result.fil(UNKNOWNMESSAGE,BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccountBusinessException.class)
+    public Result accountBusinessHandle(AccountBusinessException e) {
+        log.warn("用户业务出错: {}",e.getErrorMsg());
+
+        return Result.fil(e.getErrorMsg(),BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

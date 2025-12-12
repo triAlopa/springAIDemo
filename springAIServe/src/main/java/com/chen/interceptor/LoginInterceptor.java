@@ -71,7 +71,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         //用户不存在，拦截请求
         if (user == null) {
-            return false;
+            throw new LoginException(UNAUTHMSG, UNAUTHORIZED);
         }
 
         UserDTO userDTO = new UserDTO();

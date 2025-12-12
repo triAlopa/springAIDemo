@@ -21,6 +21,8 @@ public class UserConstant {
 
     public static final int DEFAULT_POINTS = 1000;
 
+    public static final String OLD_PASSWORD_ERR="原来的密码错误";
+
     /**
      * 注册或者登录校验错误字段
      */

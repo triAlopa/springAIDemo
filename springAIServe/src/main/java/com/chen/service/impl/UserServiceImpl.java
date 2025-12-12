@@ -7,9 +7,11 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.chen.constant.UserConstant;
+import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
 import com.chen.mapper.UserMapper;
+import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
@@ -119,19 +121,7 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
         //  token 返回
 
-        //用户id回显
-        Integer userId = user.getId();
-        //邮箱
-        String email = user.getEmail();
-        Map<String, Object> claims = new HashMap<>();
-
-        claims.put(USER_ID, userId);
-        claims.put(EMAIL, email);
-        String Key = jwtProperties.getUserSignKey();
-        long userTTL = jwtProperties.getUserTtl();
-        String token = JwtUtil.generateUserToken(Key, userTTL, claims);
-
-        log.info("已经为id：{}的用户注册用户生成对应token", userId);
+        String token = generateUserToken(user);
 
         return token;
     }
@@ -206,18 +196,13 @@ public class UserServiceImpl implements UserService {
 
         //密码不正确
         if (!selected.getPassword().equals(inputPassword)) {
-            throw new LoginException(USER_INPUT_PASS_ERR,BAD_REQUEST);
+            throw new LoginException(USER_INPUT_PASS_ERR, BAD_REQUEST);
         }
 
+        User usr = new User();
+        BeanUtil.copyProperties(user, usr);
         // 生成token 返回
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(USER_ID, selected.getId());
-        claims.put(EMAIL, email);
-        String Key = jwtProperties.getUserSignKey();
-        long userTTL = jwtProperties.getUserTtl();
-        String token = JwtUtil.generateUserToken(Key, userTTL, claims);
-
-        log.info("已经为id：{}的用户生成对应token", selected.getId());
+        String token = generateUserToken(usr);
 
         return token;
     }
@@ -233,5 +218,56 @@ public class UserServiceImpl implements UserService {
         BeanUtil.copyProperties(user, userVo);
 
         return userVo;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String modifyUserPassword(Integer userId, UserChangePassDTO changePassDTO) {
+        User user = userMapper.selectById(userId);
+
+        //旧的pass，那新的呢
+        String oldPass = user.getPassword();
+        String userInputOldPass = changePassDTO.getOriginPassword();
+        //原来密码为空
+        if (StrUtil.isBlank(userInputOldPass)) {
+            throw new AccountBusinessException(PASSWORD_INVALID, BAD_REQUEST);
+        }
+        //将用户传来的旧密码加密匹配
+        String digestOldUsr = DigestUtils.md5DigestAsHex(userInputOldPass.getBytes());
+        //原密码不匹配
+        if (!oldPass.equals(digestOldUsr)) {
+            throw new AccountBusinessException(OLD_PASSWORD_ERR, BAD_REQUEST);
+        }
+
+        changePassDTO.setId(userId);
+        //更新originPass
+        changePassDTO.setOriginPassword(digestOldUsr);
+        //更新changePass
+        changePassDTO.setChangedPassword(DigestUtils.md5DigestAsHex(
+                changePassDTO.getChangedPassword().getBytes()
+        ));
+        userMapper.updateSingleUser(changePassDTO);
+
+        //更新token
+        return generateUserToken(user);
+    }
+
+    /**
+     * 生成token
+     * @param user
+     * @return
+     */
+    private String generateUserToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put(USER_ID, user.getId());
+        claims.put(EMAIL, user.getEmail());
+
+        String Key = jwtProperties.getUserSignKey();
+        long userTTL = jwtProperties.getUserTtl();
+
+        String token = JwtUtil.generateUserToken(Key, userTTL, claims);
+        log.info("已经为id：{}的用户生成对应token", user.getId());
+        return token;
     }
 }

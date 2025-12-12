@@ -1,7 +1,9 @@
 package com.chen.controller;
 
 import com.chen.pojo.Result;
+import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
+import com.chen.pojo.vo.AISessionVo;
 import com.chen.pojo.vo.UserVo;
 import com.chen.service.UserService;
 import com.chen.util.CurrentUserHolder;
@@ -17,6 +19,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -115,7 +119,7 @@ public class UserController {
         return Result.success(code);
     }
 
-    @Operation(summary = "获取用户信息",description = "根据前端请求头携带token,获取用户的信息,返回前端展示")
+    @Operation(summary = "获取用户信息", description = "根据前端请求头携带token,获取用户的信息,返回前端展示")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "获取成功"),
             @ApiResponse(responseCode = "401", description = "获取失败")
@@ -125,9 +129,25 @@ public class UserController {
 
         log.info("获取本人的用户信息");
 
-        UserVo userVo=userService.queryUserInfo();
+        UserVo userVo = userService.queryUserInfo();
 
         return Result.success(userVo);
+    }
+
+    @Operation(summary = "修改用户密码", description = "根据前端请求头携带token,获取用户的信息,修改用户密码")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "修改成功"),
+            @ApiResponse(responseCode = "401", description = "原密码错误")
+    })
+    @PostMapping("/modifyPass")
+    public Result responseChangePassword(@RequestBody UserChangePassDTO changePassDTO) {
+
+        Integer userId = CurrentUserHolder.getCurrentUser().getId();
+        log.info("用户：{}，尝试修改用户密码：{}", userId, changePassDTO);
+
+        String token=userService.modifyUserPassword(userId, changePassDTO);
+
+        return Result.success(token);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.chen.mapper;
 
+import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,4 +23,6 @@ public interface UserMapper {
     User selectByEmail(String email);
 
     User selectById(Integer userId);
+
+    void updateSingleUser(UserChangePassDTO changePassDTO);
 }

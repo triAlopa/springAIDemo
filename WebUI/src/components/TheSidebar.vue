@@ -40,8 +40,8 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
                 >
                     <el-icon class="text-lg mr-3 text-gray-500" :class="{'text-[#00b1eb]': currentChatId === chat.id}"><ChatDotRound /></el-icon>
                     <div class="flex-1 overflow-hidden">
-                        <div class="truncate text-sm font-medium">{{ chat.title }}</div>
-                        <div class="truncate text-xs text-gray-400">{{ chat.date }}</div>
+                        <div class="truncate text-sm font-medium">{{ chat.sessionTitle }}</div>
+                        <div class="truncate text-xs text-gray-400">{{ chat.lastTime }}</div>
                     </div>
                     
                     <button @click.stop="$emit('delete-chat', chat.id)" class="absolute right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 hover:text-red-500 rounded transition-all">

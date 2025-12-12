@@ -1,22 +1,16 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus 组件
-
 import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
-import { chat, sendApi } from '@/api/msgdemo.js';
-import { userInfoApi } from '@/api/user.js';
-import { data } from 'autoprefixer';
+import { sendApi } from '@/api/msgdemo.js';
+import { userInfoApi, userChangePassApi } from '@/api/user.js';
+import { userSessionApi } from '@/api/session.js';
+import { useRouter } from 'vue-router';
 
-// --- 模拟数据 (Mock Data) ---
-const MOCK_HISTORY = [
-    { id: 1, title: "Vue3 Setup 语法糖问题", date: "刚刚" },
-    { id: 2, title: "生成一幅赛博朋克图片", date: "昨天" },
-    { id: 3, title: "解释量子纠缠", date: "2天前" },
-    { id: 4, title: "Python 爬虫脚本优化", date: "1周前" },
-];
 
+const router = useRouter();
 const MOCK_MESSAGES = {
     1: [
         { role: 'user', type: 'text', content: 'Vue3 的 setup 语法糖有什么优势？', time: '10:00' },
@@ -36,46 +30,188 @@ const MOCK_MESSAGES = {
         { role: 'ai', type: 'text', content: '', time: '20:20' }
     ]
 };
-// --- End Mock Data ---
+
+// 聊天数据
+//历史会话记录
+/**
+ * "id": 4,
+      "sessionId": "sess_002_20240101",
+      "sessionTitle": "产品咨询",
+      "modelId": null,
+      "enable": 1,
+      "createdTime": "2024-01-01 14:20:00",
+      "lastTime": "2024-03-01 10:10:00"
+ */
+const chatSessionHistory = ref([]);
+/**
+ * 
+ */
+const currentSessionId = ref(1);
+const messagesStore = reactive({ ...MOCK_MESSAGES });
 
 
 const isDark = ref(false);
 
 // 用户状态
 const currentUser = reactive({
-    name: '春乏夏困',
-    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100',
-    level: 6,
-    coins: 726.5,
-    points: 104,
+    nickName: '',
+    image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100',
+    gender: 0,
+    points: 0,
+    email: '',
+    registerTime: '',
+    useDays: 0,
     isCheckedIn: false
 });
 
-// 聊天数据
-const chatHistory = ref([...MOCK_HISTORY]);
-const currentChatId = ref(1);
-const messagesStore = reactive({ ...MOCK_MESSAGES });
+const days = computed(() => {
+    let userDate = Date.parse(currentUser.registerTime)
+    let now = Date.now();
+    return Math.round((now - userDate) / (1000 * 60 * 60 * 24));
+})
 
-// 计算属性
+/*
+*查询个人信息
+*/
+const quetyUserInfo = async () => {
+    await userInfoApi()
+        .then(result => {
+            if (result.code == 401) {
+                ElMessage.warning("请先登录")
+                router.replace('/Login')
+                return;
+            }
+            if (result.code == 200) {
+                let data = result.data;
+                Object.assign(currentUser, data)
+                currentUser.useDays = days.value
+                //TODO 
+                currentUser.image = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100'
+                console.log(result.data)
+                console.log(currentUser)
+                return result.code;
+            } else {
+                ElMessage.error(result.msg)
+                currentUser.useDays = days.value
+            }
+        }).catch(error => {
+            console.log(error);
+        })
+}
+
+const dialogVisible = ref(false)
+const passworldForm = ref({ originPassword: '', changedPassword: '' })
+const passworldRules = {
+    originPassword: [
+        { required: true, message: '请输入密码', trigger: 'change' }
+    ],
+    changedPassword: [
+        { required: true, message: '请输入密码', trigger: 'change' },
+        { min: 6, max: 50, message: '请输入不少于6位的修改密码', trigger: 'change' },
+    ]
+};
+const passRuleRef = ref();
+const handleChangUserPassworld = () => {
+    console.log('用户需要修改密码')
+    dialogVisible.value = true;
+    resetPassForm();
+}
+
+const resetPassForm = () => {
+    // passRuleRef.resetFields()
+    passworldForm.value.originPassword = '';
+    passworldForm.value.changedPassword = '';
+}
+
+const handleCloseDialog = (done) => {
+    ElMessageBox.confirm('确定关闭吗')
+        .then(() => {
+            passRuleRef.value.resetFields();
+            done()
+        })
+        .catch(() => {
+            console.log('隐忍Java，，，35 ,,996')
+        })
+}
+
+const sumbit = async (form) => {
+    if (!form) return;
+    await form.validate(async (valid, fields) => {
+        if (!valid) {
+            console.log("连这两项都填不好，建议使用老人机")
+            ElMessage.warning('按要求补完表单')
+            return;
+        } else {
+            await userChangePassApi(passworldForm.value)
+                .then(result => {
+                    if (result.code == 200) {
+                        ElMessage.success('修改成功')
+                        dialogVisible.value=false;
+                        resetPassForm();
+                        //修改token
+                        let token = result.data
+                        localStorage.removeItem('userToken')
+                        localStorage.setItem('userToken', JSON.stringify(token))
+                    } else {
+                        ElMessage.error('原密码错误')
+                    }
+                })
+        }
+    })
+
+}
+
+
+
+/**
+ * 查询该用户的会话
+ */
+const getUserSession = async () => {
+    await userSessionApi()
+        .then(result => {
+            if (result.code == 200) {
+                chatSessionHistory.value = result.data;
+            } else {
+                console.log(result)
+                ElMessage.error(result.msg)
+            }
+        }).catch(error => {
+            console.log(error);
+        })
+}
+
+
+// 计算属性该会话的信息列表
 const currentMessages = computed(() => {
-    return messagesStore[currentChatId.value] || [];
+    return messagesStore[currentSessionId.value] || [];
 });
 
+/*
+* 计算会话的标题
+*/
 const currentChatTitle = computed(() => {
-    const chat = chatHistory.value.find(c => c.id === currentChatId.value);
-    return chat ? chat.title : '新对话';
+    const chat = chatSessionHistory.value.find(c => c.id === currentSessionId.value);
+    return chat ? chat.sessionTitle : '新对话';
 });
 
+/*
+*退出登录
+*/
 const handleLogout = () => {
     ElMessageBox.confirm('确定要退出登录吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
     }).then(() => {
-        //TODO 
+        localStorage.removeItem('userToken')
+        router.replace('/Login')
+        ElMessage.success('退出登陆成功')
     });
 };
 
+/*
+*模式切换
+*/
 const updateThemeClass = () => {
     if (isDark.value) {
         document.documentElement.classList.add('dark');
@@ -83,7 +219,9 @@ const updateThemeClass = () => {
         document.documentElement.classList.remove('dark');
     }
 };
-
+/*
+*模式切换动画
+*/
 const toggleTheme = ({ x, y }) => {
     // 使用 View Transitions API
     const isSupported = document.startViewTransition;
@@ -123,29 +261,37 @@ const toggleTheme = ({ x, y }) => {
         );
     });
 };
-
+/*
+*签到
+*/
 const handleCheckIn = () => {
     if (currentUser.isCheckedIn) return;
     currentUser.isCheckedIn = true;
-    currentUser.coins += 10;
+    currentUser.points += 10;
     ElMessage.success('签到成功！硬币 +10');
 };
-
+/*
+*选择了某一个会话的函数
+*/
 const handleSelectChat = (id) => {
-    currentChatId.value = id;
+    currentSessionId.value = id;
 };
-
+/*
+*添加会话
+*/
 const handleCreateChat = () => {
     const newId = Date.now();
-    chatHistory.value.unshift({
+    chatSessionHistory.value.unshift({
         id: newId,
-        title: '新对话',
-        date: '刚刚'
+        sessionTitle: '新对话',
+        lastTime: '刚刚'
     });
     messagesStore[newId] = [];
-    currentChatId.value = newId;
+    currentSessionId.value = newId;
 };
-
+/*
+*删除信息
+*/
 const handleDeleteChat = (id) => {
     ElMessageBox.confirm(
         '确定删除该对话记录吗?',
@@ -156,29 +302,31 @@ const handleDeleteChat = (id) => {
             type: 'warning',
         }
     ).then(() => {
-        chatHistory.value = chatHistory.value.filter(c => c.id !== id);
+        chatSessionHistory.value = chatSessionHistory.value.filter(c => c.id !== id);
         delete messagesStore[id];
-        if (currentChatId.value === id && chatHistory.value.length > 0) {
-            currentChatId.value = chatHistory.value[0].id;
+        if (currentSessionId.value === id && chatSessionHistory.value.length > 0) {
+            currentSessionId.value = chatSessionHistory.value[0].id;
         }
         ElMessage.success('删除成功!');
     });
 };
-
+/*
+*发送信息
+*/
 const handleSendMessage = async (text) => {
 
     //我没本事\\\\直接这样子校验把
     quetyUserInfo();
 
     // 1. 添加用户消息
-    if (!messagesStore[currentChatId.value]) {
-        messagesStore[currentChatId.value] = [];
+    if (!messagesStore[currentSessionId.value]) {
+        messagesStore[currentSessionId.value] = [];
     }
 
     const now = new Date();
     const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-    messagesStore[currentChatId.value].push({
+    messagesStore[currentSessionId.value].push({
         role: 'user',
         type: 'text',
         content: text,
@@ -186,19 +334,19 @@ const handleSendMessage = async (text) => {
     });
 
     // 更新标题 (如果是第一条)
-    const currentChat = chatHistory.value.find(c => c.id === currentChatId.value);
-    if (currentChat && currentChat.title === '新对话') {
-        currentChat.title = text.substring(0, 10) + (text.length > 10 ? '...' : '');
+    const currentChat = chatSessionHistory.value.find(c => c.id === currentSessionId.value);
+    if (currentChat && currentChat.sessionTitle === '新对话') {
+        currentChat.sessionTitle = text.substring(0, 10) + (text.length > 10 ? '...' : '');
     }
 
-    messagesStore[currentChatId.value].push({
+    messagesStore[currentSessionId.value].push({
         role: 'ai',
         type: 'text',
         content: '',
         time: timeString
     });
 
-    const aiMessage = messagesStore[currentChatId.value][messagesStore[currentChatId.value].length - 1];
+    const aiMessage = messagesStore[currentSessionId.value][messagesStore[currentSessionId.value].length - 1];
 
 
     // 3. 使用原生 Fetch API 处理流
@@ -206,7 +354,7 @@ const handleSendMessage = async (text) => {
         let userForJson = localStorage.getItem("userToken")
 
         let userToken = JSON.parse(userForJson)
-        const result = await sendApi(text, currentChatId.value, userToken);
+        const result = await sendApi(text, currentSessionId.value, userToken);
 
         console.log(result)
         if (!result.ok) {
@@ -272,23 +420,18 @@ const handleSendMessage = async (text) => {
 
 };
 
-const quetyUserInfo = async () => {
-    await userInfoApi()
-        .then(result => {
-            if (result.code == 200) {
-                // TODO userInfo反馈前端
-                console.log()
-            } else {
-                ElMessage.error(result.msg + '111');
-            }
-        }).catch(error => {
-            console.log(error);
-        })
-}
 
 
 onMounted(() => {
-    quetyUserInfo();
+    let status = null
+    /* //获取用户信息*/
+    setTimeout(() => {
+        status = quetyUserInfo();
+    }, 200);
+    //获取用户历史会话
+    if (status) {
+        getUserSession();
+    }
     // 检查是否有暗黑模式偏好，并初始化 isDark
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         isDark.value = true;
@@ -312,8 +455,9 @@ onMounted(() => {
                 class="w-[95%] lg:w-[85%] h-[90vh] flex rounded-3xl overflow-hidden shadow-2xl border border-white/20 dark:border-gray-700 relative z-10 transition-all duration-300">
 
                 <!-- 左侧侧边栏 -->
-                <the-sidebar :history="chatHistory" :current-chat-id="currentChatId" @select-chat="handleSelectChat"
-                    @create-chat="handleCreateChat" @delete-chat="handleDeleteChat"></the-sidebar>
+                <the-sidebar :history="chatSessionHistory" :current-chat-id="currentSessionId"
+                    @select-chat="handleSelectChat" @create-chat="handleCreateChat"
+                    @delete-chat="handleDeleteChat"></the-sidebar>
 
                 <!-- 右侧聊天窗口 -->
                 <the-chat-window :messages="currentMessages" :current-chat-title="currentChatTitle"
@@ -321,15 +465,31 @@ onMounted(() => {
                     <!-- 把右上角的胶囊塞进去 -->
                     <template #header-right>
                         <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"
-                            @logout="handleLogout" @check-in="handleCheckIn"></user-capsule>
+                            @logout="handleLogout" @check-in="handleCheckIn"
+                            @changePass="handleChangUserPassworld"></user-capsule>
                     </template>
                 </the-chat-window>
 
             </div>
         </transition>
     </div>
+
+    <el-dialog v-model="dialogVisible" title="修改密码" width="500" :before-close="handleCloseDialog">
+        <el-form ref="passRuleRef" style="max-width: auto" :model="passworldForm" :rules="passworldRules"
+            label-width="auto">
+            <el-form-item label="修改前" prop="originPassword">
+                <el-input v-model="passworldForm.originPassword" type="password" show-password />
+            </el-form-item>
+            <el-form-item label="修改后" prop="changedPassword">
+                <el-input v-model="passworldForm.changedPassword" type="password" show-password />
+            </el-form-item> 
+        </el-form>
+        <div class="dialog-footer">
+            <el-button @click="sumbit(passRuleRef)">提交</el-button>
+            <el-button type="primary" @click="dialogVisible = false">
+                离开
+            </el-button>
+        </div>
+    </el-dialog>
 </template>
-<style>
-/* App.vue 中可以放置组件特有的 CSS，但此处已移至 style.css */
-/* 动画 keyframes 可以在 tailwind.config.js 中配置 */
-</style>
+<style></style>

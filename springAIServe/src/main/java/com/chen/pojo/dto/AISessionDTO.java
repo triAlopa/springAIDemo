@@ -1,4 +1,4 @@
-package com.chen.pojo.entity;
+package com.chen.pojo.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,22 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AISession implements Serializable {
+public class AISessionDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
     private String sessionId;
-    private String sessionTitle;
     private Integer userId;
     private Integer enable;
-    private Integer feedback;
     private Integer isDel;
 
-    @JsonFormat(pattern = "yyyy-dd-MM HH:mm:ss")
-    private LocalDateTime createdTime;
-
-    @JsonFormat(pattern = "yyyy-dd-MM HH:mm:ss")
-    private LocalDateTime lastTime;
 }

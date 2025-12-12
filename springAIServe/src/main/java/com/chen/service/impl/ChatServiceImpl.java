@@ -4,13 +4,17 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.chen.exception.LoginException;
 import com.chen.mapper.AIMessageMapper;
+import com.chen.mapper.AISessionMapper;
 import com.chen.mapper.UserMapper;
+import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.dto.MessageContentDTO;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
+import com.chen.pojo.entity.AISession;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
+import com.chen.pojo.vo.AISessionVo;
 import com.chen.service.ChatService;
 import com.chen.util.CurrentUserHolder;
 import com.chen.util.JwtUtil;
@@ -27,12 +31,13 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.chen.constant.ResultConstant.HTTPSTATUS.SUCCESS;
 import static com.chen.constant.ResultConstant.HTTPSTATUS.UNAUTHORIZED;
 import static com.chen.constant.ResultConstant.UNAUTHMSG;
-import static com.chen.constant.UserConstant.EMAIL;
+import static com.chen.constant.UserConstant.*;
 
 @Service
 @Slf4j
@@ -41,11 +46,14 @@ public class ChatServiceImpl implements ChatService {
     @Autowired
     private AIMessageMapper messageMapper;
 
-    @Autowired
-    private JwtProperties jwtProperties;
-
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private AISessionMapper sessionMapper;
+
+    @Autowired
+    private JwtProperties jwtProperties;
 
     private final ChatClient chatClient;
 
@@ -110,5 +118,29 @@ public class ChatServiceImpl implements ChatService {
 
 
         return messages.isEmpty()?Result.fil("没有数据",SUCCESS):Result.success(messages);
+    }
+
+    @Override
+    public List<AISessionVo> queryUserSession(Integer userId) {
+
+        AISessionDTO sessionDTO = AISessionDTO.builder()
+                .userId(userId)
+                .isDel(NODEL)
+                .build();
+
+        List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
+
+        if(list==null){
+            //TODO 如果新用户可以加入一个默认会话提供给用户指导
+            log.info("查找该:{}用户的会话列表为空",userId);
+//            list= Collections.singletonList()
+            return Collections.emptyList();
+        }
+
+        List<AISessionVo> voList = list.stream().map(
+                item -> BeanUtil.copyProperties(item, AISessionVo.class)
+        ).toList();
+
+        return voList;
     }
 }

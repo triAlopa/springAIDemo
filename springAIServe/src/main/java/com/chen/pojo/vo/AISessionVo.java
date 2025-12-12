@@ -1,4 +1,5 @@
-package com.chen.pojo.entity;
+package com.chen.pojo.vo;
+
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -9,29 +10,25 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User implements Serializable {
+public class AISessionVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private String nickName;
-    private Integer gender;
-    private Date birthday;
-    private String password;
-    private String email;
-    private String image;
-    private Integer points;
+    private String sessionId;
+    private String sessionTitle;
+    private String modelId;
     private Integer enable;
-    private Integer isDel;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime registerTime;
-    private Date cancelTime;
+    private LocalDateTime createdTime;
+
+    @JsonFormat(pattern = "yyyy-MM-ddHH:mm:ss")
+    private LocalDateTime lastTime;
 }

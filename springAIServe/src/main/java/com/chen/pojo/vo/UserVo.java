@@ -22,9 +22,11 @@ public class UserVo implements Serializable {
 
     private String nickName;
     private Integer gender;
-    private Date birthday;
     private String email;
     private String image;
     private Integer points;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDateTime registerTime;
 
 }
