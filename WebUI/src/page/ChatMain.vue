@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus �
 import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
-import { sendApi, queryMessages ,storeMessageApi} from '@/api/msgdemo.js';
+import { sendApi, queryMessages, storeMessageApi } from '@/api/msgdemo.js';
 import { userInfoApi, userChangePassApi } from '@/api/user.js';
 import { userQuerySessionApi, userDeleteSessionApi, userCreateSessionApi } from '@/api/session.js';
 import { useRouter } from 'vue-router';
@@ -333,14 +333,14 @@ const generateSessionId = () => {
 /*
 *添加会话
 */
-const handleCreateChat = async() => {
+const handleCreateChat = async () => {
 
     const id = generateSessionId();
 
     const newSession = {
         sessionId: id,
         sessionTitle: '新对话',
-        lastTime:handleLocalTime.value,
+        lastTime: handleLocalTime.value,
     }
     console.log(newSession)
 
@@ -348,12 +348,22 @@ const handleCreateChat = async() => {
         .then(result => {
             if (result.code == 200) {
                 chatSessionHistory.value.unshift(newSession);
-                currentSessionId.value = sessionId;
+                currentSessionId.value = id;
+                console.log(result.data)
+                currentMessages.value.push({
+                    type: 'ASSISTANT',
+                    contentType: 'text',
+                    textContent: result.data,
+                    createdTime: handleLocalTime.value
+                })
+                console.log(currentMessages.value)
+            }else{
+                console.log('不够你玩的吗，都申请完了😅😅')
+                ElMessage.warning('服务器开了个小差😛~,请一段时间后重试')
             }
-        }).catch(error=>{
+        }).catch(error => {
             console.log(error)
         })
-
 
 };
 /*
@@ -484,7 +494,7 @@ const handleSendMessage = async (text) => {
                 console.log('Stream finished.');
                 console.log(aiMessage.textContent);
                 //此番交互完毕,发出请求保存用户与ai这一次聊天记录
-                storeMessageApi(aiMessage,currentSessionId.value);
+                storeMessageApi(aiMessage, currentSessionId.value);
                 break;
             }
 

@@ -6,7 +6,7 @@
         insert into tb_ai_session( session_id, session_title, user_id, enable,
                                    is_del, model_id, created_time, last_time)
         values(#{sessionId},#{sessionTitle},#{userId},#{enable},
-               #{isDel},0,#{createdTime},#{lastTime})
+               #{isDel},#{modelId},#{createdTime},#{lastTime})
     </insert>
     <delete id="delSessionWithLogical">
         update tb_ai_session

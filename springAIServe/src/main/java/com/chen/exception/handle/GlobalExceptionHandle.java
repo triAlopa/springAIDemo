@@ -4,6 +4,7 @@ import com.chen.constant.ResultConstant;
 import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
+import com.chen.exception.ModelBusinessException;
 import com.chen.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -105,6 +106,19 @@ public class GlobalExceptionHandle {
     public Result unknownException(Exception e) {
         log.error("业务逻辑出错: {}",e.getMessage());
         return Result.fil(UNKNOWNMESSAGE,ResultConstant.HTTPSTATUS.UNKNOWN_ERROR);
+    }
+
+    /**
+     * 用户已经申请完了所有的模型列表
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(ModelBusinessException.class)
+    public Result modelBusinessHandle(ModelBusinessException e) {
+
+        log.warn("用户会话列表已经满了{}",e.getErrorCode());
+
+        return Result.fil(e.getErrorMsg(),e.getErrorCode());
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

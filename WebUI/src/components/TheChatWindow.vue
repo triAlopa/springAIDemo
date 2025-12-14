@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, nextTick,onMounted,onUnmounted } from 'vue';
+import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { marked } from 'marked';
 import { Service, Picture, Promotion } from '@element-plus/icons-vue'; // Service 用于代替 ph-robot
@@ -12,7 +12,22 @@ const props = defineProps({
     currentChatTitle: {
         type: String,
         required: true
-    }
+    },
+    jobInfo: {
+    type: Object,
+    required: true,
+    default: () => ({
+      hrName: "孔先生",
+      companyName: "苏州YYDS电子商务",
+      companyLevel: "初创公司",
+      industry: "游戏娱乐",
+      position: "数据分析师",
+      salary: "13k-18k",
+      culture: "家庭感",
+      hrTrait: "强势型",
+      highlights: "期权激励",
+    })
+  }
 });
 
 const emit = defineEmits(['send-message']);
@@ -57,8 +72,8 @@ const send = () => {
 };
 
 const parseMarkdown = (content) => {
-     
-    content=content.replace(/(\d+)\./g, '$1\\.');
+
+    content = content.replace(/(\d+)\./g, '$1\\.');
     // 使用导入的 marked 库进行解析
     if (typeof marked.parse === 'function') {
         return marked.parse(content);
@@ -81,8 +96,122 @@ const triggerFileUpload = () => {
             class="h-16 px-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between bg-white/40 dark:bg-gray-900/40 backdrop-blur-md z-10">
             <div class="flex items-center gap-2">
                 <span class="font-semibold text-lg">{{ currentChatTitle }}</span>
-                <span
-                    class="px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 font-bold">GPT-4</span>
+
+                <div class="inline-block">
+    <el-popover
+      placement="bottom-end"
+      :width="320"
+      trigger="hover"
+      popper-class="!p-0 !rounded-xl overflow-hidden shadow-2xl transition-all duration-300"
+    >
+      <template #reference>
+        <button class="flex items-center space-x-2 py-2 px-4 bg-white rounded-full border border-gray-200 shadow-md text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+          <el-icon class="text-blue-500"><InfoFilled /></el-icon>
+          <span>公司详情</span>
+        </button>
+      </template>
+
+      <div class="bg-white p-5">
+        <h3 class="text-xl font-extrabold mb-4 text-gray-800 border-b pb-2">
+          核心信息
+        </h3>
+
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-red-100 flex-shrink-0">
+              <el-icon class="text-red-500 text-lg"><User /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">HR 姓名:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.hrName }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-green-100 flex-shrink-0">
+              <el-icon class="text-green-500 text-lg"><OfficeBuilding /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">公司名称:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.companyName }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-yellow-100 flex-shrink-0">
+              <el-icon class="text-yellow-500 text-lg"><Histogram /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">公司档位:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.companyLevel }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-indigo-100 flex-shrink-0">
+              <el-icon class="text-indigo-500 text-lg"><Opportunity /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">行业:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.industry }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-pink-100 flex-shrink-0">
+              <el-icon class="text-pink-500 text-lg"><Briefcase /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">职位:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.position }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center pt-2 border-t border-dashed border-gray-200">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-teal-100 flex-shrink-0">
+              <el-icon class="text-teal-500 text-lg"><Money /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">薪资:</span>
+              <span class="text-base font-extrabold text-red-600">{{ jobInfo.salary }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-purple-100 flex-shrink-0">
+              <el-icon class="text-purple-500 text-lg"><StarFilled /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">企业文化:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.culture }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-orange-100 flex-shrink-0">
+              <el-icon class="text-orange-500 text-lg"><UserFilled /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">HR 性格:</span>
+              <span class="text-sm font-bold text-gray-800">{{ jobInfo.hrTrait }}</span>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-blue-100 flex-shrink-0">
+              <el-icon class="text-blue-500 text-lg"><Sunny /></el-icon>
+            </div>
+            <div class="flex-grow">
+              <span class="text-xs text-gray-500 block">招聘亮点:</span>
+              <span class="text-sm font-bold text-blue-600">{{ jobInfo.highlights }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </el-popover>
+  </div>
+
             </div>
             <slot name="header-right"></slot>
         </header>
@@ -105,9 +234,11 @@ const triggerFileUpload = () => {
 
                         <!-- <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div> -->
                         <!-- <div v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div> -->
-                        <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div>
-                        <el-image v-else-if="msg.contentType === 'image'" :src="msg.textContent" :preview-src-list="[msg.textContent]"
-                            class="rounded-lg max-h-60 w-auto" fit="cover">
+                        <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)"
+                            class="markdown-body">
+                        </div>
+                        <el-image v-else-if="msg.contentType === 'image'" :src="msg.textContent"
+                            :preview-src-list="[msg.textContent]" class="rounded-lg max-h-60 w-auto" fit="cover">
                         </el-image>
 
                         <div class="text-[10px] mt-1 opacity-60 text-right"

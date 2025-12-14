@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.chen.constant.RedisConstant.USER_LOGIN;
+import static com.chen.constant.UserConstant.NODEL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -201,9 +202,9 @@ class SpringAiDemoApplicationTests {
               ).toList().forEach(System.out::println);*/
 
 
-      List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
+     /* List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
       if (messages == null || messages.isEmpty()) {
-          /*return Collections.emptyList();*/
+         return Collections.emptyList();
       }
 
       List<AIMessageVO> list = messages.stream().filter(
@@ -212,5 +213,15 @@ class SpringAiDemoApplicationTests {
               .map(item -> BeanUtil.copyProperties(item, AIMessageVO.class))
               .toList();
       System.out.println(list);
+      */
+
+      AISessionDTO sessionDTO = AISessionDTO.builder()
+              .userId(1)
+              .isDel(NODEL)
+              .build();
+
+      List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
+      System.out.println(list);
   }
+
 }

@@ -62,12 +62,12 @@ public class SessionController {
             @ApiResponse(responseCode = "500", description = "创建失败")
     })
     @PostMapping
-    public Result createUserSession(@RequestBody AISessionDTO session) {
+    public Result<String> createUserSession(@RequestBody AISessionDTO session) {
 
         log.info("创建新:{}会话", session);
 
-        sessionService.createUserSession(session);
+        String openMessage =sessionService.createUserSession(session);
 
-        return Result.success();
+        return Result.success(openMessage);
     }
 }

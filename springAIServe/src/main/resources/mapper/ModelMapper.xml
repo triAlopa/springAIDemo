@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.mapper.ModelMapper">
+
+    <resultMap id="BaseResultMap" type="com.chen.pojo.entity.Model">
+            <id property="id" column="id" />
+            <result property="modelId" column="model_id" />
+            <result property="companyId" column="company_id" />
+            <result property="name" column="name" />
+            <result property="description" column="description" />
+            <result property="image" column="image" />
+            <result property="temperature" column="temperature" />
+            <result property="openMessage" column="open_message" />
+            <result property="enable" column="enable" />
+            <result property="isDel" column="is_del" />
+            <result property="remark" column="remark" />
+            <result property="createdTime" column="created_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="updateUserId" column="update_user_id" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,model_id,company_id,name,description,image,
+        temperature,open_message,enable,is_del,remark,
+        created_time,update_time,update_user_id
+    </sql>
+</mapper>

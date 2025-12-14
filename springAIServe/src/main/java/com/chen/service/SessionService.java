@@ -27,5 +27,5 @@ public interface SessionService {
      * 创建用户会话
      * @param sessionDTO
      */
-    void createUserSession(AISessionDTO sessionDTO);
+    String createUserSession(AISessionDTO sessionDTO);
 }

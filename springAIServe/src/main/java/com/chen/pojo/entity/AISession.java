@@ -29,9 +29,9 @@ public class AISession implements Serializable {
     private Integer feedback;
     private Integer isDel;
 
-    @JsonFormat(pattern = "yyyy-dd-MM HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime;
 
-    @JsonFormat(pattern = "yyyy-dd-MM HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd  HH:mm:ss")
     private LocalDateTime lastTime;
 }
