@@ -24,6 +24,7 @@ public class AISession implements Serializable {
     private String sessionId;
     private String sessionTitle;
     private Integer userId;
+    private String modelId;
     private Integer enable;
     private Integer feedback;
     private Integer isDel;

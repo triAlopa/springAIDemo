@@ -3,8 +3,7 @@ package com.chen.controller;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
-import com.chen.pojo.vo.AISessionVo;
-import com.chen.pojo.vo.UserVo;
+import com.chen.pojo.vo.UserVO;
 import com.chen.service.UserService;
 import com.chen.util.CurrentUserHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,8 +18,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -125,11 +122,11 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "获取失败")
     })
     @GetMapping("/info")
-    public Result<UserVo> getUserInfo() {
+    public Result<UserVO> getUserInfo() {
 
         log.info("获取本人的用户信息");
 
-        UserVo userVo = userService.queryUserInfo();
+        UserVO userVo = userService.queryUserInfo();
 
         return Result.success(userVo);
     }

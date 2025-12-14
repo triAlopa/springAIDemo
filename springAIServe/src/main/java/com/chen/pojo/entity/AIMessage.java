@@ -17,6 +17,7 @@ public class AIMessage  {
 
     private Integer id;
     private MessageType type;
+    private String contentType;
     private String textContent;
     private String medias;
     private String aiSessionId;

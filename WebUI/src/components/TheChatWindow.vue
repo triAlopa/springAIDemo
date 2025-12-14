@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick,onMounted,onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { marked } from 'marked';
 import { Service, Picture, Promotion } from '@element-plus/icons-vue'; // Service 用于代替 ph-robot
@@ -69,6 +69,8 @@ const parseMarkdown = (content) => {
 const triggerFileUpload = () => {
     ElMessage.info('图片上传功能演示：点击发送会自动模拟图片回复');
 };
+
+
 </script>
 
 <template>
@@ -88,9 +90,8 @@ const triggerFileUpload = () => {
         <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth" ref="messageContainer">
             <transition-group name="fade-slide">
                 <div v-for="(msg, index) in messages" :key="index" class="flex w-full"
-                    :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
-
-                    <div v-if="msg.role === 'ai'"
+                    :class="msg.type === 'USER' ? 'justify-end' : 'justify-start'">
+                    <div v-if="msg.type === 'ASSISTANT'"
                         class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex-shrink-0 mr-3 flex items-center justify-center text-white shadow-lg">
                         <el-icon class="text-lg">
                             <Service />
@@ -98,23 +99,24 @@ const triggerFileUpload = () => {
                     </div>
 
                     <div class="max-w-[70%] bubble-shadow p-4 rounded-2xl relative text-sm leading-relaxed break-words"
-                        :class="msg.role === 'user'
+                        :class="msg.type === 'USER'
                             ? 'bg-[#00b1eb] text-white rounded-tr-none'
                             : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-600'">
 
                         <!-- <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div> -->
-                        <div v-if="msg.type === 'text'" v-html="parseMarkdown(msg.content)" class="markdown-body"></div>
-                        <el-image v-else-if="msg.type === 'image'" :src="msg.content" :preview-src-list="[msg.content]"
+                        <!-- <div v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div> -->
+                        <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div>
+                        <el-image v-else-if="msg.contentType === 'image'" :src="msg.textContent" :preview-src-list="[msg.textContent]"
                             class="rounded-lg max-h-60 w-auto" fit="cover">
                         </el-image>
 
                         <div class="text-[10px] mt-1 opacity-60 text-right"
-                            :class="msg.role === 'user' ? 'text-slate-600' : 'text-gray-400'">
-                            {{ msg.time }}
+                            :class="msg.type === 'USER' ? 'text-slate-600' : 'text-gray-400'">
+                            {{ msg.createdTime }}
                         </div>
                     </div>
 
-                    <div v-if="msg.role === 'user'"
+                    <div v-if="msg.type === 'USER'"
                         class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
                         <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100"
                             alt="User">

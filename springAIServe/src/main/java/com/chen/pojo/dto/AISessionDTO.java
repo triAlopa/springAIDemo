@@ -22,6 +22,7 @@ public class AISessionDTO implements Serializable {
 
     private String sessionId;
     private Integer userId;
+    private String sessionTitle;
     private Integer enable;
     private Integer isDel;
 

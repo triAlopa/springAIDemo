@@ -1,5 +1,6 @@
 package com.chen;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.AIMessageMapper;
@@ -9,6 +10,7 @@ import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
 import com.chen.pojo.entity.AISession;
 import com.chen.pojo.properties.JwtProperties;
+import com.chen.pojo.vo.AIMessageVO;
 import com.chen.service.UserService;
 import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
@@ -22,6 +24,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -187,11 +190,27 @@ class SpringAiDemoApplicationTests {
   @Test
     void testMapper(){
 
-      AISessionDTO sessionDTO = AISessionDTO
+      /*AISessionDTO sessionDTO = AISessionDTO
               .builder()
               .userId(null)
               .isDel(1).build();
       List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
-      System.out.println(aiSessions);
+
+      aiSessions.stream().filter(session->
+              !"sess_004_20240101".equals(session.getSessionId())
+              ).toList().forEach(System.out::println);*/
+
+
+      List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
+      if (messages == null || messages.isEmpty()) {
+          /*return Collections.emptyList();*/
+      }
+
+      List<AIMessageVO> list = messages.stream().filter(
+                      item -> !MessageType.SYSTEM.equals(item.getType())
+              ).sorted((v1, v2) -> v1.getCreatedTime().isBefore(v2.getCreatedTime()) ? -1 : 1)
+              .map(item -> BeanUtil.copyProperties(item, AIMessageVO.class))
+              .toList();
+      System.out.println(list);
   }
 }

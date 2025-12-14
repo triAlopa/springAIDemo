@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.chen.mapper.AIMessageMapper">
+    <delete id="delMessageWithSessionId">
+      update tb_ai_message
+    <set>
+        <if test="isDel!=null and isDel !='' ">
+        is_del=0
+      </if>
+    </set>
+    </delete>
 
 
     <select id="getMessages" resultType="com.chen.pojo.entity.AIMessage">

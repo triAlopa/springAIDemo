@@ -2,11 +2,8 @@ package com.chen.service;
 
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
-import com.chen.pojo.vo.AISessionVo;
-import com.chen.pojo.vo.UserVo;
+import com.chen.pojo.vo.UserVO;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.List;
 
 public interface UserService {
 
@@ -18,7 +15,7 @@ public interface UserService {
 
     String querySingleUser(UserDTO user);
 
-    UserVo queryUserInfo();
+    UserVO queryUserInfo();
 
     String modifyUserPassword(Integer userId, UserChangePassDTO changePassDTO);
 }

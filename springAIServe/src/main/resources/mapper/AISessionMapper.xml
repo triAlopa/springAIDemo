@@ -2,6 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.chen.mapper.AISessionMapper">
+    <insert id="insertSingleSession">
+        insert into tb_ai_session( session_id, session_title, user_id, enable,
+                                   is_del, model_id, created_time, last_time)
+        values(#{sessionId},#{sessionTitle},#{userId},#{enable},
+               #{isDel},0,#{createdTime},#{lastTime})
+    </insert>
+    <delete id="delSessionWithLogical">
+        update tb_ai_session
+            <set>
+                <if test=" isDel!=null ">
+                     is_del=#{isDel}
+                </if>
+            </set>
+        <where>
+            <if test=" userId!=null and userId!=''  ">
+                and user_id=#{userId}
+            </if>
+            <if test=" sessionId!=null and sessionId!=''  ">
+                and session_id =#{sessionId}
+            </if>
+        </where>
+    </delete>
 
 
     <select id="queryByUserId" resultType="com.chen.pojo.entity.AISession">

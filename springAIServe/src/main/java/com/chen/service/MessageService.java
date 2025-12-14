@@ -1,19 +1,19 @@
 package com.chen.service;
 
+import com.chen.pojo.dto.AIMessageDTO;
 import com.chen.pojo.dto.MessageContentDTO;
-import com.chen.pojo.Result;
-import com.chen.pojo.vo.AISessionVo;
+import com.chen.pojo.vo.AIMessageVO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
 
-public interface ChatService {
+public interface MessageService {
 
     Flux<ServerSentEvent<String>> requestChat(MessageContentDTO content, HttpServletRequest request);
 
-    Result getSessionMemory(String chatId);
+    List<AIMessageVO> queryUserMessages(String sessionId);
 
-    List<AISessionVo> queryUserSession(Integer userId);
+    void saveAIMessage(AIMessageDTO messageDTO);
 }

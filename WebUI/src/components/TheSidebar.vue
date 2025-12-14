@@ -33,8 +33,8 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
             <transition-group name="list">
                 <div 
                     v-for="chat in history" 
-                    :key="chat.id"
-                    @click="$emit('select-chat', chat.id)"
+                    :key="chat.sessionId"
+                    @click="$emit('select-chat', chat.sessionId)"
                     class="group relative flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/40 dark:hover:bg-gray-700/40 hover:translate-x-1"
                     :class="{'bg-white/60 dark:bg-gray-700/60 shadow-sm border border-white/40 dark:border-gray-600': currentChatId === chat.id}"
                 >
@@ -44,7 +44,7 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
                         <div class="truncate text-xs text-gray-400">{{ chat.lastTime }}</div>
                     </div>
                     
-                    <button @click.stop="$emit('delete-chat', chat.id)" class="absolute right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 hover:text-red-500 rounded transition-all">
+                    <button @click.stop="$emit('delete-chat', chat.sessionId)" class="absolute right-2 opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 hover:text-red-500 rounded transition-all">
                         <el-icon><Delete /></el-icon>
                     </button>
                 </div>

@@ -1,14 +1,14 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus 组件
 import TheSidebar from '../components/TheSidebar.vue';
 import TheChatWindow from '../components/TheChatWindow.vue';
 import UserCapsule from '../components/UserCapsule.vue';
-import { sendApi } from '@/api/msgdemo.js';
+import { sendApi, queryMessages ,storeMessageApi} from '@/api/msgdemo.js';
 import { userInfoApi, userChangePassApi } from '@/api/user.js';
-import { userSessionApi } from '@/api/session.js';
+import { userQuerySessionApi, userDeleteSessionApi, userCreateSessionApi } from '@/api/session.js';
 import { useRouter } from 'vue-router';
-
+import { nanoid } from 'nanoid'
 
 const router = useRouter();
 const MOCK_MESSAGES = {
@@ -33,20 +33,11 @@ const MOCK_MESSAGES = {
 
 // 聊天数据
 //历史会话记录
-/**
- * "id": 4,
-      "sessionId": "sess_002_20240101",
-      "sessionTitle": "产品咨询",
-      "modelId": null,
-      "enable": 1,
-      "createdTime": "2024-01-01 14:20:00",
-      "lastTime": "2024-03-01 10:10:00"
- */
 const chatSessionHistory = ref([]);
 /**
  * 
  */
-const currentSessionId = ref(1);
+const currentSessionId = ref();
 const messagesStore = reactive({ ...MOCK_MESSAGES });
 
 
@@ -74,12 +65,12 @@ const days = computed(() => {
 *查询个人信息
 */
 const quetyUserInfo = async () => {
-    await userInfoApi()
+    return await userInfoApi()
         .then(result => {
             if (result.code == 401) {
                 ElMessage.warning("请先登录")
                 router.replace('/Login')
-                return;
+                return result;
             }
             if (result.code == 200) {
                 let data = result.data;
@@ -87,12 +78,13 @@ const quetyUserInfo = async () => {
                 currentUser.useDays = days.value
                 //TODO 
                 currentUser.image = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100'
-                console.log(result.data)
+                console.log(result)
                 console.log(currentUser)
-                return result.code;
+                return result;
             } else {
                 ElMessage.error(result.msg)
                 currentUser.useDays = days.value
+                return result;
             }
         }).catch(error => {
             console.log(error);
@@ -146,7 +138,7 @@ const sumbit = async (form) => {
                 .then(result => {
                     if (result.code == 200) {
                         ElMessage.success('修改成功')
-                        dialogVisible.value=false;
+                        dialogVisible.value = false;
                         resetPassForm();
                         //修改token
                         let token = result.data
@@ -167,7 +159,7 @@ const sumbit = async (form) => {
  * 查询该用户的会话
  */
 const getUserSession = async () => {
-    await userSessionApi()
+    await userQuerySessionApi()
         .then(result => {
             if (result.code == 200) {
                 chatSessionHistory.value = result.data;
@@ -180,18 +172,70 @@ const getUserSession = async () => {
         })
 }
 
+const messageStore = reactive([]);
 
-// 计算属性该会话的信息列表
-const currentMessages = computed(() => {
-    return messagesStore[currentSessionId.value] || [];
-});
+/**
+ * 处理聊天数据存储在messageStore数组
+ */
+const queryStoreMessagesHandle = (selectSessionId) => {
+    const index = messageStore.findIndex(item => item.sessionId == selectSessionId);
+    console.log(selectSessionId, index);
+    if (index >= 0) {
+        return messageStore[index].messages;
+    }
+}
+
+/**
+ * 处理聊天会话存储在js数组
+ */
+const storeMessageHandle = (sessionId, messages) => {
+    messageStore.unshift({ sessionId, messages })
+    console.log(messageStore);
+}
+
+
+/**
+ * 无需.value
+ */
+const currentMessages = ref([])
+watch(currentSessionId, async (newSessionId) => {
+    //优化用户切换的感受、、
+    currentMessages.value = [];
+    const messages = queryStoreMessagesHandle(newSessionId)
+    if (messages) {
+        setTimeout(() => {
+            currentMessages.value = messages;
+        }, 250)
+        console.log('本地已存在，无需查询')
+        return;
+    };
+
+    console.log(newSessionId);
+    const result = await queryMessages(newSessionId)
+        .catch(error => {
+            console.log(error);
+        });
+
+    if (result.code == 200) {
+        console.log(result)
+        let data = result.data
+        if (data && data.length > 0) {
+            storeMessageHandle(newSessionId, data);
+        }
+        currentMessages.value = result.data;
+    } else {
+        console.log(result.code);
+        ElMessage.info(result.msg)
+    }
+    console.log(result)
+}, { deep: true })
 
 /*
 * 计算会话的标题
 */
 const currentChatTitle = computed(() => {
-    const chat = chatSessionHistory.value.find(c => c.id === currentSessionId.value);
-    return chat ? chat.sessionTitle : '新对话';
+    const chat = chatSessionHistory.value.find(c => c.sessionId === currentSessionId.value);
+    return chat ? chat.sessionTitle : '任意选择会话开始';
 });
 
 /*
@@ -273,26 +317,49 @@ const handleCheckIn = () => {
 /*
 *选择了某一个会话的函数
 */
-const handleSelectChat = (id) => {
-    currentSessionId.value = id;
+const handleSelectChat = (sessionId) => {
+    currentSessionId.value = sessionId;
 };
+
+/**
+ * 生成用户会话id
+ */
+const generateSessionId = () => {
+    let sess_suffix = nanoid(6);
+    let sess_perfix = 'sess_' + currentUser.email.substring(0, 4);
+    return sess_perfix + '_' + sess_suffix;
+}
+
 /*
 *添加会话
 */
-const handleCreateChat = () => {
-    const newId = Date.now();
-    chatSessionHistory.value.unshift({
-        id: newId,
+const handleCreateChat = async() => {
+
+    const id = generateSessionId();
+
+    const newSession = {
+        sessionId: id,
         sessionTitle: '新对话',
-        lastTime: '刚刚'
-    });
-    messagesStore[newId] = [];
-    currentSessionId.value = newId;
+        lastTime:handleLocalTime.value,
+    }
+    console.log(newSession)
+
+    await userCreateSessionApi(newSession)
+        .then(result => {
+            if (result.code == 200) {
+                chatSessionHistory.value.unshift(newSession);
+                currentSessionId.value = sessionId;
+            }
+        }).catch(error=>{
+            console.log(error)
+        })
+
+
 };
 /*
 *删除信息
 */
-const handleDeleteChat = (id) => {
+const handleDeleteChat = (sessionId) => {
     ElMessageBox.confirm(
         '确定删除该对话记录吗?',
         '警告',
@@ -301,53 +368,99 @@ const handleDeleteChat = (id) => {
             cancelButtonText: '取消',
             type: 'warning',
         }
-    ).then(() => {
-        chatSessionHistory.value = chatSessionHistory.value.filter(c => c.id !== id);
-        delete messagesStore[id];
-        if (currentSessionId.value === id && chatSessionHistory.value.length > 0) {
-            currentSessionId.value = chatSessionHistory.value[0].id;
-        }
-        ElMessage.success('删除成功!');
+    ).then(async () => {
+        await userDeleteSessionApi(sessionId)
+            .then(result => {
+                if (result.code == 200) {
+                    chatSessionHistory.value = chatSessionHistory.value.filter(c => c.sessionId !== sessionId);
+                    delete messagesStore[sessionId];
+                    if (currentSessionId.value === sessionId && chatSessionHistory.value.length > 0) {
+                        currentSessionId.value = chatSessionHistory.value[0].sessionId;
+                    }
+                    ElMessage.success('删除成功!');
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+
     });
 };
+
+/* const handleLocalMessageTime = () => {
+    return timeString=new Date().format('yy-MM-dd HH:mm:ss')
+} */
+
+const handleLocalTime = computed(() => {
+    let now = new Date();
+    let year = now.getFullYear().toString().substring(2, 4);
+    let month = (now.getMonth() + 1).toString().padStart(2, '0');
+    let day = now.getDate().toString().padStart(2, '0');
+    let hours = now.getHours().toString().padStart(2, '0');
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let seconds = now.getSeconds().toString().padStart(2, '0');
+    let formattedTime = `${year}年${month}月${day} ${hours}:${minutes}:${seconds}`;
+    return formattedTime;
+})
+
+
+
+
 /*
 *发送信息
 */
 const handleSendMessage = async (text) => {
 
-    //我没本事\\\\直接这样子校验把
-    quetyUserInfo();
 
+    console.log(currentMessages.value)
+
+
+    currentMessages.value = queryStoreMessagesHandle(currentSessionId.value);
     // 1. 添加用户消息
-    if (!messagesStore[currentSessionId.value]) {
-        messagesStore[currentSessionId.value] = [];
+    if (!currentMessages.value) {
+        currentMessages.value = [];
     }
 
-    const now = new Date();
-    const timeString = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-    messagesStore[currentSessionId.value].push({
-        role: 'user',
-        type: 'text',
-        content: text,
-        time: timeString
-    });
+    const timeString = handleLocalTime.value;
+    /* messageStore[currentSessionId.value].push({
+        type: 'USER',
+        contentType: 'text',
+        textContent: text,
+        createdTime: timeString
+    }); */
+
+
+    const currentUserSendMsg = {
+        type: 'USER',
+        contentType: 'text',
+        textContent: text,
+        createdTime: timeString
+    }
+
+    currentMessages.value.push(currentUserSendMsg);
+
 
     // 更新标题 (如果是第一条)
-    const currentChat = chatSessionHistory.value.find(c => c.id === currentSessionId.value);
+    const currentChat = chatSessionHistory.value.find(c => c.sessionId === currentSessionId.value);
     if (currentChat && currentChat.sessionTitle === '新对话') {
         currentChat.sessionTitle = text.substring(0, 10) + (text.length > 10 ? '...' : '');
     }
 
-    messagesStore[currentSessionId.value].push({
-        role: 'ai',
-        type: 'text',
-        content: '',
-        time: timeString
-    });
+    const currentASSISTANTSendMsg = {
+        type: 'ASSISTANT',
+        contentType: 'text',
+        textContent: '',
+        createdTime: timeString
+    }
+    currentMessages.value.push(currentASSISTANTSendMsg);
 
-    const aiMessage = messagesStore[currentSessionId.value][messagesStore[currentSessionId.value].length - 1];
+    //存储在前端数组里面
+    storeMessageHandle(currentSessionId.value, currentMessages.value)
 
+    console.log(messageStore[currentSessionId.value])
+
+    // const aiMessage = messageStore[currentSessionId.value][messageStore[currentSessionId.value].length - 1];
+    const aiMessage = currentMessages.value[currentMessages.value.length - 1];
 
     // 3. 使用原生 Fetch API 处理流
     try {
@@ -369,7 +482,9 @@ const handleSendMessage = async (text) => {
 
             if (done) {
                 console.log('Stream finished.');
-                console.log(aiMessage.content);
+                console.log(aiMessage.textContent);
+                //此番交互完毕,发出请求保存用户与ai这一次聊天记录
+                storeMessageApi(aiMessage,currentSessionId.value);
                 break;
             }
 
@@ -410,7 +525,7 @@ const handleSendMessage = async (text) => {
                      dataString = dataString.substring(0, index) + dataString.substring(index); */
                 }
                 // 直接追加提取后的内容
-                aiMessage.content += dataString;
+                aiMessage.textContent += dataString;
                 console.log('add')
             }
         }
@@ -421,17 +536,22 @@ const handleSendMessage = async (text) => {
 };
 
 
-
-onMounted(() => {
-    let status = null
-    /* //获取用户信息*/
-    setTimeout(() => {
-        status = quetyUserInfo();
-    }, 200);
-    //获取用户历史会话
-    if (status) {
-        getUserSession();
+const userInitInfo = async () => {
+    try {
+        const result = await quetyUserInfo();
+        console.log(result)
+        if (result && result.code == 200) {
+            await getUserSession();
+        } else {
+            console.log('查询失败:', result);
+        }
+    } catch (error) {
+        console.error('执行出错:', error);
     }
+}
+
+onMounted(async () => {
+    await userInitInfo();
     // 检查是否有暗黑模式偏好，并初始化 isDark
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         isDark.value = true;
@@ -440,6 +560,8 @@ onMounted(() => {
 });
 </script>
 <template>
+
+
     <div class="h-screen w-full flex flex-col justify-center items-center overflow-hidden relative">
         <!-- 背景装饰球 -->
         <div
@@ -482,7 +604,7 @@ onMounted(() => {
             </el-form-item>
             <el-form-item label="修改后" prop="changedPassword">
                 <el-input v-model="passworldForm.changedPassword" type="password" show-password />
-            </el-form-item> 
+            </el-form-item>
         </el-form>
         <div class="dialog-footer">
             <el-button @click="sumbit(passRuleRef)">提交</el-button>

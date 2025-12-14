@@ -1,12 +1,9 @@
 package com.chen.service.impl;
 
-import ch.qos.logback.core.util.MD5Util;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.druid.support.json.JSONUtils;
-import com.chen.constant.UserConstant;
 import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
@@ -15,18 +12,16 @@ import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
-import com.chen.pojo.vo.UserVo;
+import com.chen.pojo.vo.UserVO;
 import com.chen.service.UserService;
 import com.chen.util.CurrentUserHolder;
 import com.chen.util.JwtUtil;
 import jakarta.annotation.Resource;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -35,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -200,7 +194,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User usr = new User();
-        BeanUtil.copyProperties(user, usr);
+        BeanUtil.copyProperties(selected, usr);
         // 生成token 返回
         String token = generateUserToken(usr);
 
@@ -208,13 +202,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVo queryUserInfo() {
+    public UserVO queryUserInfo() {
         //获取该线程的userDto
         UserDTO userDTO = CurrentUserHolder.getCurrentUser();
         Integer userId = userDTO.getId();
 
         User user = userMapper.selectById(userId);
-        UserVo userVo = new UserVo();
+        UserVO userVo = new UserVO();
         BeanUtil.copyProperties(user, userVo);
 
         return userVo;

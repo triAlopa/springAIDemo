@@ -19,7 +19,7 @@ export const chat = (prompt, chatId) => request.get(`/ai/chat?prompt=${prompt}&c
 
 
 //发送信息接口
-export  const sendApi=async (text,chatId,userToken) => await fetch('/api/user/ai/send', {
+export  const sendApi=async (text,sessionId,userToken) => await fetch('/api/user/ai/send', {
     method: 'POST',
     headers: {
         'authorization':userToken,
@@ -28,9 +28,35 @@ export  const sendApi=async (text,chatId,userToken) => await fetch('/api/user/ai
     },
     body: JSON.stringify({
         'prompt': text,
-        'chatId': chatId
+        'sessionId': sessionId
     }
     )
 
 })
+
+//保存信息接口
+export  const  storeMessageApi = (message,sessionId) => request.post(`/user/ai/message/save`,
+    {
+        'sessionId':sessionId,
+        'type':message.type,
+        'contentType':message.contentType,
+        'textContent':message.textContent,
+    },
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+//信息接口
+export const queryMessages = (sessionId) => request.get(`/user/ai/message?sessionId=${sessionId}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
 
