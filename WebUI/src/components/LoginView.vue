@@ -12,7 +12,7 @@ const router = useRouter();
 
 const isRegister = ref(false)
 const typedText = ref('')
-const fullText = "欢迎来到 BOSS AI。\n这里是思维的延伸，创意的起点。\n准备好开始探索了吗？"
+const fullText = "别再让简历石沉大海，在这里，每家公司都为你‘已读必回’。"
 
 const emailCodeDisabled = ref(false)
 
@@ -360,8 +360,8 @@ function sendEmailWithSeconds() {
             </div>
 
             <h1
-                class="text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600 tracking-tighter">
-                BOSS AI</h1>
+                class="text-6xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600 tracking-tighter">
+                BOSS 求聘</h1>
             <div class="h-32 text-2xl text-gray-600 dark:text-gray-300 font-mono text-center max-w-3xl leading-relaxed">
                 {{ typedText }}<span class="animate-pulse text-blue-500">|</span>
             </div>

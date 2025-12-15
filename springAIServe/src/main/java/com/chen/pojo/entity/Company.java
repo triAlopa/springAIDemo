@@ -37,6 +37,11 @@ public class Company implements Serializable {
     @Length(max= 20,message="编码长度不能超过20")
     private String name;
     /**
+     * 公司类型 1.初创公司 2.上市公司 3.500强公司
+     */
+    @NotNull(message="公司类型不能为空")
+    private Integer type;
+    /**
     * 最低薪水单位 k
     */
     @NotNull(message="[最低薪水单位 k]不能为空")

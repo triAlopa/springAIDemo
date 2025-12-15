@@ -34,7 +34,7 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
                 <div 
                     v-for="chat in history" 
                     :key="chat.sessionId"
-                    @click="$emit('select-chat', chat.sessionId)"
+                    @click="$emit('select-chat', chat)"
                     class="group relative flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-white/40 dark:hover:bg-gray-700/40 hover:translate-x-1"
                     :class="{'bg-white/60 dark:bg-gray-700/60 shadow-sm border border-white/40 dark:border-gray-600': currentChatId === chat.id}"
                 >

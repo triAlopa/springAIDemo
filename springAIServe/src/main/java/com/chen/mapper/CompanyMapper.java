@@ -1,6 +1,8 @@
 package com.chen.mapper;
 
+import com.chen.pojo.entity.Company;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author Chen
@@ -11,6 +13,9 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface CompanyMapper {
 
+
+    @Select("select * from tb_ai_company where company_id=#{companyId}")
+    Company selectCompanyId(String companyId);
 }
 
 

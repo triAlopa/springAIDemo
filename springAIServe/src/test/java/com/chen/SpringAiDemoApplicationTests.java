@@ -1,6 +1,7 @@
 package com.chen;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.net.url.UrlBuilder;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.AIMessageMapper;
@@ -10,10 +11,14 @@ import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
 import com.chen.pojo.entity.AISession;
 import com.chen.pojo.properties.JwtProperties;
+import com.chen.pojo.properties.TencentMapProperties;
 import com.chen.pojo.vo.AIMessageVO;
 import com.chen.service.UserService;
 import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
+import com.chen.util.TencentMapUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -22,6 +27,17 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.SneakyThrows;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.assertj.core.util.Maps;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.MessageType;
@@ -33,11 +49,21 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.util.DigestUtils;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.Flow;
 import java.util.regex.Pattern;
 
 import static com.chen.constant.RedisConstant.USER_LOGIN;
@@ -52,23 +78,24 @@ class SpringAiDemoApplicationTests {
 
     @Autowired
     private AIMessageMapper aiMessageMapper;
+
     @Test
     void contextLoads() {
         List<AIMessage> messages = aiMessageMapper.getMessages("1");
         System.out.println(messages);
     }
 
-   @Autowired
-   private JwtProperties jwtProperties;
+    @Autowired
+    private JwtProperties jwtProperties;
 
 
     /**
      * 测试用户的jwt生成解析
      */
     @Test
-    void testJwtUtil(){
-         String signKey = jwtProperties.getUserSignKey();
-         long time = jwtProperties.getUserTtl();
+    void testJwtUtil() {
+        String signKey = jwtProperties.getUserSignKey();
+        long time = jwtProperties.getUserTtl();
         UserDTO build = UserDTO.builder()
                 .nickName("chen")
                 .email("chen@gmail.com")
@@ -79,9 +106,9 @@ class SpringAiDemoApplicationTests {
         claims.put(UserConstant.NICKNAME, build.getNickName());
         claims.put(UserConstant.EMAIL, build.getEmail());
 
-        String token = JwtUtil.generateUserToken(signKey,time,claims);
+        String token = JwtUtil.generateUserToken(signKey, time, claims);
         System.out.println(token);
-        Jws<Claims> claimsJws = JwtUtil.parseUserToken(signKey,token);
+        Jws<Claims> claimsJws = JwtUtil.parseUserToken(signKey, token);
         String nickName = claimsJws.getPayload().get("nickName", String.class);
         System.out.println(nickName);
 
@@ -108,8 +135,8 @@ class SpringAiDemoApplicationTests {
     }
 
     @Test
-    void testSubStr(){
-        String str="org.springframework.dao.DuplicateKeyException: \n" +
+    void testSubStr() {
+        String str = "org.springframework.dao.DuplicateKeyException: \n" +
                 "### Error updating database.  Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '1@qq.com' for key 'tb_ai_user.email'\n" +
                 "### The error may exist in com/chen/mapper/UserMapper.java (best guess)\n" +
                 "### The error may involve com.chen.mapper.UserMapper.insert-Inline\n" +
@@ -118,31 +145,32 @@ class SpringAiDemoApplicationTests {
                 "### Cause: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '1@qq.com' for key 'tb_ai_user.email'\n" +
                 "; Duplicate entry '1@qq.com' for key 'tb_ai_user.email";
         int index = str.indexOf(" for key ");
-        String duplicateEntry = str.substring(index-10, index);
+        String duplicateEntry = str.substring(index - 10, index);
         System.out.println(duplicateEntry);
     }
 
 
-  @Test
-    void testMatch(){
-        String regex="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    @Test
+    void testMatch() {
+        String regex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         Pattern pattern = Pattern.compile(regex);
 
         pattern.matcher("chen@gmail.com").matches();
         System.out.println(pattern.matcher("chen@gmail.com").matches());
 
-      System.out.println(pattern.matcher("1111").matches());
-  }
+        System.out.println(pattern.matcher("1111").matches());
+    }
 
-  @Test
-    void testJwtProperties(){
-      System.out.println(jwtProperties);
-  }
+    @Test
+    void testJwtProperties() {
+        System.out.println(jwtProperties);
+    }
 
-  @Resource
-  private StringRedisTemplate stringRedisTemplate;
-  @Test
-    void testRedis(){
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Test
+    void testRedis() {
      /*  LocalDateTime now = LocalDateTime.now();
       String key_prefix = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+":";
       Random r=new Random();
@@ -160,17 +188,17 @@ class SpringAiDemoApplicationTests {
       Long execute = stringRedisTemplate.execute(script, Collections.emptyList(), "2025-12-11:*");
       System.out.println(execute);*/
 
-  }
+    }
 
-  @Autowired
-  private Task2Service task2Service;
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private Task2Service task2Service;
+    @Autowired
+    private UserService userService;
 
-  @Test
-    void testTask(){
+    @Test
+    void testTask() {
 
-      /// ////用于验证....
+        /// ////用于验证....
       /*for (int i = 0; i < 10; i++) {
           String code = RandomUtil.randomString(4);
 
@@ -183,13 +211,14 @@ class SpringAiDemoApplicationTests {
           stringRedisTemplate.opsForValue().set(key, code);
           System.out.println(code);
       }*/
-      task2Service.delUserLoginCode();
-  }
+        task2Service.delUserLoginCode();
+    }
 
-  @Resource
-  private AISessionMapper sessionMapper;
-  @Test
-    void testMapper(){
+    @Resource
+    private AISessionMapper sessionMapper;
+
+    @Test
+    void testMapper() {
 
       /*AISessionDTO sessionDTO = AISessionDTO
               .builder()
@@ -215,13 +244,32 @@ class SpringAiDemoApplicationTests {
       System.out.println(list);
       */
 
-      AISessionDTO sessionDTO = AISessionDTO.builder()
-              .userId(1)
-              .isDel(NODEL)
-              .build();
+        AISessionDTO sessionDTO = AISessionDTO.builder()
+                .userId(1)
+                .isDel(NODEL)
+                .build();
 
-      List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
-      System.out.println(list);
-  }
+        List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
+        System.out.println(list);
+    }
+
+    @Autowired
+    private TencentMapProperties tencentMapProperties;
+    @SneakyThrows
+    @Test
+    void testTencentMap() throws JSONException, UnsupportedEncodingException {
+        //https://apis.map.qq.com/ws/geocoder/v1?key=K7QBZ-TAJCM-ALB64-6VDNR-CBYG5-XHBGR&location=28.7033487,115.8660847
+
+
+        Map<String, String> map =new TreeMap<>();
+        map.put("key", tencentMapProperties.getApiKey());
+        map.put("location","39.9042,116.4074");
+
+
+        String ad = TencentMapUtil.generateAddress(map, tencentMapProperties.getSecretKey());
+        System.out.println(ad);
+
+
+    }
 
 }

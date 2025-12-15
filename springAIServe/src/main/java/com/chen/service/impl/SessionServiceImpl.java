@@ -99,7 +99,12 @@ public class SessionServiceImpl implements SessionService {
             //model_id
             String modelId = String.valueOf(model.getModelId());
             aiSessionDTO.setModelId(modelId);
+            //处理session的标题
+            String name = model.getName();
+            aiSessionDTO.setSessionTitle(name);
+            //保存会话
             saveUserSession(aiSessionDTO);
+            //保存第一条信息
             saveSessionFirstMessage(model, aiSessionDTO);
             //返回开场白
             return model.getOpenMessage();
@@ -131,25 +136,25 @@ public class SessionServiceImpl implements SessionService {
         return model.getOpenMessage();
     }
 
+
+
+
+
+
+    /**
+     * 查询hr列表 并赋值传递给形参
+     * @param modelId
+     * @param model
+     */
     private void handleModel(Integer modelId,Model model) {
-       Model queried= modelMapper.queryModelById(modelId);
-       BeanUtil.copyProperties(queried, model);
+        Model queried= modelMapper.queryModelById(modelId);
+        BeanUtil.copyProperties(queried, model);
     }
 
-    private void saveSessionFirstMessage(Model model,AISessionDTO aiSessionDTO) {
-
-        AIMessage message = AIMessage.builder()
-                .aiSessionId(aiSessionDTO.getSessionId())
-                .type(MessageType.ASSISTANT)
-                .contentType(TEXT_TYPE)
-                .textContent(model.getOpenMessage())
-                .creatorId(aiSessionDTO.getUserId())
-                .createdTime(LocalDateTime.now())
-                .lastTime(LocalDateTime.now()).build();
-
-        messageMapper.insertSingleMessage(message);
-    }
-
+    /**
+     * 保存用户创建的会话
+     * @param aiSessionDTO
+     */
     private void saveUserSession(AISessionDTO aiSessionDTO) {
         AISession session = AISession.builder()
                 .sessionId(aiSessionDTO.getSessionId())
@@ -165,5 +170,24 @@ public class SessionServiceImpl implements SessionService {
         sessionMapper.insertSingleSession(session);
     }
 
+    /**
+     * 保创建会话AI自动返回的第一条信息
+     * @param model
+     * @param aiSessionDTO
+     */
+    private void saveSessionFirstMessage(Model model,AISessionDTO aiSessionDTO) {
+
+        AIMessage message = AIMessage.builder()
+                .aiSessionId(aiSessionDTO.getSessionId())
+                .type(MessageType.ASSISTANT)
+                .contentType(TEXT_TYPE)
+                .textContent(model.getOpenMessage())
+                .creatorId(aiSessionDTO.getUserId())
+                .createdTime(LocalDateTime.now())
+                .lastTime(LocalDateTime.now())
+                .build();
+
+        messageMapper.insertSingleMessage(message);
+    }
 
 }

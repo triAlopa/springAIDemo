@@ -1,6 +1,6 @@
 package com.chen.pojo.vo;
 
-
+import com.chen.pojo.entity.Model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,23 +15,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-/**
- * 用于展示会话列表
- */
-public class AISessionVO implements Serializable {
-
+public class ModelVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
-    private String sessionId;
-    private String sessionTitle;
-    private String modelId;
-    private Integer enable;
+    /**
+     * hr的名称
+     */
+    private String name;
+    private String image;
+    /**
+     * 用于ai风格 0~2.0 值越大越有创意
+     */
+    private Double temperature;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime createdTime;
+    private CompanyVO company;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime lastTime;
+    
 }

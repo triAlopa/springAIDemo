@@ -7,6 +7,7 @@ import UserCapsule from '../components/UserCapsule.vue';
 import { sendApi, queryMessages, storeMessageApi } from '@/api/msgdemo.js';
 import { userInfoApi, userChangePassApi } from '@/api/user.js';
 import { userQuerySessionApi, userDeleteSessionApi, userCreateSessionApi } from '@/api/session.js';
+import { queryModelApi } from '@/api/model.js';
 import { useRouter } from 'vue-router';
 import { nanoid } from 'nanoid'
 
@@ -314,11 +315,42 @@ const handleCheckIn = () => {
     currentUser.points += 10;
     ElMessage.success('签到成功！硬币 +10');
 };
+
+
+const currentModel = ref({
+      name: "",
+      image: "",
+      temperature: 0.0,
+      company: {
+        name: "",
+        type: 0,
+        lowSalary: 0,
+        highSalar: 0,
+        address: "",
+        jobTag: [],
+        jobDesc: "",
+        employerBenefit: []
+      }
+    });
+
 /*
 *选择了某一个会话的函数
 */
-const handleSelectChat = (sessionId) => {
-    currentSessionId.value = sessionId;
+const handleSelectChat = async (selectChat) => {
+    currentSessionId.value = selectChat.sessionId;
+    let modelId = selectChat.modelId;
+    await queryModelApi(modelId)
+        .then(result => {
+            if (result.code == 200) {
+                currentModel.value=result.data;
+                console.log(result)
+            }else{
+                console.log(result.msg)
+            }
+        }).catch(error=>{
+            console.log(error)
+        })
+
 };
 
 /**
@@ -350,14 +382,14 @@ const handleCreateChat = async () => {
                 chatSessionHistory.value.unshift(newSession);
                 currentSessionId.value = id;
                 console.log(result.data)
-                currentMessages.value.push({
+                /* currentMessages.value.push({
                     type: 'ASSISTANT',
                     contentType: 'text',
                     textContent: result.data,
                     createdTime: handleLocalTime.value
-                })
+                }) */
                 console.log(currentMessages.value)
-            }else{
+            } else {
                 console.log('不够你玩的吗，都申请完了😅😅')
                 ElMessage.warning('服务器开了个小差😛~,请一段时间后重试')
             }
@@ -593,7 +625,7 @@ onMounted(async () => {
 
                 <!-- 右侧聊天窗口 -->
                 <the-chat-window :messages="currentMessages" :current-chat-title="currentChatTitle"
-                    @send-message="handleSendMessage">
+                    @send-message="handleSendMessage" :currentModel="currentModel">
                     <!-- 把右上角的胶囊塞进去 -->
                     <template #header-right>
                         <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"

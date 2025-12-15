@@ -69,3 +69,7 @@ knife4j:
   enable: false
   setting:
     language: zh_cn
+tencent:
+  map:
+    secret-key: OOrAcissy72rW3P6VuhiVWF5pBOTg7eF
+    api-key: K7QBZ-TAJCM-ALB64-6VDNR-CBYG5-XHBGR

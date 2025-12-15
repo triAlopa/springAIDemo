@@ -1,10 +1,7 @@
 package com.chen.exception.handle;
 
 import com.chen.constant.ResultConstant;
-import com.chen.exception.AccountBusinessException;
-import com.chen.exception.AccountRegisterException;
-import com.chen.exception.LoginException;
-import com.chen.exception.ModelBusinessException;
+import com.chen.exception.*;
 import com.chen.pojo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -19,6 +16,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import static com.chen.constant.ResultConstant.HTTPSTATUS.BAD_REQUEST;
+import static com.chen.constant.ResultConstant.HTTPSTATUS.UNKNOWN_ERROR;
 import static com.chen.constant.ResultConstant.UNKNOWNMESSAGE;
 
 @RestControllerAdvice
@@ -116,9 +114,22 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(ModelBusinessException.class)
     public Result modelBusinessHandle(ModelBusinessException e) {
 
-        log.warn("用户会话列表已经满了{}",e.getErrorCode());
+        log.warn("{}",e.getErrorMsg());
 
         return Result.fil(e.getErrorMsg(),e.getErrorCode());
+    }
+
+    /**
+     * 正常 可预期的业务错误
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(NormalBusinessException.class)
+    public Result normalBusinessHandle(NormalBusinessException e) {
+
+        log.warn("{}",e.getMessage());
+
+        return Result.fil(e.getMessage(),UNKNOWN_ERROR);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
