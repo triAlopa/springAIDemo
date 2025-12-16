@@ -13,59 +13,13 @@ const props = defineProps({
     type: String,
     required: true
   },
+  isDark: {
+    type: Boolean,
+    required: true
+  },
   currentModel: {
     type: Object,
     required: true,
-    /**
-     * "data": {
-    "name": "小蓝",
-    "image": "https://example.com/images/blue_avatar.jpg",
-    "temperature": 0.7,
-    "company": {
-      "name": "深蓝科技",
-      "type": 1,
-      "lowSalary": 15,
-      "highSalary": 35,
-      "address": "北京市东城区正义路",
-      "jobTag": [
-        "Java",
-        "大数据",
-        "云计算"
-      ],
-      "jobDesc": "负责后端系统架构设计与开发，熟悉分布式系统",
-      "employerBenefit": [
-        "五险一金",
-        "年度旅游",
-        "弹性工作",
-        "股票期权"
-      ]
-    }
-  }
-     */
-    default: () => ({
-      name: "小蓝",
-      image: "https://example.com/images/blue_avatar.jpg",
-      temperature: 0.7,
-      company: {
-        name: "深蓝",
-        type: 1,
-        lowSalary: 15,
-        highSalar: 35,
-        address: "北京市东城区正义路",
-        jobTag: [
-          "Java",
-          "大数据",
-          "云计算"
-        ],
-        jobDesc: "负责后端系统架构设计与开发，熟悉分布式系统",
-        employerBenefit: [
-          "五险一金",
-          "年度旅游",
-          "弹性工作",
-          "股票期权"
-        ]
-      }
-    })
   }
 });
 
@@ -136,167 +90,207 @@ const triggerFileUpload = () => {
       <div class="flex items-center gap-2">
         <span class="font-semibold text-lg">{{ currentChatTitle }}</span>
 
-        <div class="inline-block">
-          <el-popover placement="bottom-end" :width="320" trigger="hover"
-            popper-class="!p-0 !rounded-xl overflow-hidden shadow-2xl transition-all duration-300">
-            <template #reference>
-              <button
-                class="flex items-center space-x-2 py-2 px-4 bg-white rounded-full border border-gray-200 shadow-md text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-                <el-icon class="text-blue-500">
-                  <InfoFilled />
-                </el-icon>
-                <span>公司详情</span>
-              </button>
-            </template>
+        <el-popover placement="bottom-end" :width="340" trigger="hover"
+       
+          popper-class="!p-0 !rounded-xl overflow-hidden shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-out"
+          transition="el-zoom-in-top">
+          <template #reference
+          
+          >
+            <div 
+            v-show="currentModel.name!=='' "
+              class="inline-flex items-center justify-center px-4 py-2 
+              rounded-lg bg-white dark:bg-gray-800 border border-gray-300 
+              dark:border-gray-600 shadow-sm hover:shadow-md hover:border-blue-400 
+              dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-gray-700 
+              transition-all duration-200 cursor-pointer">
+              <el-icon class="text-blue-500 dark:text-blue-400 mr-2">
+                <InfoFilled />
+              </el-icon>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-200">公司详情</span>
+            </div>
+          </template>
 
-            <div class="bg-white p-5">
-              <h3 class="text-xl font-extrabold mb-4 text-gray-800 border-b pb-2">
-                核心信息
-              </h3>
+          <div class="bg-white dark:bg-gray-800 p-5">
+            <div class="mb-6">
+              <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-1">核心信息</h3>
+              <div class="w-12 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
+            </div>
 
-              <div class="space-y-4">
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-red-100 flex-shrink-0">
-                    <el-icon class="text-red-500 text-lg">
-                      <User />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">HR 姓名:</span>
-                    <span class="text-sm font-bold text-gray-800">{{ currentModel.name }}</span>
+            <div class="space-y-4">
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-red-100 dark:bg-red-900/30 flex-shrink-0">
+                  <el-icon class="text-red-500 dark:text-red-400 text-lg">
+                    <User />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">HR 姓名</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.name }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-green-100 dark:bg-green-900/30 flex-shrink-0">
+                  <el-icon class="text-green-500 dark:text-green-400 text-lg">
+                    <OfficeBuilding />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">公司名称</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
+                    }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-yellow-100 dark:bg-yellow-900/30 flex-shrink-0">
+                  <el-icon class="text-yellow-500 dark:text-yellow-400 text-lg">
+                    <Histogram />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">公司档位</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                    <span v-if="currentModel.company.type == 1" class="text-blue-600 dark:text-blue-400">初创公司</span>
+                    <span v-else-if="currentModel.company.type == 2"
+                      class="text-green-600 dark:text-green-400">上市公司</span>
+                    <span v-else-if="currentModel.company.type == 3"
+                      class="text-purple-600 dark:text-purple-400">500强公司</span>
+                    <span v-else class="text-gray-500">其他类型</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-indigo-100 dark:bg-indigo-900/30 flex-shrink-0">
+                  <el-icon class="text-indigo-500 dark:text-indigo-400 text-lg">
+                    <Opportunity />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">地址</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.address
+                    }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-pink-100 dark:bg-pink-900/30 flex-shrink-0 mt-1">
+                  <el-icon class="text-pink-500 dark:text-pink-400 text-lg">
+                    <Briefcase />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">职位属性</span>
+                  <div class="flex flex-wrap gap-1">
+                    <el-tag v-for="(job, index) in currentModel.company.jobTag" :key="index" size="small"
+                      class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
+                        'bg-blue-100 dark:bg-blue-900/30',
+                        'text-blue-600 dark:text-blue-300',
+                        'hover:bg-blue-200 dark:hover:bg-blue-800/50'
+                      ]">
+                      {{ job }}
+                    </el-tag>
                   </div>
                 </div>
+              </div>
 
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-green-100 flex-shrink-0">
-                    <el-icon class="text-green-500 text-lg">
-                      <OfficeBuilding />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">公司名称:</span>
-                    <span class="text-sm font-bold text-gray-800">{{ currentModel.company.name }}</span>
+              <div class="flex items-center pt-3 border-t border-dashed border-gray-200 dark:border-gray-700">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-teal-100 dark:bg-teal-900/30 flex-shrink-0">
+                  <el-icon class="text-teal-500 dark:text-teal-400 text-lg">
+                    <Money />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">薪资范围</span>
+                  <span class="text-base font-bold text-red-500 dark:text-red-400">
+                    {{ currentModel.company.lowSalary }}K - {{ currentModel.company.highSalary }}K
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-purple-100 dark:bg-purple-900/30 flex-shrink-0">
+                  <el-icon class="text-purple-500 dark:text-purple-400 text-lg">
+                    <StarFilled />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">企业名称</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
+                    }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-orange-100 dark:bg-orange-900/30 flex-shrink-0">
+                  <el-icon class="text-orange-500 dark:text-orange-400 text-lg">
+                    <UserFilled />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block">HR 性格</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">
+                    <span v-if="currentModel.temperature >= 0.0 && currentModel.temperature <= 1.0"
+                      class="text-red-500">强硬型</span>
+                    <span v-else-if="currentModel.temperature >= 1.0 && currentModel.temperature <= 1.5"
+                      class="text-yellow-500">幽默型</span>
+                    <span v-else-if="currentModel.temperature >= 1.5 && currentModel.temperature <= 2.0"
+                      class="text-blue-500">卑微型</span>
+                    <span v-else class="text-gray-500">null型</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 工作详情 -->
+              <div class="flex items-start">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-blue-100 dark:bg-blue-900/30 flex-shrink-0 mt-1">
+                  <el-icon class="text-blue-500 dark:text-blue-400 text-lg">
+                    <Sunny />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">工作详情</span>
+                  <span class="text-sm text-blue-600 dark:text-blue-300 leading-relaxed">{{ currentModel.company.jobDesc
+                    }}</span>
+                </div>
+              </div>
+
+              <!-- 员工福利 -->
+              <div class="flex items-start">
+                <div
+                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-cyan-100 dark:bg-cyan-900/30 flex-shrink-0 mt-1">
+                  <el-icon class="text-cyan-500 dark:text-cyan-400 text-lg">
+                    <Sunny />
+                  </el-icon>
+                </div>
+                <div class="flex-grow">
+                  <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">员工福利</span>
+                  <div class="flex flex-wrap gap-1">
+                    <el-tag v-for="(benefit, index) in currentModel.company.employerBenefit" :key="index" size="small"
+                      class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
+                        'bg-green-100 dark:bg-green-900/30',
+                        'text-green-600 dark:text-green-300',
+                        'hover:bg-green-200 dark:hover:bg-green-800/50'
+                      ]">
+                      {{ benefit }}
+                    </el-tag>
                   </div>
                 </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-yellow-100 flex-shrink-0">
-                    <el-icon class="text-yellow-500 text-lg">
-                      <Histogram />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">公司档位:</span>
-                    <span class="text-sm font-bold text-gray-800">
-                      <div v-if="currentModel.company.type == 1">初创公司</div>
-                      <div v-else-if="currentModel.company.type == 2">上市公司</div>
-                      <div v-else-if="currentModel.company.type == 3">500强公司</div>
-                      <div v-else>路边一条</div>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-indigo-100 flex-shrink-0">
-                    <el-icon class="text-indigo-500 text-lg">
-                      <Opportunity />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">地址:</span>
-                    <span class="text-sm font-bold text-gray-800">{{ currentModel.company.address }}</span>
-                  </div>
-                </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-pink-100 flex-shrink-0">
-                    <el-icon class="text-pink-500 text-lg">
-                      <Briefcase />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">职位属性:</span>
-                    <span class="text-sm font-bold text-gray-800">
-                      <el-tag v-for="(job, index) in currentModel.company.jobTag" :key="index">
-                        {{ job }}
-                      </el-tag>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="flex items-center pt-2 border-t border-dashed border-gray-200">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-teal-100 flex-shrink-0">
-                    <el-icon class="text-teal-500 text-lg">
-                      <Money />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">薪资:</span>
-                    <span class="text-base font-extrabold text-red-600">
-                      {{ currentModel.company.lowSalary }}K至{{ currentModel.company.highSalary }}K</span>
-                  </div>
-                </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-purple-100 flex-shrink-0">
-                    <el-icon class="text-purple-500 text-lg">
-                      <StarFilled />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">企业名称:</span>
-                    <span class="text-sm font-bold text-gray-800">{{ currentModel.company.name }}</span>
-                  </div>
-                </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-orange-100 flex-shrink-0">
-                    <el-icon class="text-orange-500 text-lg">
-                      <UserFilled />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">HR 性格:</span>
-                    <span class="text-sm font-bold text-gray-800">
-                      <div v-if="currentModel.temperature>=0.0&& currentModel.temperature<=1.0">强硬型</div>
-                      <div v-else-if="currentModel.temperature>=1.0&& currentModel.temperature<=1.5">幽默型</div>
-                      <div v-else-if="currentModel.temperature>=1.5&& currentModel.temperature<=2.0">卑微型</div>
-                      <div v-else>null型</div>
-                    </span>
-                  </div>
-                </div>
-
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-blue-100 flex-shrink-0">
-                    <el-icon class="text-blue-500 text-lg">
-                      <Sunny />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">工作详情:</span>
-                    <span class="text-sm font-bold text-blue-600">{{ currentModel.company.jobDesc }}</span>
-                  </div>
-                </div>
-                <div class="flex items-center">
-                  <div class="w-7 h-7 flex items-center justify-center rounded-lg mr-3 bg-blue-100 flex-shrink-0">
-                    <el-icon class="text-blue-500 text-lg">
-                      <Sunny />
-                    </el-icon>
-                  </div>
-                  <div class="flex-grow">
-                    <span class="text-xs text-gray-500 block">员工福利:</span>
-                    <span class="text-sm font-bold text-blue-600">
-                       <el-tag v-for="(job, index) in currentModel.company.employerBenefit" :key="index">
-                        {{ job }}
-                      </el-tag>
-                    </span>
-                  </div>
-                </div>
-
               </div>
             </div>
-          </el-popover>
-        </div>
+          </div>
+        </el-popover>
 
       </div>
       <slot name="header-right"></slot>

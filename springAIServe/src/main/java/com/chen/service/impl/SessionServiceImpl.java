@@ -10,6 +10,8 @@ import com.chen.pojo.entity.AIMessage;
 import com.chen.pojo.entity.AISession;
 import com.chen.pojo.entity.Model;
 import com.chen.pojo.vo.AISessionVO;
+import com.chen.pojo.vo.ModelVO;
+import com.chen.service.ModelService;
 import com.chen.service.SessionService;
 import com.chen.util.CurrentUserHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class SessionServiceImpl implements SessionService {
 
     @Autowired
     private AIMessageMapper messageMapper;
+
+    @Autowired
+    private ModelService modelService;
 
 
     @Override
@@ -81,7 +86,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public String createUserSession(AISessionDTO aiSessionDTO) {
+    public ModelVO createUserSession(AISessionDTO aiSessionDTO) {
 
         Integer userId = CurrentUserHolder.getCurrentUser().getId();
         //查询所有交流过的hr
@@ -97,8 +102,9 @@ public class SessionServiceImpl implements SessionService {
         if (aiSessions == null || aiSessions.isEmpty()) {
             Model model = models.get(0);
             //model_id
-            String modelId = String.valueOf(model.getModelId());
-            aiSessionDTO.setModelId(modelId);
+            Integer modelId = model.getModelId();
+            String id = String.valueOf(modelId);
+            aiSessionDTO.setModelId(id);
             //处理session的标题
             String name = model.getName();
             aiSessionDTO.setSessionTitle(name);
@@ -106,9 +112,12 @@ public class SessionServiceImpl implements SessionService {
             saveUserSession(aiSessionDTO);
             //保存第一条信息
             saveSessionFirstMessage(model, aiSessionDTO);
-            //返回开场白
-            return model.getOpenMessage();
+            //返回hr信息和公司信息
+            //TODO 对用户与hr的信息初始化
+
+            return modelService.queryModelWithCompany(modelId);
         }
+        //用户会话的hr的id
         List<String> userModelList = aiSessions.stream()
                 .map(AISession::getModelId)
                 .collect(Collectors.toList());
@@ -124,16 +133,19 @@ public class SessionServiceImpl implements SessionService {
             first.ifPresent(id->handleModel(id, model));
         }
         //表示该用户model列表都使用了
-        if(model.getModelId()==null){
+        Integer modelId = model.getModelId();
+        if(modelId==null){
             throw new ModelBusinessException(MODEL_NOTFOUND,NOT_FOUND);
         }
+        //处理标题
+        aiSessionDTO.setSessionTitle(model.getName());
         aiSessionDTO.setModelId(String.valueOf(model.getModelId()));
         saveUserSession(aiSessionDTO);
 
         //首条信息的保存
         saveSessionFirstMessage(model, aiSessionDTO);
 
-        return model.getOpenMessage();
+        return modelService.queryModelWithCompany(modelId);
     }
 
 

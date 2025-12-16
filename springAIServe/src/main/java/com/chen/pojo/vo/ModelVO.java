@@ -20,6 +20,10 @@ public class ModelVO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 人物模型id
+     */
+    private Integer modelId;
+    /**
      * hr的名称
      */
     private String name;

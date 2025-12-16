@@ -3,6 +3,7 @@ package com.chen.service;
 import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.vo.AIMessageVO;
 import com.chen.pojo.vo.AISessionVO;
+import com.chen.pojo.vo.ModelVO;
 
 import java.util.List;
 
@@ -27,5 +28,5 @@ public interface SessionService {
      * 创建用户会话
      * @param sessionDTO
      */
-    String createUserSession(AISessionDTO sessionDTO);
+    ModelVO createUserSession(AISessionDTO sessionDTO);
 }

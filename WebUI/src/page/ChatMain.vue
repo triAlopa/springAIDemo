@@ -12,42 +12,51 @@ import { useRouter } from 'vue-router';
 import { nanoid } from 'nanoid'
 
 const router = useRouter();
-const MOCK_MESSAGES = {
-    1: [
-        { role: 'user', type: 'text', content: 'Vue3 的 setup 语法糖有什么优势？', time: '10:00' },
-        { role: 'ai', type: 'text', content: 'Vue 3 的 `<script setup>` 语法糖主要有以下优势：\n1. **更少的样板代码**：无需 `return` 暴露变量。\n2. **更好的 TypeScript 支持**：原生支持纯 TS 声明。\n3. **更好的运行时性能**：模板会被编译成更高效的渲染函数。\n\n需要我给你写个例子吗？', time: '10:01' },
-        { role: 'ai', type: 'text', content: '量子纠缠是量子力学中一种奇特的现象，两个或多个粒子在相互作用后形成一种“纠缠态”，此时它们的量子状态会紧密关联，无论相隔多远。当一个粒子的状态被测量时，另一个粒子的状态会**瞬间**确定（例如自旋方向），仿佛存在某种超距联系。\n\n### 核心特点：\n1. **瞬时性**：纠缠粒子的状态关联是瞬时的，不受距离限制（爱因斯坦称之为“鬼魅般的超距作用”）。\n2. **随机性**：单个粒子的状态在测量前是随机的，但纠缠对的状态始终互斥（如一个自旋向上，另一个必然向下）。\n3. **不可分割**：纠缠态是整体性的，无法单独描述单个粒子状态。\n\n### 通俗比喻：\n想象一对“量子骰子”：\n- 单独看，每个骰子的点数都是随机的。\n- 但当它们纠缠时，只要测量其中一个骰子为“3”，另一个无论多远都会**瞬间**变成“4”（总和固定为7）。\n\n### 重要说明：\n- ❌ **不是信息传递**：量子纠缠无法传递经典信息（无法控制测量结果）。\n- ✅ **应用场景**：量子通信（量子密钥分发）、量子计算的基础之一。\n\n量子纠缠揭示了自然界的非局域性，至今仍是物理学和哲学的研究热点。 🌌', time: '10:01' }
-    ],
-    2: [
-        { role: 'user', type: 'text', content: '生成一张图片：未来的上海。', time: '14:20' },
-        { role: 'ai', type: 'text', content: '正在为你生成...', time: '14:20' },
-        { role: 'ai', type: 'image', content: 'https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=2000&auto=format&fit=crop', time: '14:21' },
-        { role: 'ai', type: 'text', content: '😄 Java 确实很卷，但卷得很有道理！作为常年占据 TIOBE 榜首的语言，Java 的生态成熟、岗位需求大，但也意味着竞争激烈。不过换个角度看：\n\n**卷在哪里？**  \n- 初级岗位扎堆，技术栈要求越来越高（Spring Cloud/Alibaba、分布式、高并发...）  \n- 技术更新快（JDK 21虚拟线程、GraalVM、Spring AI 等新特性需持续跟进）  \n\n**破局关键：**  \n✅ **差异化能力**：深耕云原生（K8s+DevOps）、大数据（Flink）、或结合AI（Spring AI应用）  \n✅ **场景落地**：能解决实际痛点（如用Project Reactor优化高并发，而非只会背八股文）  \n\n**举个栗子🌰**：  \n用Java玩转AI——Spring AI整合LangChain4j，5行代码调用大模型：  \n```java\nAiClient client = new OpenAiChatClient(apiKey);  \nString response = client.generate(\"用Java实现快速排序\");  \nSystem.out.println(response);  \n', time: '14:21' }
-    ],
-    3: [
-        { role: 'ai', type: 'text', content: '哈哈，您这风格切换得真快！不过没问题，我可是「热情话多」模式全开版AI 😄\n\n您都喊「Hello World」了，这不得来个经典开场？👇\n\n```java\npublic class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"🌈 你好，魔法世界！(Hello World from a passionate AI!)\"); \n    }\n}\n```\n\n**输出结果**：  \n`🌈 你好，魔法世界！(Hello World from a passionate AI!)`\n\n需要我变个 Spring AI 的魔法？聊技术？解 Bug？甚至写首诗？随时待命！✨ 您尽管吩咐~', time: '20:20' },
-        { role: 'ai', type: 'text', content: '哈哈，承蒙夸奖！不过地狱笑话需谨慎，来一个程序员特供版（轻量级）：  \n\n**“为什么程序员下地狱后反而效率更高？  \n——因为地狱里的需求永不‘404’，客户终于学会一次性说清需求了。”**  \n\n（温馨提示：幽默有风险，玩笑需边界，本笑话绝不针对任何真实客户或程序员群体 😉）', time: '20:20' },
-        { role: 'ai', type: 'text', content: '好的！以下是三种语言的 \"Hello, World!\" 代码：\n\n**1. C++**\n```cpp\n#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n```\n* **编译运行：** 需要编译器（如 g++），命令通常是 `g++ hello.cpp -o hello` 然后 `./hello`\n\n**2. Python**\n```python\nprint(\"Hello, World!\")\n```\n* **运行：** 直接执行，命令 `python hello.py` (或 `python3 hello.py`)\n\n**3. C#**\n```csharp\nusing System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine(\"Hello, World!\");\n    }\n}\n```\n* **编译运行：** 需要 .NET SDK，命令 `dotnet run` (如果作为控制台应用项目) 或使用 Visual Studio 等 IDE。\n\n希望这些简洁的示例对你有帮助！"', time: '20:20' },
-        { role: 'ai', type: 'text', content: '', time: '20:20' }
-    ]
-};
-
-// 聊天数据
-//历史会话记录
-const chatSessionHistory = ref([]);
-/**
- * 
- */
-const currentSessionId = ref();
-const messagesStore = reactive({ ...MOCK_MESSAGES });
-
-
+//是否为暗黑模式
 const isDark = ref(false);
+/**
+ * 聊天数据
+ */
 
-// 用户状态
+//历史会话记录
+/**
+ * {
+ *  id='',
+ *  sessionId:'',
+ *  sessionTitle:'',
+ *  lastTime:'',
+ *  modelId:''
+ * }
+ */
+const chatSessionHistory = ref([]);
+//当前会话id
+const currentSessionId = ref();
+//当前会话的所有聊天信息
+const currentMessages = ref([])
+//当前hr以及公司数据
+const currentModel = ref({
+    name: "",
+    image: "",
+    temperature: 0.0,
+    company: {
+        name: "",
+        type: 0,
+        lowSalary: 0,
+        highSalar: 0,
+        address: "",
+        jobTag: [],
+        jobDesc: "",
+        employerBenefit: []
+    }
+});
+
+//本地的所有聊天信息 sessionId+message
+const messageStore = reactive([]);
+
+// 当前用户状态
 const currentUser = reactive({
     nickName: '',
-    image: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100',
+    image: '',
     gender: 0,
     points: 0,
     email: '',
@@ -55,12 +64,6 @@ const currentUser = reactive({
     useDays: 0,
     isCheckedIn: false
 });
-
-const days = computed(() => {
-    let userDate = Date.parse(currentUser.registerTime)
-    let now = Date.now();
-    return Math.round((now - userDate) / (1000 * 60 * 60 * 24));
-})
 
 /*
 *查询个人信息
@@ -91,7 +94,18 @@ const quetyUserInfo = async () => {
             console.log(error);
         })
 }
+/**
+ * 前端计算用户使用天数
+ */
+const days = computed(() => {
+    let userDate = Date.parse(currentUser.registerTime)
+    let now = Date.now();
+    return Math.round((now - userDate) / (1000 * 60 * 60 * 24));
+})
 
+/**
+ * 修改用户密码相关
+ */
 const dialogVisible = ref(false)
 const passworldForm = ref({ originPassword: '', changedPassword: '' })
 const passworldRules = {
@@ -111,7 +125,6 @@ const handleChangUserPassworld = () => {
 }
 
 const resetPassForm = () => {
-    // passRuleRef.resetFields()
     passworldForm.value.originPassword = '';
     passworldForm.value.changedPassword = '';
 }
@@ -127,6 +140,7 @@ const handleCloseDialog = (done) => {
         })
 }
 
+//提交修改
 const sumbit = async (form) => {
     if (!form) return;
     await form.validate(async (valid, fields) => {
@@ -173,7 +187,6 @@ const getUserSession = async () => {
         })
 }
 
-const messageStore = reactive([]);
 
 /**
  * 处理聊天数据存储在messageStore数组
@@ -194,20 +207,17 @@ const storeMessageHandle = (sessionId, messages) => {
     console.log(messageStore);
 }
 
-
-/**
- * 无需.value
- */
-const currentMessages = ref([])
 watch(currentSessionId, async (newSessionId) => {
     //优化用户切换的感受、、
     currentMessages.value = [];
     const messages = queryStoreMessagesHandle(newSessionId)
+    //校验js数组有没有
     if (messages) {
         setTimeout(() => {
             currentMessages.value = messages;
         }, 250)
         console.log('本地已存在，无需查询')
+
         return;
     };
 
@@ -218,10 +228,10 @@ watch(currentSessionId, async (newSessionId) => {
         });
 
     if (result.code == 200) {
-        console.log(result)
-        let data = result.data
-        if (data && data.length > 0) {
-            storeMessageHandle(newSessionId, data);
+        // console.log(result)
+        let messages = result.data
+        if (messages && messages.length > 0) {
+            storeMessageHandle(newSessionId, messages);
         }
         currentMessages.value = result.data;
     } else {
@@ -317,21 +327,19 @@ const handleCheckIn = () => {
 };
 
 
-const currentModel = ref({
-      name: "",
-      image: "",
-      temperature: 0.0,
-      company: {
-        name: "",
-        type: 0,
-        lowSalary: 0,
-        highSalar: 0,
-        address: "",
-        jobTag: [],
-        jobDesc: "",
-        employerBenefit: []
-      }
-    });
+const queryCurrentSessionModel = async (modelId) => {
+    await queryModelApi(modelId)
+        .then(result => {
+            if (result.code == 200) {
+                currentModel.value = result.data;
+                console.log(result)
+            } else {
+                console.log(result.msg)
+            }
+        }).catch(error => {
+            console.log(error)
+        })
+}
 
 /*
 *选择了某一个会话的函数
@@ -339,17 +347,8 @@ const currentModel = ref({
 const handleSelectChat = async (selectChat) => {
     currentSessionId.value = selectChat.sessionId;
     let modelId = selectChat.modelId;
-    await queryModelApi(modelId)
-        .then(result => {
-            if (result.code == 200) {
-                currentModel.value=result.data;
-                console.log(result)
-            }else{
-                console.log(result.msg)
-            }
-        }).catch(error=>{
-            console.log(error)
-        })
+    //查询hr及公司
+    await queryCurrentSessionModel(modelId);
 
 };
 
@@ -372,6 +371,7 @@ const handleCreateChat = async () => {
     const newSession = {
         sessionId: id,
         sessionTitle: '新对话',
+        modelId:'',
         lastTime: handleLocalTime.value,
     }
     console.log(newSession)
@@ -379,16 +379,20 @@ const handleCreateChat = async () => {
     await userCreateSessionApi(newSession)
         .then(result => {
             if (result.code == 200) {
-                chatSessionHistory.value.unshift(newSession);
+                let model= result.data;
+                //当前创建的会话hr和公司
+                currentModel.value = model;
+                newSession.modelId=model.modelId;
+               
+                //切换为当前的会话
                 currentSessionId.value = id;
+                //标题
+                currentChatTitle.value=model.name;
+                newSession.sessionTitle=model.name;
+
+                 //添加到本地显示
+                chatSessionHistory.value.unshift(newSession);
                 console.log(result.data)
-                /* currentMessages.value.push({
-                    type: 'ASSISTANT',
-                    contentType: 'text',
-                    textContent: result.data,
-                    createdTime: handleLocalTime.value
-                }) */
-                console.log(currentMessages.value)
             } else {
                 console.log('不够你玩的吗，都申请完了😅😅')
                 ElMessage.warning('服务器开了个小差😛~,请一段时间后重试')
@@ -415,7 +419,6 @@ const handleDeleteChat = (sessionId) => {
             .then(result => {
                 if (result.code == 200) {
                     chatSessionHistory.value = chatSessionHistory.value.filter(c => c.sessionId !== sessionId);
-                    delete messagesStore[sessionId];
                     if (currentSessionId.value === sessionId && chatSessionHistory.value.length > 0) {
                         currentSessionId.value = chatSessionHistory.value[0].sessionId;
                     }
@@ -428,10 +431,6 @@ const handleDeleteChat = (sessionId) => {
     });
 };
 
-/* const handleLocalMessageTime = () => {
-    return timeString=new Date().format('yy-MM-dd HH:mm:ss')
-} */
-
 const handleLocalTime = computed(() => {
     let now = new Date();
     let year = now.getFullYear().toString().substring(2, 4);
@@ -440,7 +439,7 @@ const handleLocalTime = computed(() => {
     let hours = now.getHours().toString().padStart(2, '0');
     let minutes = now.getMinutes().toString().padStart(2, '0');
     let seconds = now.getSeconds().toString().padStart(2, '0');
-    let formattedTime = `${year}年${month}月${day} ${hours}:${minutes}:${seconds}`;
+    let formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     return formattedTime;
 })
 
@@ -625,7 +624,7 @@ onMounted(async () => {
 
                 <!-- 右侧聊天窗口 -->
                 <the-chat-window :messages="currentMessages" :current-chat-title="currentChatTitle"
-                    @send-message="handleSendMessage" :currentModel="currentModel">
+                    @send-message="handleSendMessage" :currentModel="currentModel" :is-dark="isDark">
                     <!-- 把右上角的胶囊塞进去 -->
                     <template #header-right>
                         <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"

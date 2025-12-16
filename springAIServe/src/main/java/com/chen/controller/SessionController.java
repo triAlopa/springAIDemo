@@ -3,6 +3,7 @@ package com.chen.controller;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.vo.AISessionVO;
+import com.chen.pojo.vo.ModelVO;
 import com.chen.service.SessionService;
 import com.chen.util.CurrentUserHolder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,12 +63,12 @@ public class SessionController {
             @ApiResponse(responseCode = "500", description = "创建失败")
     })
     @PostMapping
-    public Result<String> createUserSession(@RequestBody AISessionDTO session) {
+    public Result<ModelVO> createUserSession(@RequestBody AISessionDTO session) {
 
         log.info("创建新:{}会话", session);
 
-        String openMessage =sessionService.createUserSession(session);
+        ModelVO modelVO =sessionService.createUserSession(session);
 
-        return Result.success(openMessage);
+        return Result.success(modelVO);
     }
 }
