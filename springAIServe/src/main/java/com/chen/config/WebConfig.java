@@ -1,9 +1,14 @@
 package com.chen.config;
 
 import com.chen.interceptor.LoginInterceptor;
-import com.chen.pojo.properties.JwtProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -54,6 +59,15 @@ public class WebConfig implements WebMvcConfigurer {
                         "/doc.html",
                         "/favicon.ico"
                 );
+    }
+
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public WebFilter connectionCloseFilter() {
+        return (ServerWebExchange exchange, WebFilterChain chain)->{
+            exchange.getResponse().getHeaders().add("Connection", "close");
+            return chain.filter(exchange);
+        };
     }
 
     /**

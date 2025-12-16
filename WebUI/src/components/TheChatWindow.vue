@@ -240,11 +240,11 @@ const triggerFileUpload = () => {
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">HR 性格</span>
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                    <span v-if="currentModel.temperature >= 0.0 && currentModel.temperature <= 1.0"
+                    <span v-if="currentModel.temperature >= 0.0 && currentModel.temperature <= 0.7"
                       class="text-red-500">强硬型</span>
-                    <span v-else-if="currentModel.temperature >= 1.0 && currentModel.temperature <= 1.5"
+                    <span v-else-if="currentModel.temperature > 0.7 && currentModel.temperature <= 1.5"
                       class="text-yellow-500">幽默型</span>
-                    <span v-else-if="currentModel.temperature >= 1.5 && currentModel.temperature <= 2.0"
+                    <span v-else-if="currentModel.temperature > 1.5 && currentModel.temperature <= 2.0"
                       class="text-blue-500">卑微型</span>
                     <span v-else class="text-gray-500">null型</span>
                   </span>

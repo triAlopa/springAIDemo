@@ -371,26 +371,26 @@ const handleCreateChat = async () => {
     const newSession = {
         sessionId: id,
         sessionTitle: '新对话',
-        modelId:'',
-        lastTime: handleLocalTime.value,
+        modelId: '',
+        lastTime: handleLocalTime(true),
     }
     console.log(newSession)
 
     await userCreateSessionApi(newSession)
         .then(result => {
             if (result.code == 200) {
-                let model= result.data;
+                let model = result.data;
                 //当前创建的会话hr和公司
                 currentModel.value = model;
-                newSession.modelId=model.modelId;
-               
+                newSession.modelId = model.modelId;
+
                 //切换为当前的会话
                 currentSessionId.value = id;
                 //标题
-                currentChatTitle.value=model.name;
-                newSession.sessionTitle=model.name;
+                currentChatTitle.value = model.name;
+                newSession.sessionTitle = model.name;
 
-                 //添加到本地显示
+                //添加到本地显示
                 chatSessionHistory.value.unshift(newSession);
                 console.log(result.data)
             } else {
@@ -431,17 +431,22 @@ const handleDeleteChat = (sessionId) => {
     });
 };
 
-const handleLocalTime = computed(() => {
+const handleLocalTime = (isSession) => {
     let now = new Date();
-    let year = now.getFullYear().toString().substring(2, 4);
+    let year = now.getFullYear();
     let month = (now.getMonth() + 1).toString().padStart(2, '0');
     let day = now.getDate().toString().padStart(2, '0');
+    if (isSession) {
+        return `${year}-${month}-${day}`;
+    }
+    //yy-MM-dd HH:mm:ss
+    year = now.getFullYear().toString().substring(2, 4);
     let hours = now.getHours().toString().padStart(2, '0');
     let minutes = now.getMinutes().toString().padStart(2, '0');
     let seconds = now.getSeconds().toString().padStart(2, '0');
-    let formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    return formattedTime;
-})
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;;
+}
 
 
 
@@ -462,7 +467,7 @@ const handleSendMessage = async (text) => {
     }
 
 
-    const timeString = handleLocalTime.value;
+    const timeString = handleLocalTime(false);
     /* messageStore[currentSessionId.value].push({
         type: 'USER',
         contentType: 'text',
@@ -536,39 +541,26 @@ const handleSendMessage = async (text) => {
             buffer = lines.pop() || ''; // 保留最后一个不完整的行
 
             for (const line of lines) {
-                console.log('11111')
 
                 // 1. 严格处理每一行，清理首尾空白
-                const trimmedLine = line.trim();
+                const trimmedLine = line;
+                console.log(trimmedLine)
 
                 //2. 忽略空行或非数据行
-                if (!trimmedLine || !trimmedLine.startsWith('data:')) {
+                if (!trimmedLine) {
                     continue;
                 }
-                // if (trimmedLine === 'data:' || trimmedLine === 'data: ') {
-                //     continue;
-                // }
-
                 // 3. 提取 data 部分：移除 "data:" 并清理首尾空格
-                let dataString = trimmedLine.substring(5).trim();
+                let dataString = trimmedLine.substring(5);
 
-                // if (!dataString) {
-                //     continue; // 忽略内容为空的数据行 (例如 data: )
-                // }
-                if (dataString.includes('data:')) {
-                    console.log('remove........................')
-                    console.log(dataString)
-                    // dataString = dataString.replaceAll('\ndata:', '\n');
-                    dataString = dataString.replaceAll('data:', '');
-                    // dataString = dataString.replaceAll('data:data:', '');
-                    console.log('remove' + dataString)
-                    /*  const index = dataString.indexOf('data:');
-                     dataString = dataString.substring(0, index) + dataString.substring(index); */
+                if (!dataString) {
+                    continue; // 忽略内容为空的数据行 (例如 data: )
                 }
-                // 直接追加提取后的内容
+                dataString = dataString.replaceAll('data:', '');
                 aiMessage.textContent += dataString;
                 console.log('add')
             }
+
         }
     } catch (error) {
         ElMessage.error(`[连接或流式错误: ${error.message}]`);

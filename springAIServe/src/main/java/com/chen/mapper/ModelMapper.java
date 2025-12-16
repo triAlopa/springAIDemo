@@ -1,8 +1,10 @@
 package com.chen.mapper;
 
 import com.chen.pojo.entity.Model;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,6 +24,12 @@ public interface ModelMapper {
 
     @Select("select  * from tb_ai_model where model_id=#{modelId}")
     Model queryModelById(Integer modelId);
+
+    @Select("select * from  tb_ai_model")
+    List<Model> queryAllModels();
+
+    @Update("update tb_ai_model set description=#{description}    where model_id=#{modelId}")
+    void update(Model model);
 }
 
 

@@ -110,8 +110,8 @@ public class SessionServiceImpl implements SessionService {
             aiSessionDTO.setSessionTitle(name);
             //保存会话
             saveUserSession(aiSessionDTO);
-            //保存第一条信息
-            saveSessionFirstMessage(model, aiSessionDTO);
+            //保存信息
+            saveSessionFirstMessage(model, aiSessionDTO,model.getDescription());
             //返回hr信息和公司信息
             //TODO 对用户与hr的信息初始化
 
@@ -142,8 +142,8 @@ public class SessionServiceImpl implements SessionService {
         aiSessionDTO.setModelId(String.valueOf(model.getModelId()));
         saveUserSession(aiSessionDTO);
 
-        //首条信息的保存
-        saveSessionFirstMessage(model, aiSessionDTO);
+        //信息的保存
+        saveSessionFirstMessage(model, aiSessionDTO,model.getDescription());
 
         return modelService.queryModelWithCompany(modelId);
     }
@@ -184,22 +184,29 @@ public class SessionServiceImpl implements SessionService {
 
     /**
      * 保创建会话AI自动返回的第一条信息
+     * 以及交流场景信息 如hr的信息，公司信息
      * @param model
      * @param aiSessionDTO
+     * @param description
      */
-    private void saveSessionFirstMessage(Model model,AISessionDTO aiSessionDTO) {
-
-        AIMessage message = AIMessage.builder()
+    private void saveSessionFirstMessage(Model model,AISessionDTO aiSessionDTO,String description) {
+        AIMessage promptMessage= AIMessage.builder()
                 .aiSessionId(aiSessionDTO.getSessionId())
-                .type(MessageType.ASSISTANT)
+                .type(MessageType.SYSTEM)
                 .contentType(TEXT_TYPE)
-                .textContent(model.getOpenMessage())
+                .textContent(description)
                 .creatorId(aiSessionDTO.getUserId())
                 .createdTime(LocalDateTime.now())
                 .lastTime(LocalDateTime.now())
                 .build();
 
-        messageMapper.insertSingleMessage(message);
+        AIMessage firstMessage = new AIMessage();
+        BeanUtil.copyProperties(promptMessage, firstMessage);
+        firstMessage.setType(MessageType.ASSISTANT);
+        firstMessage.setTextContent(model.getOpenMessage());
+
+        messageMapper.insertSingleMessage(promptMessage);
+        messageMapper.insertSingleMessage(firstMessage);
     }
 
 }

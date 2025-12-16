@@ -6,10 +6,14 @@ import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.AIMessageMapper;
 import com.chen.mapper.AISessionMapper;
+import com.chen.mapper.CompanyMapper;
+import com.chen.mapper.ModelMapper;
 import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
 import com.chen.pojo.entity.AISession;
+import com.chen.pojo.entity.Company;
+import com.chen.pojo.entity.Model;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.properties.TencentMapProperties;
 import com.chen.pojo.vo.AIMessageVO;
@@ -50,6 +54,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.util.DigestUtils;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templateresolver.DefaultTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -67,6 +76,8 @@ import java.util.concurrent.Flow;
 import java.util.regex.Pattern;
 
 import static com.chen.constant.RedisConstant.USER_LOGIN;
+import static com.chen.constant.TencentConstant.TENCENT_API_KEY;
+import static com.chen.constant.TencentConstant.TENCENT_LOCATION;
 import static com.chen.constant.UserConstant.NODEL;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -255,15 +266,16 @@ class SpringAiDemoApplicationTests {
 
     @Autowired
     private TencentMapProperties tencentMapProperties;
+
     @SneakyThrows
     @Test
     void testTencentMap() throws JSONException, UnsupportedEncodingException {
         //https://apis.map.qq.com/ws/geocoder/v1?key=K7QBZ-TAJCM-ALB64-6VDNR-CBYG5-XHBGR&location=28.7033487,115.8660847
 
 
-        Map<String, String> map =new TreeMap<>();
+        Map<String, String> map = new TreeMap<>();
         map.put("key", tencentMapProperties.getApiKey());
-        map.put("location","39.9042,116.4074");
+        map.put("location", "39.9042,116.4074");
 
 
         String ad = TencentMapUtil.generateAddress(map, tencentMapProperties.getSecretKey());
@@ -271,5 +283,73 @@ class SpringAiDemoApplicationTests {
 
 
     }
+
+    @Resource
+    private SpringTemplateEngine springTemplateEngine;
+
+
+    @Resource
+    ModelMapper modelMapper;
+    @Resource
+    CompanyMapper companyMapper;
+
+
+    @Test
+    void testTemplate() {
+
+        //1.你的名字是${modelName}，你的性格是${model-name}，语言风格要符合这一点。
+        //2.你的公司名字是${model-company-name}，其位置在${model-company-address}，
+        // 你招聘员工的薪资一个月在${model-company-lowSalary}到${model-company-highSalary}之间，
+        // 你招聘的工作标签为${model-company-jobTag}，员工福利有${model-company-benefits}。
+
+
+        List<Model> models = modelMapper.queryAllModels();
+        for (Model model : models) {
+            String companyId = model.getCompanyId();
+            Company company = companyMapper.selectCompanyId(companyId);
+            Context ctx=new Context();
+            Map<String, Object> data = new HashMap<>();
+            data.put("modelName", model.getName());
+            if(model.getTemperature()>=0.0&&model.getTemperature()<=0.7){
+                data.put("modelPersonality", "强硬型");
+            }else if(model.getTemperature()>0.7&&model.getTemperature()<=1.5){
+                data.put("modelPersonality", "幽默型");
+            }else if(model.getTemperature()>1.5&&model.getTemperature()<=2.0){
+                data.put("modelPersonality", "卑微型");
+            }
+            data.put("modelCompanyName", company.getName());
+
+            Map<String,String> map=new TreeMap<>();
+            map.put(TENCENT_LOCATION,company.getAddress());
+            String apiKey = tencentMapProperties.getApiKey();
+            map.put(TENCENT_API_KEY,apiKey);
+            String address = TencentMapUtil.generateAddress(map, tencentMapProperties.getSecretKey());
+            data.put("modelCompanyAddress", address);
+            data.put("modelCompanyLowSalary", company.getLowSalary());
+            data.put("modelCompanyHighSalary", company.getHighSalary());
+            data.put("modelCompanyJobTag",company.getJobTag());
+            data.put("modelCompanyBenefits",company.getEmployerBenefit());
+            ctx.setVariables(data);
+            String process = springTemplateEngine.process("ModelPrompt.txt", ctx);
+            System.out.println(process);
+
+            model.setDescription(process);
+            modelMapper.update(model);
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+    }
+
 
 }
