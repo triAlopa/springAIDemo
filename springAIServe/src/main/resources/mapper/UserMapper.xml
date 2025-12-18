@@ -5,16 +5,16 @@
     <update id="updateSingleUser">
         update tb_ai_user
         <set>
-        <if test="changedPassword!=null and changedPassword !='' ">
-            password=#{changedPassword},
-        </if>
+            <if test="changedPassword!=null and changedPassword !='' ">
+                password=#{changedPassword},
+            </if>
         </set>
         <where>
             <if test="id!=null and id !='' ">
-                and  id=#{id}
+                and id=#{id}
             </if>
             <if test="originPassword!=null and originPassword !='' ">
-                and  password=#{originPassword}
+                and password=#{originPassword}
             </if>
         </where>
     </update>

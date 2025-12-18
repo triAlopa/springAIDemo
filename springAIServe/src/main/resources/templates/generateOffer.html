@@ -1,0 +1,36 @@
+<style>
+    .offer-card {
+        background-color: #e0f7f9;
+        max-width: 350px;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #b2ebf2;
+        font-family: "Microsoft YaHei", sans-serif;
+    }
+    .offer-header { display: flex; align-items: center; margin-bottom: 15px; }
+    .offer-icon { background: #0097a7; padding: 8px; border-radius: 8px; margin-right: 12px; }
+    .offer-title { font-size: 15px; color: #333; font-weight: bold; }
+    .offer-item { margin: 8px 0; font-size: 14px; color: #555; }
+    .offer-footer { display: flex; gap: 10px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #d1e9eb; }
+    .o-btn { flex: 1; padding: 8px; border-radius: 6px; border: none; cursor: pointer; font-size: 14px; }
+    .o-btn-refuse { background: #eeeeee; color: #666; }
+    .o-btn-agree { background: #0097a7; color: white; }
+</style>
+
+<div class="offer-card">
+    <div class="offer-header">
+        <div class="offer-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div class="offer-title">您确定要接受这份 Offer 吗？</div>
+    </div>
+    <div class="offer-item">🏢 公司：<span th:text="${companyName}">苏州YYDS</span></div>
+    <div class="offer-item">💼 职责：<span th:text="${jobTitle}">数据分析师</span></div>
+    <div class="offer-item">💵 薪资：<span th:text="${salary}">15K</span></div>
+    <div class="offer-footer">
+        <button class="o-btn o-btn-refuse" data-action="reject">拒绝</button>
+        <button class="o-btn o-btn-agree"
+                data-action="accept"
+                th:attr="data-company=${companyName}">同意</button>
+    </div>
+</div>

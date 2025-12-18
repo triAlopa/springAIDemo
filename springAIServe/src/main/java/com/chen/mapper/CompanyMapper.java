@@ -16,6 +16,11 @@ public interface CompanyMapper {
 
     @Select("select * from tb_ai_company where company_id=#{companyId}")
     Company selectCompanyId(String companyId);
+
+
+    @Select("select tc.* from tb_ai_company tc,tb_ai_session ts,tb_ai_model tm" +
+            " where ts.model_id=tm.model_id and tm.company_id=tc.company_id and ts.session_id=#{sessionId}")
+    Company selectCompanyBySessionId(String sessionId);
 }
 
 

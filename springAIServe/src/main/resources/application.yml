@@ -6,6 +6,7 @@ spring:
       chat:
         options:
           model: qwen-flash
+          temperature: 0.4
     chat:
       memory:
         repository:
@@ -23,6 +24,7 @@ spring:
           starttls:
             enable: true
             required: true
+# database init
   datasource:
     name: root
     password: 06170018
@@ -34,10 +36,13 @@ spring:
       port: 6379
       password: "06170018"
       database: 0
+      connect-timeout: 2000
+# log
 logging:
   level:
     org.springframework.ai.chat.client: debug
     com.chen.mapper: debug
+#    自定义 属性 token
 chatai:
   jwt:
     user-signKey: "y3QUMAp4Lk6mHtATNFsgT0GLfo9fOUN2"

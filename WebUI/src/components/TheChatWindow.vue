@@ -20,10 +20,21 @@ const props = defineProps({
   currentModel: {
     type: Object,
     required: true,
+  },
+  currentBaseInfo: {
+    type: Object,
+    required: true,
   }
 });
 
-const emit = defineEmits(['send-message']);
+marked.setOptions({
+  html: true,
+  breaks: true,
+  sanitize: false,
+  gfm: true          // 启用 GitHub 风格的 Markdown
+});
+
+const emit = defineEmits(['send-message', 'handleOffer']);
 
 const inputContent = ref('');
 const textareaRef = ref(null);
@@ -64,19 +75,44 @@ const send = () => {
   });
 };
 
+const action = (event) => {
+
+  // 查找点击的目标元素及其父级，看是否包含我们定义的 data-action
+  const target = event.target.closest('[data-action]');
+
+  if (!target) return; // 如果点击的不是按钮，直接返回
+
+  const actionType = target.dataset.action;
+
+  if (actionType === 'accept') {
+    // console.log('accept')
+    emit('handleOffer', 'accept');
+  } else if (actionType === 'reject') {
+  //  console.log('reject')
+   emit('handleOffer', 'reject');
+  }
+}
+
+
+
 const parseMarkdown = (content) => {
+
+  if (!content) return ''
 
   content = content.replace(/(\d+)\./g, '$1\\.');
   // 使用导入的 marked 库进行解析
   if (typeof marked.parse === 'function') {
+    // console.log(marked.parse(content))
     return marked.parse(content);
   }
   return content;
 };
 
-const triggerFileUpload = () => {
+/* const triggerFileUpload = () => {
   ElMessage.info('图片上传功能演示：点击发送会自动模拟图片回复');
 };
+ */
+
 
 
 </script>
@@ -91,15 +127,10 @@ const triggerFileUpload = () => {
         <span class="font-semibold text-lg">{{ currentChatTitle }}</span>
 
         <el-popover placement="bottom-end" :width="340" trigger="hover"
-       
           popper-class="!p-0 !rounded-xl overflow-hidden shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-out"
           transition="el-zoom-in-top">
-          <template #reference
-          
-          >
-            <div 
-            v-show="currentModel.name!=='' "
-              class="inline-flex items-center justify-center px-4 py-2 
+          <template #reference>
+            <div v-show="currentModel.name !== ''" class="inline-flex items-center justify-center px-4 py-2 
               rounded-lg bg-white dark:bg-gray-800 border border-gray-300 
               dark:border-gray-600 shadow-sm hover:shadow-md hover:border-blue-400 
               dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-gray-700 
@@ -141,7 +172,7 @@ const triggerFileUpload = () => {
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">公司名称</span>
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
-                    }}</span>
+                  }}</span>
                 </div>
               </div>
 
@@ -175,7 +206,7 @@ const triggerFileUpload = () => {
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">地址</span>
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.address
-                    }}</span>
+                  }}</span>
                 </div>
               </div>
 
@@ -226,7 +257,7 @@ const triggerFileUpload = () => {
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">企业名称</span>
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
-                    }}</span>
+                  }}</span>
                 </div>
               </div>
 
@@ -262,7 +293,7 @@ const triggerFileUpload = () => {
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">工作详情</span>
                   <span class="text-sm text-blue-600 dark:text-blue-300 leading-relaxed">{{ currentModel.company.jobDesc
-                    }}</span>
+                  }}</span>
                 </div>
               </div>
 
@@ -300,12 +331,14 @@ const triggerFileUpload = () => {
       <transition-group name="fade-slide">
         <div v-for="(msg, index) in messages" :key="index" class="flex w-full"
           :class="msg.type === 'USER' ? 'justify-end' : 'justify-start'">
-          <div v-if="msg.type === 'ASSISTANT'"
-            class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex-shrink-0 mr-3 flex items-center justify-center text-white shadow-lg">
-            <el-icon class="text-lg">
-              <Service />
-            </el-icon>
-          </div>
+      <div v-if="msg.type === 'ASSISTANT'"
+     class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 mr-3 shadow-md border-2 border-white dark:border-gray-600">
+  <img :src="currentBaseInfo.AIImage" 
+       alt="ASSISTANT" 
+       class="w-full h-full object-cover">
+</div>
+
+        
 
           <div class="max-w-[70%] bubble-shadow p-4 rounded-2xl relative text-sm leading-relaxed break-words"
             :class="msg.type === 'USER'
@@ -314,7 +347,8 @@ const triggerFileUpload = () => {
 
             <!-- <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div> -->
             <!-- <div v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div> -->
-            <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)" class="markdown-body">
+            <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)" class="markdown-body"
+              @click="action">
             </div>
             <el-image v-else-if="msg.contentType === 'image'" :src="msg.textContent"
               :preview-src-list="[msg.textContent]" class="rounded-lg max-h-60 w-auto" fit="cover">
@@ -328,7 +362,7 @@ const triggerFileUpload = () => {
 
           <div v-if="msg.type === 'USER'"
             class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100"
+            <img :src="currentBaseInfo.userImage"
               alt="User">
           </div>
         </div>
@@ -345,21 +379,21 @@ const triggerFileUpload = () => {
         'focus-within:shadow-2xl focus-within:shadow-blue-300/60 dark:focus-within:shadow-blue-700/60'
       ]">
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2" v-if="currentBaseInfo.sessionStatus==1">
 
-          <button class="p-2 text-gray-500 hover:text-primary rounded-lg transition-colors flex-shrink-0" title="上传图片"
+          <!-- <button class="p-2 text-gray-500 hover:text-primary rounded-lg transition-colors flex-shrink-0" title="上传图片"
             @click="triggerFileUpload">
 
             <el-icon class="text-xl">
               <Picture />
             </el-icon>
-          </button>
+          </button> -->
 
-          <textarea v-model="inputContent" @keydown.enter.prevent="send" placeholder="输入消息给 BOSS AI..."
+          <textarea v-model="inputContent" @keydown.enter.prevent="send" placeholder="输入消息拷打你的hr...."
             class="flex-1 bg-transparent border-none outline-none resize-none max-h-32 text-base dark:text-white scrollbar-hide"
             rows="1" @input="autoResize" ref="textareaRef"></textarea>
 
-          <button @click="send" :disabled="!inputContent.trim()"
+          <button @click="send" :disabled="(!inputContent.trim())|| currentBaseInfo.sessionStatus==0"
             class="w-10 h-10 rounded-xl bg-primary text-white hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0">
 
             <el-icon class="text-xl">
@@ -369,7 +403,7 @@ const triggerFileUpload = () => {
         </div>
       </div>
 
-      <div class="text-center mt-2 text-xs text-gray-400">AI generated content may be inaccurate.</div>
+      <div class="text-center mt-2 text-xs text-gray-400">只供娱乐使用</div>
     </div>
   </div>
 </template>

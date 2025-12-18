@@ -2,10 +2,8 @@ package com.chen.mapper;
 
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.entity.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Mapper
 public interface UserMapper {
@@ -25,4 +23,7 @@ public interface UserMapper {
     User selectById(Integer userId);
 
     void updateSingleUser(UserChangePassDTO changePassDTO);
+
+    @Update("update tb_ai_user set image=#{image} where id=#{userId}")
+    void updateUserImage(String image,Integer userId);
 }

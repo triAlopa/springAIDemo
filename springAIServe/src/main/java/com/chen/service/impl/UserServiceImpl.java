@@ -1,6 +1,7 @@
 package com.chen.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -8,12 +9,14 @@ import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
 import com.chen.mapper.UserMapper;
+import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.vo.UserVO;
 import com.chen.service.UserService;
+import com.chen.util.AliyunOSSOperator;
 import com.chen.util.CurrentUserHolder;
 import com.chen.util.JwtUtil;
 import jakarta.annotation.Resource;
@@ -28,6 +31,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -65,6 +69,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtProperties jwtProperties;
 
+    @Resource
+    private AliyunOSSOperator aliyunOSSOperator;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -244,6 +250,31 @@ public class UserServiceImpl implements UserService {
 
         //更新token
         return generateUserToken(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String uploadUserImage(MultipartFile file) {
+
+        Integer userId = CurrentUserHolder.getCurrentUser().getId();
+
+        try {
+            String suffix = file.getOriginalFilename().substring(file
+                    .getOriginalFilename()
+                    .lastIndexOf("."));
+
+            String fileName = UUID.randomUUID().toString(true)+suffix;
+
+            // 上传文件
+            String url = aliyunOSSOperator.upload(file.getBytes(), fileName);
+
+            userMapper.updateUserImage(url,userId);
+
+            return url;
+        }catch (Exception e) {
+            log.error("{}用户上传错误,message:{}",userId,e.getMessage());
+            throw new RuntimeException("上传图片失败");
+        }
     }
 
     /**

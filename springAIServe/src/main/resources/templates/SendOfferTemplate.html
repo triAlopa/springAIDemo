@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>录取通知书 - BOSS求聘</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 15px;
+        }
+
+        /* 邮件容器 */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* 邮件头部 - 采用渐变色增强正式感 */
+        .email-header {
+            background: linear-gradient(135deg, #00897b 0%, #4db6ac 100%);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+
+        .email-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        /* 邮件主体 */
+        .email-body {
+            padding: 30px 25px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .greeting strong {
+            color: #00897b;
+        }
+
+        .main-text {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        /* Offer 详情展示区 (模仿验证码卡片风格) */
+        .offer-card {
+            background: linear-gradient(135deg, #f0fdfa 0%, #e6f7f5 100%);
+            border: 1px solid #b2dfdb;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 4px 10px rgba(0, 137, 123, 0.05);
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: baseline;
+        }
+
+        .detail-label {
+            width: 80px;
+            color: #7f8c8d;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .salary-value {
+            color: #e74c3c;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* 使用说明板块 */
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 4px solid #00897b;
+            padding: 18px 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .instructions h3 {
+            font-size: 16px;
+            color: #00897b;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+        }
+
+        /* 结尾签名区 */
+        .closing-section {
+            text-align: right;
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        .signature-company {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00897b;
+        }
+
+        /* 邮件底部 */
+        .email-footer {
+            background-color: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* 移动端深度优化 */
+        @media (max-width: 600px) {
+            .email-body {
+                padding: 20px 15px;
+            }
+            .offer-card {
+                padding: 20px 15px;
+            }
+            .detail-label {
+                width: 70px;
+            }
+            .salary-value {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="email-header">
+        <div class="logo">🎉 <strong  th:text="${companyName}">量子数据科技有限公司</strong></div>
+        <h1>录取通知</h1>
+        <p>诚挚邀请您加入我们的团队</p>
+    </div>
+
+    <div class="email-body">
+        <div class="greeting">
+            尊敬的 <strong><span th:text="${nickName}">Silstrom</span></strong> 先生/女士：
+        </div>
+
+        <p class="main-text">
+            我们有一个好消息！经过我们的慎重评估，您的才华与经验给我们留下了极其深刻的印象。我们非常荣幸地通知您，您已被我司正式录取！欢迎加入
+            <strong style="color:#00897b" th:text="${companyName}">量子数据科技有限公司</strong> 的大家庭。🥳
+        </p>
+
+        <div class="offer-card">
+            <div class="detail-row">
+                <div class="detail-label">录用职责</div>
+                <div class="detail-value" th:text="${jobTag}">高级后端开发工程师</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">薪资待遇</div>
+                <div class="detail-value salary-value" th:text="${salary}">25k / 月</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">办公地点</div>
+                <div class="detail-value" th:text="${companyAddress}">北京市东城区正义路 88 号量子大厦</div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>入职引导：</h3>
+            <ul>
+                <li>请在收到此邮件后的 2 个工作日内回复确认。</li>
+                <li>入职当日请携带身份证、学历证明原件及复印件。</li>
+                <li>如有任何疑问，请联系人力资源部相关负责人员。</li>
+                <li>本平台仅供模拟娱乐展示，祝您生活愉快！</li>
+            </ul>
+        </div>
+
+        <p class="main-text">
+            我们期待着与您一起共事，共同创造更精彩的未来。🚀
+        </p>
+
+        <div class="closing-section">
+            <div style="color: #666; font-size: 14px;">期待您的回复</div>
+            <div class="signature-company" th:text="${companyName}">量子数据科技有限公司</div>
+            <div style="font-weight: bold; color: #444;">人力资源部</div>
+        </div>
+    </div>
+
+    <div class="email-footer">
+        <p>此邮件为系统自动发送，请勿直接回复</p>
+        <p>© <span th:text="${currentYear}">2025</span> BOSS求聘平台. All rights reserved.</p>
+        <p style="margin-top: 8px;"><b>声明：模拟求聘展示，请勿上升高度</b></p>
+    </div>
+</div>
+</body>
+</html>

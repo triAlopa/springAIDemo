@@ -8,6 +8,24 @@
         values(#{sessionId},#{sessionTitle},#{userId},#{enable},
                #{isDel},#{modelId},#{createdTime},#{lastTime})
     </insert>
+    <update id="updateSingleSession">
+        update tb_ai_session
+        <set>
+            <if test=" enable!=null ">
+                enable=#{enable}
+            </if>
+        </set>
+        <where>
+            <if test=" userId!=null and userId!=''  ">
+                and user_id=#{userId}
+            </if>
+            <if test=" sessionId!=null and sessionId!=''  ">
+                and session_id =#{sessionId}
+            </if>
+        </where>
+    </update>
+
+
     <delete id="delSessionWithLogical">
         update tb_ai_session
             <set>

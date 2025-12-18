@@ -14,4 +14,9 @@ public class SystemConstant {
         public static final String IMAGE_TYPE = "image";
 
     }
+
+    public class Offer_type{
+        public static final Integer ACCEPT = 1;
+        public static final Integer REJECT = 0;
+    }
 }

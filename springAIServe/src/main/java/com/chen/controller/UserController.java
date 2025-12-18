@@ -1,10 +1,12 @@
 package com.chen.controller;
 
+import cn.hutool.core.lang.UUID;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.vo.UserVO;
 import com.chen.service.UserService;
+import com.chen.util.AliyunOSSOperator;
 import com.chen.util.CurrentUserHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -27,6 +30,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+
+
 
     /**
      * 用户申请注册
@@ -142,9 +148,25 @@ public class UserController {
         Integer userId = CurrentUserHolder.getCurrentUser().getId();
         log.info("用户：{}，尝试修改用户密码：{}", userId, changePassDTO);
 
-        String token=userService.modifyUserPassword(userId, changePassDTO);
+        String token = userService.modifyUserPassword(userId, changePassDTO);
 
         return Result.success(token);
+    }
+
+    @Operation(summary = "修改用户密码", description = "根据前端请求头携带token,获取用户的信息,修改用户密码")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "修改成功"),
+            @ApiResponse(responseCode = "401", description = "原密码错误")
+    })
+    @PostMapping("/upload")
+    public Result<String> uploadUserImage(MultipartFile file) {
+
+        Integer userId = CurrentUserHolder.getCurrentUser().getId();
+        log.info("用户：{}，尝试上传文件：{}", userId, file);
+
+        String url = userService.uploadUserImage(file);
+
+        return Result.success(url);
     }
 
 }

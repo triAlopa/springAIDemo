@@ -14,4 +14,6 @@ public interface AISessionMapper {
     void delSessionWithLogical(AISessionDTO sessionDTO);
 
     void insertSingleSession(AISession session);
+
+    void updateSingleSession(AISessionDTO sessionDTO);
 }

@@ -8,6 +8,7 @@ import { sendApi, queryMessages, storeMessageApi } from '@/api/msgdemo.js';
 import { userInfoApi, userChangePassApi } from '@/api/user.js';
 import { userQuerySessionApi, userDeleteSessionApi, userCreateSessionApi } from '@/api/session.js';
 import { queryModelApi } from '@/api/model.js';
+import { userOfferApi } from '@/api/offer.js';
 import { useRouter } from 'vue-router';
 import { nanoid } from 'nanoid'
 
@@ -31,6 +32,7 @@ const isDark = ref(false);
 const chatSessionHistory = ref([]);
 //当前会话id
 const currentSessionId = ref();
+
 //当前会话的所有聊天信息
 const currentMessages = ref([])
 //当前hr以及公司数据
@@ -65,6 +67,15 @@ const currentUser = reactive({
     isCheckedIn: false
 });
 
+//当前会话id
+const currentBaseInfo = ref({
+    sessionStatus: 1,
+    userImage: '',
+    AIImage: '',
+});
+
+
+
 /*
 *查询个人信息
 */
@@ -81,7 +92,7 @@ const quetyUserInfo = async () => {
                 Object.assign(currentUser, data)
                 currentUser.useDays = days.value
                 //TODO 
-                currentUser.image = 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100'
+                currentBaseInfo.value.userImage = currentUser.image
                 console.log(result)
                 console.log(currentUser)
                 return result;
@@ -222,6 +233,13 @@ watch(currentSessionId, async (newSessionId) => {
     };
 
     console.log(newSessionId);
+    queryCurrentMessages(newSessionId)
+
+}, { deep: true })
+
+
+
+const queryCurrentMessages = async (newSessionId) => {
     const result = await queryMessages(newSessionId)
         .catch(error => {
             console.log(error);
@@ -238,8 +256,8 @@ watch(currentSessionId, async (newSessionId) => {
         console.log(result.code);
         ElMessage.info(result.msg)
     }
-    console.log(result)
-}, { deep: true })
+    // console.log(result)
+}
 
 /*
 * 计算会话的标题
@@ -332,7 +350,8 @@ const queryCurrentSessionModel = async (modelId) => {
         .then(result => {
             if (result.code == 200) {
                 currentModel.value = result.data;
-                console.log(result)
+                // console.log(result)
+                currentBaseInfo.value.AIImage = currentModel.value.image
             } else {
                 console.log(result.msg)
             }
@@ -346,10 +365,15 @@ const queryCurrentSessionModel = async (modelId) => {
 */
 const handleSelectChat = async (selectChat) => {
     currentSessionId.value = selectChat.sessionId;
+    //聊天状态
+    currentBaseInfo.value.sessionStatus = selectChat.enable
+    console.log(selectChat)
+    //
     let modelId = selectChat.modelId;
     //查询hr及公司
     await queryCurrentSessionModel(modelId);
 
+    console.log(currentBaseInfo.value)
 };
 
 /**
@@ -373,12 +397,14 @@ const handleCreateChat = async () => {
         sessionTitle: '新对话',
         modelId: '',
         lastTime: handleLocalTime(true),
+        enable: 1,
     }
     console.log(newSession)
 
     await userCreateSessionApi(newSession)
         .then(result => {
             if (result.code == 200) {
+                currentBaseInfo.value.sessionStatus=1
                 let model = result.data;
                 //当前创建的会话hr和公司
                 currentModel.value = model;
@@ -389,6 +415,7 @@ const handleCreateChat = async () => {
                 //标题
                 currentChatTitle.value = model.name;
                 newSession.sessionTitle = model.name;
+                newSession.enable = 1
 
                 //添加到本地显示
                 chatSessionHistory.value.unshift(newSession);
@@ -448,7 +475,11 @@ const handleLocalTime = (isSession) => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;;
 }
 
-
+const changeImage=(image)=>{
+    console.log(image)
+    currentBaseInfo.value.userImage=image
+    currentUser.image=image
+}
 
 
 /*
@@ -484,14 +515,16 @@ const handleSendMessage = async (text) => {
     }
 
     currentMessages.value.push(currentUserSendMsg);
+    await handleAIResponseMessage(text);
 
+    setTimeout(() => {
+        queryCurrentMessages(currentSessionId.value);
+    }, 400);
 
-    // 更新标题 (如果是第一条)
-    const currentChat = chatSessionHistory.value.find(c => c.sessionId === currentSessionId.value);
-    if (currentChat && currentChat.sessionTitle === '新对话') {
-        currentChat.sessionTitle = text.substring(0, 10) + (text.length > 10 ? '...' : '');
-    }
+};
 
+const handleAIResponseMessage = async (text) => {
+    const timeString = handleLocalTime(false);
     const currentASSISTANTSendMsg = {
         type: 'ASSISTANT',
         contentType: 'text',
@@ -531,6 +564,7 @@ const handleSendMessage = async (text) => {
                 console.log(aiMessage.textContent);
                 //此番交互完毕,发出请求保存用户与ai这一次聊天记录
                 storeMessageApi(aiMessage, currentSessionId.value);
+
                 break;
             }
 
@@ -565,8 +599,47 @@ const handleSendMessage = async (text) => {
     } catch (error) {
         ElMessage.error(`[连接或流式错误: ${error.message}]`);
     }
+}
 
+
+const handleOfferClick = async (type) => {
+    console.log(type)
+
+    if (!type) return;
+    if (currentBaseInfo.value.sessionStatus == 0) {
+        ElMessage.warning('此聊天已结束，美美收offer🥳')
+        return;
+    }
+
+    if (type == 'accept') {
+        await userOfferApi(1, currentSessionId.value)
+            .then(result => {
+                if (result.code == 200) {
+                    currentBaseInfo.value.sessionStatus = 0;
+                    console.log(currentBaseInfo.value)
+                    
+
+                    ElMessage.success('欢迎加入我们。请检查你的邮箱确保信息无误🥳')
+                }else{
+                    ElMessage.warning('网络有些波动，稍后重试')
+                }
+            })
+        //const session = chatSessionHistory.value.filter(chat => chat.sessionId == currentSessionId.value);
+
+
+
+        // if (!session) {
+        //     console.log('not find error')
+        //     return;
+        // }
+
+
+
+
+    }
 };
+
+
 
 
 const userInitInfo = async () => {
@@ -616,12 +689,14 @@ onMounted(async () => {
 
                 <!-- 右侧聊天窗口 -->
                 <the-chat-window :messages="currentMessages" :current-chat-title="currentChatTitle"
-                    @send-message="handleSendMessage" :currentModel="currentModel" :is-dark="isDark">
-                    <!-- 把右上角的胶囊塞进去 -->
+                    :currentBaseInfo="currentBaseInfo" @send-message="handleSendMessage" :currentModel="currentModel"
+                    :is-dark="isDark" @handleOffer="handleOfferClick">
+                    <!-- 右上角的胶囊  -->
                     <template #header-right>
                         <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"
                             @logout="handleLogout" @check-in="handleCheckIn"
-                            @changePass="handleChangUserPassworld"></user-capsule>
+                            @changePass="handleChangUserPassworld"
+                            @changeImage="changeImage"></user-capsule>
                     </template>
                 </the-chat-window>
 

@@ -1,6 +1,7 @@
 package com.chen;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.net.url.UrlBuilder;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
@@ -45,6 +46,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.messages.MessageType;
+import org.springframework.ai.document.Document;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -270,7 +273,7 @@ class SpringAiDemoApplicationTests {
     @SneakyThrows
     @Test
     void testTencentMap() throws JSONException, UnsupportedEncodingException {
-        //https://apis.map.qq.com/ws/geocoder/v1?key=K7QBZ-TAJCM-ALB64-6VDNR-CBYG5-XHBGR&location=28.7033487,115.8660847
+
 
 
         Map<String, String> map = new TreeMap<>();
@@ -294,6 +297,9 @@ class SpringAiDemoApplicationTests {
     CompanyMapper companyMapper;
 
 
+    @Autowired
+    private TemplateEngine templateEngine;
+
     @Test
     void testTemplate() {
 
@@ -303,7 +309,7 @@ class SpringAiDemoApplicationTests {
         // 你招聘的工作标签为${model-company-jobTag}，员工福利有${model-company-benefits}。
 
 
-        List<Model> models = modelMapper.queryAllModels();
+        /*List<Model> models = modelMapper.queryAllModels();
         for (Model model : models) {
             String companyId = model.getCompanyId();
             Company company = companyMapper.selectCompanyId(companyId);
@@ -334,20 +340,21 @@ class SpringAiDemoApplicationTests {
             System.out.println(process);
 
             model.setDescription(process);
-            modelMapper.update(model);
+            modelMapper.update(model);*/
 
+        Context ctx = new Context();
+        ctx.setVariable("companyName", "邦邦科技");
+        ctx.setVariable("jobTitle", "孔孟");
+        ctx.setVariable("salary", "30K");
+        String process = templateEngine.process("generateOffer.html", ctx);
+        System.out.println(process);
 
-        }
+    }
 
-
-
-
-
-
-
-
-
-
+    @Test
+    void testUUID(){
+        String string = UUID.randomUUID().toString(true);
+        System.out.println(string);
 
     }
 

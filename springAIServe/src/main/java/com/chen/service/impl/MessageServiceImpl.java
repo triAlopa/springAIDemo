@@ -4,11 +4,13 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.chen.mapper.AIMessageMapper;
 import com.chen.mapper.AISessionMapper;
+import com.chen.mapper.CompanyMapper;
 import com.chen.mapper.UserMapper;
 import com.chen.pojo.dto.AIMessageDTO;
 import com.chen.pojo.dto.MessageContentDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.AIMessage;
+import com.chen.pojo.entity.Company;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.vo.AIMessageVO;
@@ -27,12 +29,15 @@ import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static com.chen.config.ChatConfig.DEFAULT_PROMPT;
 import static com.chen.constant.UserConstant.*;
 import static org.springframework.ai.chat.messages.MessageType.ASSISTANT;
 import static org.springframework.ai.chat.messages.MessageType.USER;
@@ -48,7 +53,10 @@ public class MessageServiceImpl implements MessageService {
     private UserMapper userMapper;
 
     @Resource
-    private AISessionMapper sessionMapper;
+    private CompanyMapper companyMapper;
+
+    @Autowired
+    private TemplateEngine templateEngine;
 
     @Autowired
     private JwtProperties jwtProperties;
@@ -91,16 +99,62 @@ public class MessageServiceImpl implements MessageService {
         UserDTO userDTO = new UserDTO();
         BeanUtil.copyProperties(user, userDTO, true);
         CurrentUserHolder.setCurrentUser(userDTO);
+        Integer userId=user.getId();
+
+
+        String userMessage = content.getPrompt();
+        //校验用户的请求
+        String checkOffer = """
+                分析用户请求，判断是否要发送给面试者offer。
+                用户这次说的话：%s
+                询问薪资不算到用户要求发送offer
+                如果不涉及到offer相关词语，返回"NO_DEED_OFFER"。
+                如果说了来个offer,发个offer之类语境 就返回之前谈好的薪资，没有的话按最高的薪资返回，一定有一个值。
+                """.formatted(userMessage);
+
+        String response = chatClient.prompt(checkOffer)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, content.getSessionId()))
+                .call().content();
 
         return chatClient.prompt()
-                .user(content.getPrompt())
+                .user(userMessage)
+                .system(DEFAULT_PROMPT)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, content.getSessionId()))
                 .stream()
                 .content()
                 .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build())
                 .doOnComplete(
-                        ()->storeSuccessResponseUserMsg(content,USER,user.getId())
+                        ()-> {
+                            //保存顺序
+                            //1.先保存用户发出的请求
+                            storeSuccessResponseUserMsg(content, USER, userId);
+                            log.error("{}",response);
+                            //2.判断offer
+                            if(!"NO_DEED_OFFER".equals(response)) {
+                                //处理信息并保存用户请求的offer
+                                handleOfferMessage(content,response,userId);
+                            }
+                        }
                 );
+    }
+    //保存offerHtml片段
+    private void handleOfferMessage(MessageContentDTO content,String salary,Integer userId) {
+        String sessionId = content.getSessionId();
+
+        //salary jobTitle companyName
+        Company company = companyMapper.selectCompanyBySessionId(sessionId);
+        Context ctx=new Context();
+        ctx.setVariable("salary",salary);
+        ctx.setVariable("companyName",company.getName());
+        ctx.setVariable("jobTitle",company.getJobTag());
+        String process = templateEngine.process("generateOffer.html", ctx);
+
+        MessageContentDTO message=new MessageContentDTO();
+        message.setSessionId(sessionId);
+        message.setPrompt(process);
+
+        storeSuccessResponseUserMsg(message,ASSISTANT,userId);
+
     }
 
     private void storeSuccessResponseUserMsg(MessageContentDTO content,MessageType messageType,Integer userId) {

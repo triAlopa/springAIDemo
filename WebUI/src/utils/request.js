@@ -17,7 +17,7 @@ const request = axios.create({
 
 request.interceptors.request.use(
   config => {
-    console.log(config.needAuth)
+    // console.log(config.needAuth)
     let needAuth = config.needAuth == null ? true : config.needAuth
 
     let myrouter=router;
