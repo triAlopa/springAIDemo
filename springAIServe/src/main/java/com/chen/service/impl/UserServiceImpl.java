@@ -8,10 +8,15 @@ import cn.hutool.core.util.StrUtil;
 import com.chen.exception.AccountBusinessException;
 import com.chen.exception.AccountRegisterException;
 import com.chen.exception.LoginException;
+import com.chen.mapper.AISessionMapper;
 import com.chen.mapper.UserMapper;
+import com.chen.pojo.PageResult;
 import com.chen.pojo.Result;
+import com.chen.pojo.dto.AISessionDTO;
+import com.chen.pojo.dto.QueryUserDTO;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
+import com.chen.pojo.entity.AISession;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.vo.UserVO;
@@ -19,6 +24,8 @@ import com.chen.service.UserService;
 import com.chen.util.AliyunOSSOperator;
 import com.chen.util.CurrentUserHolder;
 import com.chen.util.JwtUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +45,7 @@ import org.thymeleaf.context.Context;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -72,6 +80,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private AliyunOSSOperator aliyunOSSOperator;
 
+    @Resource
+    private AISessionMapper sessionMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String insertSingleUser(UserDTO userDTO, HttpServletResponse response) {
@@ -92,6 +103,15 @@ public class UserServiceImpl implements UserService {
             throw new AccountRegisterException(INPUT_CODE_ERR, BAD_REQUEST);
         }
 
+        User user = handleInsertByLogical(userDTO);
+        //  token 返回
+
+        String token = generateUserToken(user);
+
+        return token;
+    }
+
+    private User handleInsertByLogical(UserDTO userDTO) {
         //校验用户是否注册
         User checkUser = userMapper.selectByEmail(userDTO.getEmail());
         if (checkUser != null) {
@@ -119,11 +139,7 @@ public class UserServiceImpl implements UserService {
         BeanUtil.copyProperties(userDTO, user);
 
         userMapper.insert(user);
-        //  token 返回
-
-        String token = generateUserToken(user);
-
-        return token;
+        return user;
     }
 
     @Override
@@ -263,22 +279,116 @@ public class UserServiceImpl implements UserService {
                     .getOriginalFilename()
                     .lastIndexOf("."));
 
-            String fileName = UUID.randomUUID().toString(true)+suffix;
+            String fileName = UUID.randomUUID().toString(true) + suffix;
 
             // 上传文件
             String url = aliyunOSSOperator.upload(file.getBytes(), fileName);
 
-            userMapper.updateUserImage(url,userId);
+
+            User user = User.builder()
+                    .id(userId).image(url).build();
+
+            userMapper.updateUser(user);
+
+//            userMapper.updateUserImage(url,userId);
 
             return url;
-        }catch (Exception e) {
-            log.error("{}用户上传错误,message:{}",userId,e.getMessage());
+        } catch (Exception e) {
+            log.error("{}用户上传错误,message:{}", userId, e.getMessage());
             throw new RuntimeException("上传图片失败");
         }
     }
 
+    @Override
+    public PageResult<List<UserVO>> queryAllUser(QueryUserDTO queryUserDTO) {
+
+        Integer pageNum = queryUserDTO.getPageNum();
+        Integer pageSize = queryUserDTO.getPageSize();
+        PageHelper.startPage(pageNum, pageSize);
+
+        List<User> userList = userMapper.queryAllUser(queryUserDTO);
+
+        PageInfo<User> pageInfo = new PageInfo<>(userList);
+
+        List<UserVO> list = pageInfo.getList().stream().map(
+                user -> BeanUtil.copyProperties(user, UserVO.class)
+        ).toList();
+
+        return new PageResult<>(list, pageInfo.getTotal());
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateSingleUser(UserDTO userDTO) {
+
+        //添加操作
+        if (userDTO.getId() == null) {
+            handleInsertByLogical(userDTO);
+            return;
+        }
+        //修改操作
+        User user = userMapper.selectById(userDTO.getId());
+        if(userDTO.getPassword()!=null){
+            String password = DigestUtils.md5DigestAsHex(userDTO.getPassword().getBytes());
+            userDTO.setPassword(password);
+        }
+
+        BeanUtil.copyProperties(userDTO, user);
+        userMapper.updateUser(user);
+
+    }
+
+    @Override
+    public UserVO selectById(Integer userId) {
+        User user = userMapper.selectById(userId);
+        return BeanUtil.copyProperties(user, UserVO.class);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUserByLogical(Integer id) {
+
+        User user = User.builder()
+                .isDel(ISDEL)
+                .id(id)
+                .build();
+
+        handleLogicalDelUserSession(id);
+
+        userMapper.updateUser(user);
+    }
+
+    private void handleLogicalDelUserSession(Integer id) {
+        AISessionDTO sessionDTO = AISessionDTO.builder()
+                .userId(id)
+                .isDel(NODEL).build();
+
+        List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
+
+        if(aiSessions!=null&& !aiSessions.isEmpty()){
+            aiSessions.forEach(session -> {
+                session.setIsDel(ISDEL);
+            });
+
+            sessionMapper.batchUpdateSession(aiSessions);
+        }
+
+
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUsersByLogical(List<Integer> ids) {
+
+        userMapper.updateByLogicalDelIds(ids);
+
+        ids.forEach(this::handleLogicalDelUserSession);
+
+    }
+
     /**
      * 生成token
+     *
      * @param user
      * @return
      */

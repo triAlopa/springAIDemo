@@ -18,6 +18,50 @@
             </if>
         </where>
     </update>
+<!--    update tb_ai_user set image=#{image} where id=#{userId}-->
+<!--     id, nick_name, gender, birthday, password, email, image,
+               points, enable, is_del, register_time, cancel_time-->
+    <update id="updateUser">
+        update tb_ai_user
+        <set>
+            <if test="points!=null and points !='' ">
+                points=#{points},
+            </if>
+            <if test="enable!=null  ">
+                enable=#{enable},
+            </if>
+            <if test=" isDel!=null  ">
+                is_del=#{isDel},
+            </if>
+            <if test="email!=null and email !='' ">
+                email=#{email},
+            </if>
+            <if test="image!=null and image !='' ">
+                image=#{image},
+            </if>
+            <if test="gender!=null and gender !='' ">
+                gender=#{gender},
+            </if>
+            <if test="birthday!=null ">
+                birthday=#{birthday},
+            </if>
+            <if test="password!=null and password !='' ">
+                password=#{password},
+            </if>
+        </set>
+            where id=#{id}
+    </update>
+    <update id="updateByLogicalDelIds">
+        update tb_ai_user
+        set is_del=0
+        <where>
+            id in
+        <foreach collection="ids" item="item" open="(" close=")"  separator=",">
+            #{item}
+        </foreach>
+        </where>
+
+    </update>
 
     <!--保持高扩展性即复用性，先决定所有字段查出来-->
     <select id="selectById" resultType="com.chen.pojo.entity.User">
@@ -25,5 +69,24 @@
                points, enable, is_del, register_time, cancel_time
             from tb_ai_user
         where id=#{userId}
+    </select>
+    <select id="queryAllUser" resultType="com.chen.pojo.entity.User">
+        select id, nick_name, gender, birthday, password, email, image,
+               points, enable, is_del, register_time, cancel_time
+        from tb_ai_user
+        <where>
+            <if test="nickName!=null and nickName !='' ">
+                and nick_name like concat('%' , #{nickName},'%')
+            </if>
+
+            <if test="gender != null ">
+                and  gender = #{gender}
+            </if>
+            <if test="  start!= null and   end != null">
+                and register_time between #{start} and #{end}
+            </if>
+           and is_del=1
+        </where>
+        order by register_time desc
     </select>
 </mapper>

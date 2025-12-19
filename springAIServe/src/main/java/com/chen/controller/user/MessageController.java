@@ -1,4 +1,4 @@
-package com.chen.controller;
+package com.chen.controller.user;
 
 import com.chen.pojo.dto.AIMessageDTO;
 import com.chen.pojo.dto.MessageContentDTO;

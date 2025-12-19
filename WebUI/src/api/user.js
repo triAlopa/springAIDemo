@@ -46,8 +46,6 @@ export const loginCodeApi = (email) => request.get(
     }
 );
 
-
-
 export const userInfoApi = () => request.get(
     `/user/info`,
     {
@@ -58,10 +56,66 @@ export const userInfoApi = () => request.get(
     }
 );
 
-
 export const userChangePassApi = (passworldForm) => request.post(
     `/user/modifyPass`,
         passworldForm,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+//admin查询全部用户接口
+export const queryAllUserApi = (queryForm) => request.get(
+    `/admin/user/queryAll?nickName=${queryForm.nickName}&gender=${queryForm.gender}&start=${queryForm.start}&end=${queryForm.end}&pageSize=${queryForm.pageSize}&pageNum=${queryForm.pageNum}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+//admin查询全部用户接口
+export const updateOrSaveApi = (userForm) => request.put(
+    `/admin/user`,
+        userForm,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+//admin查询全部用户接口
+export const querySingleUser = (userId) => request.get(
+    `/admin/user/single?id=${userId}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+
+//admin查询全部用户接口
+export const delSingUser = (userId) => request.delete(
+    `/admin/user/del/${userId}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+//admin查询全部用户接口
+export const batchDelUser = (params) => request.delete(
+    `/admin/user/del?${params.toString()}`,
     {
         headers: {
             'Content-Type': 'application/json'

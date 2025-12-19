@@ -1,9 +1,9 @@
 <script setup>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus'; // 导入 ElementPlus 组件
-import TheSidebar from '../components/TheSidebar.vue';
-import TheChatWindow from '../components/TheChatWindow.vue';
-import UserCapsule from '../components/UserCapsule.vue';
+import TheSidebar from '@/components/TheSidebar.vue';
+import TheChatWindow from '@/components/TheChatWindow.vue';
+import UserCapsule from '@/components/UserCapsule.vue';
 import { sendApi, queryMessages, storeMessageApi } from '@/api/msgdemo.js';
 import { userInfoApi, userChangePassApi } from '@/api/user.js';
 import { userQuerySessionApi, userDeleteSessionApi, userCreateSessionApi } from '@/api/session.js';

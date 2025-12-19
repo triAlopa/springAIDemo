@@ -1,4 +1,4 @@
-package com.chen.controller;
+package com.chen.controller.user;
 
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.OfferDTO;

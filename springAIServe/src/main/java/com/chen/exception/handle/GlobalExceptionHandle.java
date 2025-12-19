@@ -102,7 +102,7 @@ public class GlobalExceptionHandle {
     @ExceptionHandler(Exception.class)
 //    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result unknownException(Exception e) {
-        log.error("业务逻辑出错: {}",e.getMessage());
+        log.error("业务逻辑出错: {}",e.toString());
         return Result.fil(UNKNOWNMESSAGE,ResultConstant.HTTPSTATUS.UNKNOWN_ERROR);
     }
 

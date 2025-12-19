@@ -16,4 +16,7 @@ public interface AISessionMapper {
     void insertSingleSession(AISession session);
 
     void updateSingleSession(AISessionDTO sessionDTO);
+
+    void batchUpdateSession(List<AISession> aiSessions);
+
 }

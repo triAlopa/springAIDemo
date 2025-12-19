@@ -24,6 +24,17 @@
             </if>
         </where>
     </update>
+    <update id="batchUpdateSession">
+    update tb_ai_session
+    set is_del =0
+    <where>
+        and session_id in
+        <foreach collection="session"  item="session" separator="," open="(" close=")">
+            session.sessionId
+        </foreach>
+    </where>
+
+    </update>
 
 
     <delete id="delSessionWithLogical">

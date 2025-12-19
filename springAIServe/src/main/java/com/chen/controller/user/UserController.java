@@ -1,12 +1,10 @@
-package com.chen.controller;
+package com.chen.controller.user;
 
-import cn.hutool.core.lang.UUID;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.vo.UserVO;
 import com.chen.service.UserService;
-import com.chen.util.AliyunOSSOperator;
 import com.chen.util.CurrentUserHolder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +20,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController
+
+@RestController("userController")
 @Slf4j
 @RequestMapping("/user")
 @Tag(name = "用户相关API", description = "用户注册登录对应接口")

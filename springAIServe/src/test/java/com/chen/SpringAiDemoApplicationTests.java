@@ -1,20 +1,17 @@
 package com.chen;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.net.url.UrlBuilder;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.constant.UserConstant;
-import com.chen.mapper.AIMessageMapper;
-import com.chen.mapper.AISessionMapper;
-import com.chen.mapper.CompanyMapper;
-import com.chen.mapper.ModelMapper;
+import com.chen.mapper.*;
 import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.dto.UserDTO;
-import com.chen.pojo.entity.AIMessage;
-import com.chen.pojo.entity.AISession;
-import com.chen.pojo.entity.Company;
-import com.chen.pojo.entity.Model;
+import com.chen.pojo.entity.*;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.properties.TencentMapProperties;
 import com.chen.pojo.vo.AIMessageVO;
@@ -81,7 +78,7 @@ import java.util.regex.Pattern;
 import static com.chen.constant.RedisConstant.USER_LOGIN;
 import static com.chen.constant.TencentConstant.TENCENT_API_KEY;
 import static com.chen.constant.TencentConstant.TENCENT_LOCATION;
-import static com.chen.constant.UserConstant.NODEL;
+import static com.chen.constant.UserConstant.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -275,7 +272,6 @@ class SpringAiDemoApplicationTests {
     void testTencentMap() throws JSONException, UnsupportedEncodingException {
 
 
-
         Map<String, String> map = new TreeMap<>();
         map.put("key", tencentMapProperties.getApiKey());
         map.put("location", "39.9042,116.4074");
@@ -352,9 +348,48 @@ class SpringAiDemoApplicationTests {
     }
 
     @Test
-    void testUUID(){
+    void testUUID() {
         String string = UUID.randomUUID().toString(true);
         System.out.println(string);
+
+    }
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Test
+    void testUser() {
+        for (int i = 0; i < 1000; i++) {
+            int randomInt = RandomUtil.randomInt(0, 2);
+            String nickName = RandomUtil.randomString(10);
+            String password = DigestUtils.md5DigestAsHex(RandomUtil.randomString(8).getBytes());
+            DateTime startDate = DateUtil.parse("2000-01-01");  // 月份从0开始
+            DateTime randomDate = RandomUtil.randomDate(startDate, DateField.DAY_OF_YEAR, 1, 360);
+            String[] strings = {"@qq.com","@163.com","@gmail.com","@deu.cn","@gov.cn"};
+            String email = RandomUtil.randomString(10)+strings[RandomUtil.randomInt(0, strings.length)];
+
+            String[] images = {"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo1.jpg"
+                ,"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo22.jpg",
+            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo2223.jpg"};
+
+            String img = images[RandomUtil.randomInt(0, images.length)];
+
+            User user = User.builder()
+                    .points(1000)
+                    .password(password)
+                    .birthday(randomDate)
+                    .gender(randomInt)
+                    .nickName(nickName)
+                    .enable(randomInt)
+                    .isDel(randomInt)
+                    .email(email)
+                    .image(img)
+                    .registerTime(LocalDateTime.now().minusDays(RandomUtil.randomInt(200)))
+                    .build();
+
+            userMapper.insert(user);
+        }
+
 
     }
 

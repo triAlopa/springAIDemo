@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -19,11 +20,15 @@ public class UserVO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private Integer id;
     private String nickName;
     private Integer gender;
     private String email;
     private String image;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthday;
     private Integer points;
+    private Integer enable;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime registerTime;

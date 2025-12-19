@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-import LoginView from '../components/LoginView.vue';
+import LoginView from '@/components/LoginView.vue';
 
 import { useRouter } from 'vue-router';
 
