@@ -1,5 +1,6 @@
 package com.chen.controller.user;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.AISessionDTO;
 import com.chen.pojo.vo.AISessionVO;
@@ -33,6 +34,7 @@ public class SessionController {
             @ApiResponse(responseCode = "404", description = "获取失败")
     })
     @GetMapping
+    @LogOperation
     public Result<List<AISessionVO>> getUserSession() {
         Integer userId = CurrentUserHolder.getCurrentUser().getId();
         log.info("获取用户:{} 的会话信息", userId);
@@ -48,6 +50,7 @@ public class SessionController {
             @ApiResponse(responseCode = "500", description = "删除失败")
     })
     @DeleteMapping("/{session_id}")
+    @LogOperation
     public Result delUserSession(@NotNull @PathVariable("session_id") String sessionId) {
         Integer userId = CurrentUserHolder.getCurrentUser().getId();
         log.info("{}用户请求删除: {}的会话信息", userId,sessionId);
@@ -63,6 +66,7 @@ public class SessionController {
             @ApiResponse(responseCode = "500", description = "创建失败")
     })
     @PostMapping
+    @LogOperation
     public Result<ModelVO> createUserSession(@RequestBody AISessionDTO session) {
 
         log.info("创建新:{}会话", session);

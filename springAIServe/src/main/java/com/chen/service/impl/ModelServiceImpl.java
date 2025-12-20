@@ -77,6 +77,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     //处理公司的经纬度
+    @Override
     public void handelCompanyAddress(Company company){
         String site = company.getAddress();
         Map<String,String> map=new TreeMap<>();

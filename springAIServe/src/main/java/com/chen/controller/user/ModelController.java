@@ -1,5 +1,6 @@
 package com.chen.controller.user;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.Result;
 import com.chen.pojo.vo.ModelVO;
 import com.chen.service.ModelService;
@@ -23,6 +24,7 @@ public class ModelController {
 
     @Operation(summary = "用户查询聊天窗口对应的hr及公司信息")
     @GetMapping("/user")
+    @LogOperation
     public Result<ModelVO> queryModelWithCompany(@RequestParam Integer modelId){
 
         log.info("用户查询 Id为:{}的hr", modelId);

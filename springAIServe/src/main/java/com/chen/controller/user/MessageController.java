@@ -1,5 +1,6 @@
 package com.chen.controller.user;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.dto.AIMessageDTO;
 import com.chen.pojo.dto.MessageContentDTO;
 import com.chen.pojo.Result;
@@ -29,6 +30,7 @@ public class MessageController {
 
     @Operation(description = "用户发出信息")
     @PostMapping(value = "/send", produces = "text/event-stream;charset=utf-8")
+    @LogOperation
     public Flux<ServerSentEvent<String>> Send(@RequestBody MessageContentDTO content, HttpServletRequest request) {
 
         log.info("用户请求访问:{}", content);
@@ -43,6 +45,7 @@ public class MessageController {
             @ApiResponse(responseCode = "500", description = "业务错误")
     })
     @GetMapping("/message")
+    @LogOperation
     public Result<List<AIMessageVO>> getUserMessages(@RequestParam String sessionId) {
 
         log.info("获取会话:{} 的消息体", sessionId);
@@ -54,6 +57,7 @@ public class MessageController {
 
     @Operation(description = "AI信息保存")
     @PostMapping(value = "/message/save")
+    @LogOperation
     public Result saveAIMessage(@RequestBody AIMessageDTO messageDTO) {
 
         log.info("请求AI信息保存:{}", messageDTO);

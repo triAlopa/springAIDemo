@@ -30,7 +30,10 @@ public interface ModelMapper {
 
     @Update("update tb_ai_model set description=#{description}    where model_id=#{modelId}")
     void update(Model model);
-}
+
+    @Select("select  * from tb_ai_model where company_id=#{companyId}")
+    List<Model> selectByCompanyId(String companyId);
+ }
 
 
 

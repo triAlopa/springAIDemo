@@ -1,5 +1,6 @@
 package com.chen.service;
 
+import com.chen.pojo.entity.Company;
 import com.chen.pojo.vo.ModelVO;
 
 public interface ModelService {
@@ -10,4 +11,6 @@ public interface ModelService {
      * @return
      */
     ModelVO queryModelWithCompany(Integer modelId);
+
+    void handelCompanyAddress(Company company);
 }

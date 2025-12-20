@@ -1,5 +1,6 @@
 package com.chen.controller.admin;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.Result;
 import com.chen.pojo.vo.report.EmailReportVO;
 import com.chen.pojo.vo.report.UserReportVO;
@@ -29,7 +30,7 @@ public class ReportController {
     @Autowired
     private UserService userService;
 
-
+    @LogOperation
     @Operation(summary = "报表统计用户", description = "报表统计用户")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "成功"),
@@ -51,6 +52,7 @@ public class ReportController {
     /**
      * 获取邮箱分布占比
      */
+    @LogOperation
     @GetMapping("/email")
     public Result<List<EmailReportVO>> getEmailStats() {
 
@@ -64,6 +66,7 @@ public class ReportController {
     /**
      * 获取邮箱分布占比
      */
+    @LogOperation
     @PostMapping()
     public void requestUserReportExcel(HttpServletResponse response) {
 

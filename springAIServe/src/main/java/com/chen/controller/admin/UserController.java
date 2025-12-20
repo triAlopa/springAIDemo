@@ -1,5 +1,6 @@
 package com.chen.controller.admin;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.PageResult;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.QueryUserDTO;
@@ -35,6 +36,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "没有")
     })
     @GetMapping("/queryAll")
+    @LogOperation
     public Result<PageResult<List<UserVO>>> queryAllUser(QueryUserDTO queryUserDTO) {
 
         log.info("请求查询用户,参数为{}", queryUserDTO);
@@ -50,6 +52,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "没有")
     })
     @PutMapping()
+    @LogOperation
     public Result updateORSaveSingleUser(@Validated(UserDTO.onAdmin.class) @RequestBody @Schema UserDTO user) {
 
         log.info("请求 用户,参数为{}", user);
@@ -65,6 +68,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "没有")
     })
     @GetMapping("/single")
+    @LogOperation
     public Result<UserVO> queryUser(@RequestParam Integer id) {
 
         log.info("修改回显{}", id);
@@ -80,6 +84,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "没有")
     })
     @DeleteMapping("/del/{userId}")
+    @LogOperation
     public Result delUser(@PathVariable("userId") Integer id) {
 
         log.info("逻辑删除用户{}", id);
@@ -95,6 +100,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "没有")
     })
     @DeleteMapping("/del")
+    @LogOperation
     public Result batchDelUser( @RequestParam List<Integer> ids) {
 
         log.info("逻辑批量删除用户{}", ids);

@@ -2,10 +2,8 @@
   <el-container style="height:100vh">
     <el-aside width="220px" style="padding:16px;box-sizing:border-box;border-right:1px solid #e6e6e6">
       <h3 style="margin:0 0 20px 15px">Admin导航</h3>
-      <el-menu :default-active="activeMenu" @select="handleSelect">
-        <el-menu-item index="console">控制台（Console）</el-menu-item>
-        <el-menu-item index="table">通用表格（Table）</el-menu-item>
-        <el-sub-menu style="margin:0 0 0  -8px" index="admin">
+      <el-menu   @select="handleSelect">
+        <el-sub-menu style="margin:0 0 0  -8px" index="user">
           <template #title>
             <el-icon type="small" >
               <location/>
@@ -14,6 +12,15 @@
           </template>
             <el-menu-item index="user/manage">管理</el-menu-item>
             <el-menu-item index="user/report">统计报表</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu style="margin:0 0 0  -8px" index="company">
+          <template #title>
+            <el-icon type="small" >
+              <location/>
+            </el-icon>
+            公司
+          </template>
+          <el-menu-item index="company/manage">管理</el-menu-item>
         </el-sub-menu>
       </el-menu>
 
@@ -38,25 +45,13 @@
 </template>
 
 <script setup>
-import {computed} from 'vue'
 import {useRouter, useRoute} from 'vue-router'
 
 const router = useRouter()
-const route = useRoute()
 
-const activeMenu = computed(() => {
-  const path = route.path || ''
-  if (path.endsWith('/table')) return 'table'
-  if (path.endsWith('/chat')) return 'chat'
-  return 'console'
-})
 
 function handleSelect(index) {
-  if (index === 'chat') {
-    router.push('/admin/chat')
-  } else {
     router.push(`/admin/${index}`)
-  }
 }
 </script>
 

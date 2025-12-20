@@ -42,6 +42,11 @@ logging:
   level:
     org.springframework.ai.chat.client: debug
     com.chen.mapper: debug
+  file:
+    path: logs/
+    name: logs/app.log
+  charset:
+    file: UTF-8
 #    自定义 属性 token
 chatai:
   jwt:
@@ -66,9 +71,12 @@ springdoc:
     - group: 'dev'
       paths-to-match: '/**'
       packages-to-scan: com.chen.controller
-#    - group: 'ai'
-#      paths-to-match: '/ai'
-#      packages-to-scan: com.chen
+    - group: 'user'
+      paths-to-match: '/**'
+      packages-to-scan: com.chen.controller.user
+    - group: 'admin'
+      paths-to-match: '/admin'
+      packages-to-scan: com.chen.controller.admin
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: false

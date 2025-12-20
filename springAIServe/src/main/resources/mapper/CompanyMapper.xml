@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chen.mapper.CompanyMapper">
+    <select id="queryAllUser" resultType="com.chen.pojo.entity.User">
+        select id, nick_name, gender, birthday, password, email, image,
+               points, enable, is_del, register_time, cancel_time
+        from tb_ai_user
+        <where>
+            <if test="nickName!=null and nickName !='' ">
+                and nick_name like concat('%' , #{nickName},'%')
+            </if>
+
+            <if test="gender != null ">
+                and  gender = #{gender}
+            </if>
+            <if test="  start!= null and   end != null">
+                and register_time between #{start} and #{end}
+            </if>
+            <if test="is_del != null ">
+                and  is_del = #{is_del}
+            </if>
+        </where>
+        order by register_time desc
+    </select>
+    <select id="queryCompany" resultType="com.chen.pojo.entity.Company">
+        select  company_id, name, type, low_salary, high_salary,
+               address, job_tag, job_desc, employer_benefit
+        from tb_ai_company
+        <where>
+            <if test="name!=null and name !='' ">
+                and name like concat('%' , #{name},'%')
+            </if>
+            <if test="type != null ">
+                and  type = #{type}
+            </if>
+
+        </where>
+        order by created_time desc
+    </select>
+</mapper>

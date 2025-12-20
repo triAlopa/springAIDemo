@@ -1,5 +1,6 @@
 package com.chen.controller.user;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.OfferDTO;
 import com.chen.service.OfferService;
@@ -21,6 +22,7 @@ public class OfferController {
     private OfferService offerService;
 
     @PostMapping
+    @LogOperation
     public Result responseUser4offer(@RequestBody OfferDTO offerDTO) {
 
         log.info("用户发出offer响应{}", offerDTO);

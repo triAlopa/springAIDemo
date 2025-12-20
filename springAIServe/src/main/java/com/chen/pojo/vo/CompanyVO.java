@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 public class CompanyVO {
 
+    private String companyId;
     /**
      * 公司的名称
      */
@@ -49,5 +50,7 @@ public class CompanyVO {
      * 员工福利 用空格隔开
      */
     private List<String>  employerBenefit;
+
+    private List<ModelVO> models;
 
 }

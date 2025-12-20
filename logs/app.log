@@ -1,0 +1,382 @@
+2025-12-21T00:04:22.776+08:00  INFO 72272 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Starting SpringAiDemoApplication using Java 17.0.17 with PID 72272 (D:\code\project\AIChatdemo\springAIServe\target\classes started by Chen in D:\code\project\AIChatdemo)
+2025-12-21T00:04:22.783+08:00  INFO 72272 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T00:04:23.848+08:00  INFO 72272 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-21T00:04:23.851+08:00  INFO 72272 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-21T00:04:23.890+08:00  INFO 72272 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+2025-12-21T00:04:24.564+08:00  INFO 72272 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-21T00:04:24.576+08:00  INFO 72272 --- [springAIDemo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T00:04:24.576+08:00  INFO 72272 --- [springAIDemo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-21T00:04:24.622+08:00  INFO 72272 --- [springAIDemo] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T00:04:24.623+08:00  INFO 72272 --- [springAIDemo] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1798 ms
+2025-12-21T00:04:26.161+08:00  INFO 72272 --- [springAIDemo] [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-21T00:04:26.556+08:00  INFO 72272 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-21T00:04:26.566+08:00  INFO 72272 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Started SpringAiDemoApplication in 4.358 seconds (process running for 5.202)
+2025-12-21T00:04:32.587+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-21T00:04:32.587+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-21T00:04:32.589+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-12-21T00:04:32.854+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] c.chen.controller.admin.UserController   : 请求查询用户,参数为QueryUserDTO(nickName=, pageSize=10, pageNum=1, gender=null, is_del=1, start=null, end=null)
+2025-12-21T00:04:32.999+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:04:32.999+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:04:33.856+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-4] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company.
+2025-12-21T00:04:33.857+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:05:09.866+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-6] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:05:16.727+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:05:16.727+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:05:32.067+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-8] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:05:38.353+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:05:38.353+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:07:12.008+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-5] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:07:18.305+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-10] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:07:18.808+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:07:18.810+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:07:24.383+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:07:24.384+08:00  INFO 72272 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:07:57.126+08:00  INFO 72272 --- [springAIDemo] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-21T00:07:57.439+08:00  INFO 72272 --- [springAIDemo] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-21T00:07:57.452+08:00  INFO 72272 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-21T00:07:57.455+08:00  INFO 72272 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-12-21T00:08:01.257+08:00  INFO 81048 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Starting SpringAiDemoApplication using Java 17.0.17 with PID 81048 (D:\code\project\AIChatdemo\springAIServe\target\classes started by Chen in D:\code\project\AIChatdemo)
+2025-12-21T00:08:01.259+08:00  INFO 81048 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T00:08:01.969+08:00  INFO 81048 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-21T00:08:01.972+08:00  INFO 81048 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-21T00:08:02.000+08:00  INFO 81048 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+2025-12-21T00:08:02.544+08:00  INFO 81048 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-21T00:08:02.557+08:00  INFO 81048 --- [springAIDemo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T00:08:02.557+08:00  INFO 81048 --- [springAIDemo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-21T00:08:02.610+08:00  INFO 81048 --- [springAIDemo] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T00:08:02.610+08:00  INFO 81048 --- [springAIDemo] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1318 ms
+2025-12-21T00:08:03.936+08:00  INFO 81048 --- [springAIDemo] [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-21T00:08:04.291+08:00  INFO 81048 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-21T00:08:04.303+08:00  INFO 81048 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Started SpringAiDemoApplication in 3.464 seconds (process running for 4.085)
+2025-12-21T00:08:11.333+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-21T00:08:11.334+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-21T00:08:11.336+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-12-21T00:08:11.655+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:08:18.907+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:08:18.907+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:08:43.850+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:08:50.733+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:08:50.733+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:13:02.256+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:13:07.568+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:13:08.663+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:13:08.663+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:13:13.700+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:13:13.700+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:13:28.615+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:13:34.279+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:13:34.279+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:14:20.845+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:14:27.234+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:14:27.234+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:14:38.337+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:14:43.787+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:14:43.787+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:15:45.289+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:15:51.203+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:15:51.204+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:16:05.509+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:16:11.495+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:16:11.495+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:16:14.567+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:16:20.738+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:16:20.739+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:16:22.531+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:16:28.338+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:16:28.339+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:18:11.690+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:18:18.049+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:18:18.049+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:19:00.737+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:19:06.627+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:19:06.628+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:19:20.351+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:19:26.102+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:19:26.102+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:22:05.798+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:22:12.588+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:22:12.588+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:23:13.348+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] c.chen.controller.admin.UserController   : 请求查询用户,参数为QueryUserDTO(nickName=, pageSize=10, pageNum=1, gender=null, is_del=1, start=null, end=null)
+2025-12-21T00:23:13.419+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:23:13.419+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:23:17.379+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:23:23.378+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:23:23.378+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:24:27.164+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:24:33.247+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:24:33.247+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:24:40.458+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:24:47.102+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:24:47.102+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:25:32.787+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:25:38.798+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:25:38.798+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:26:43.012+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:26:49.134+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:26:49.135+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:27:50.080+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:27:50.597+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:27:50.597+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:27:52.865+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:27:53.372+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:27:53.372+08:00  INFO 81048 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:29:31.809+08:00  INFO 81048 --- [springAIDemo] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-21T00:29:32.104+08:00  INFO 81048 --- [springAIDemo] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-21T00:29:32.119+08:00  INFO 81048 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-21T00:29:32.123+08:00  INFO 81048 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-12-21T00:29:36.853+08:00  INFO 83308 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Starting SpringAiDemoApplication using Java 17.0.17 with PID 83308 (D:\code\project\AIChatdemo\springAIServe\target\classes started by Chen in D:\code\project\AIChatdemo)
+2025-12-21T00:29:36.855+08:00  INFO 83308 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T00:29:37.587+08:00  INFO 83308 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-21T00:29:37.589+08:00  INFO 83308 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-21T00:29:37.626+08:00  INFO 83308 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 21 ms. Found 0 Redis repository interfaces.
+2025-12-21T00:29:38.255+08:00  INFO 83308 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-21T00:29:38.268+08:00  INFO 83308 --- [springAIDemo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T00:29:38.269+08:00  INFO 83308 --- [springAIDemo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-21T00:29:38.320+08:00  INFO 83308 --- [springAIDemo] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T00:29:38.320+08:00  INFO 83308 --- [springAIDemo] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1431 ms
+2025-12-21T00:29:39.572+08:00  INFO 83308 --- [springAIDemo] [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-21T00:29:39.911+08:00  INFO 83308 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-21T00:29:39.922+08:00  INFO 83308 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Started SpringAiDemoApplication in 3.478 seconds (process running for 4.197)
+2025-12-21T00:29:51.609+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-21T00:29:51.609+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-21T00:29:51.610+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-21T00:29:51.794+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:29:52.514+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:29:52.514+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:29:52.656+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:29:53.148+08:00  WARN 83308 --- [springAIDemo] [http-nio-8080-exec-2] c.c.e.handle.GlobalExceptionHandle       : 腾讯地图api调用失败
+2025-12-21T00:29:53.149+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:29:54.144+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:29:54.634+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:29:54.634+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:29:59.304+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-4] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/del.
+2025-12-21T00:29:59.305+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:31:00.213+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-5] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:31:00.767+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:31:00.767+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:33:18.999+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-6] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/del.
+2025-12-21T00:33:18.999+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:37:12.446+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-7] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/del.
+2025-12-21T00:37:12.448+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:37:43.107+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-8] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/del.
+2025-12-21T00:37:43.108+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:46:50.672+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-9] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/single.
+2025-12-21T00:46:50.674+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:46:50.762+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-10] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/single.
+2025-12-21T00:46:50.763+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:46:53.069+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:46:53.572+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:46:53.572+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:46:54.861+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-2] c.c.e.handle.GlobalExceptionHandle       : 找不到该资源：No static resource admin/company/single.
+2025-12-21T00:46:54.861+08:00  INFO 83308 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:47:04.523+08:00  INFO 83308 --- [springAIDemo] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-21T00:47:04.907+08:00  INFO 83308 --- [springAIDemo] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-21T00:47:04.951+08:00  INFO 83308 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-21T00:47:04.954+08:00  INFO 83308 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-12-21T00:47:10.470+08:00  INFO 76432 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Starting SpringAiDemoApplication using Java 17.0.17 with PID 76432 (D:\code\project\AIChatdemo\springAIServe\target\classes started by Chen in D:\code\project\AIChatdemo)
+2025-12-21T00:47:10.472+08:00  INFO 76432 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T00:47:11.254+08:00  INFO 76432 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-21T00:47:11.256+08:00  INFO 76432 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-21T00:47:11.285+08:00  INFO 76432 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+2025-12-21T00:47:11.893+08:00  INFO 76432 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-21T00:47:11.905+08:00  INFO 76432 --- [springAIDemo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T00:47:11.905+08:00  INFO 76432 --- [springAIDemo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-21T00:47:11.953+08:00  INFO 76432 --- [springAIDemo] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T00:47:11.954+08:00  INFO 76432 --- [springAIDemo] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1444 ms
+2025-12-21T00:47:13.324+08:00  INFO 76432 --- [springAIDemo] [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-21T00:47:13.709+08:00  INFO 76432 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-21T00:47:13.721+08:00  INFO 76432 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Started SpringAiDemoApplication in 3.648 seconds (process running for 4.345)
+2025-12-21T00:47:19.250+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-21T00:47:19.250+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-21T00:47:19.251+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-21T00:47:19.452+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:47:20.186+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:47:20.187+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:47:21.418+08:00  WARN 76432 --- [springAIDemo] [http-nio-8080-exec-1] .m.m.a.ExceptionHandlerExceptionResolver : Failure in @ExceptionHandler com.chen.exception.handle.GlobalExceptionHandle#unknownException(Exception)
+
+java.lang.NullPointerException: Cannot invoke "java.lang.Throwable.getMessage()" because the return value of "java.lang.Exception.getCause()" is null
+	at com.chen.exception.handle.GlobalExceptionHandle.unknownException(GlobalExceptionHandle.java:105) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver.doResolveHandlerMethodException(ExceptionHandlerExceptionResolver.java:471) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodExceptionResolver.doResolveException(AbstractHandlerMethodExceptionResolver.java:73) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver.resolveException(AbstractHandlerExceptionResolver.java:182) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.HandlerExceptionResolverComposite.resolveException(HandlerExceptionResolverComposite.java:80) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.processHandlerException(DispatcherServlet.java:1360) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.processDispatchResult(DispatcherServlet.java:1161) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1106) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596) ~[tomcat-embed-core-10.1.48.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.48.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.servlet.resource.ResourceUrlEncodingFilter.doFilter(ResourceUrlEncodingFilter.java:66) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+
+2025-12-21T00:47:21.424+08:00  WARN 76432 --- [springAIDemo] [http-nio-8080-exec-1] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'DELETE' is not supported]
+2025-12-21T00:47:21.442+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:47:21.442+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:48:54.812+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:48:55.324+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:48:55.325+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:49:13.111+08:00  WARN 76432 --- [springAIDemo] [http-nio-8080-exec-7] .m.m.a.ExceptionHandlerExceptionResolver : Failure in @ExceptionHandler com.chen.exception.handle.GlobalExceptionHandle#unknownException(Exception)
+
+java.lang.NullPointerException: Cannot invoke "java.lang.Throwable.getMessage()" because the return value of "java.lang.Exception.getCause()" is null
+	at com.chen.exception.handle.GlobalExceptionHandle.unknownException(GlobalExceptionHandle.java:105) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver.doResolveHandlerMethodException(ExceptionHandlerExceptionResolver.java:471) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodExceptionResolver.doResolveException(AbstractHandlerMethodExceptionResolver.java:73) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver.resolveException(AbstractHandlerExceptionResolver.java:182) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.handler.HandlerExceptionResolverComposite.resolveException(HandlerExceptionResolverComposite.java:80) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.processHandlerException(DispatcherServlet.java:1360) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.processDispatchResult(DispatcherServlet.java:1161) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1106) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.springframework.web.servlet.FrameworkServlet.doDelete(FrameworkServlet.java:936) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:596) ~[tomcat-embed-core-10.1.48.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.48.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.servlet.resource.ResourceUrlEncodingFilter.doFilter(ResourceUrlEncodingFilter.java:66) ~[spring-webmvc-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.12.jar:6.2.12]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.48.jar:10.1.48]
+	at java.base/java.lang.Thread.run(Thread.java:842) ~[na:na]
+
+2025-12-21T00:49:13.112+08:00  WARN 76432 --- [springAIDemo] [http-nio-8080-exec-7] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'DELETE' is not supported]
+2025-12-21T00:49:13.117+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:49:13.117+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:49:51.850+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-5] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T00:49:51.974+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:49:51.975+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-5] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:50:47.543+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-6] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T00:50:47.704+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:50:47.705+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-6] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:53:03.755+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T00:53:03.866+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:53:03.866+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:54:08.616+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-8] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T00:54:08.731+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:54:08.733+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-8] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:56:20.228+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-9] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T00:56:20.728+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:56:20.728+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-9] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:56:22.958+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-10] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T00:56:23.060+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T00:56:23.061+08:00  INFO 76432 --- [springAIDemo] [http-nio-8080-exec-10] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T00:59:39.439+08:00  INFO 76432 --- [springAIDemo] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-21T00:59:39.770+08:00  INFO 76432 --- [springAIDemo] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-21T00:59:39.780+08:00  INFO 76432 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-21T00:59:39.783+08:00  INFO 76432 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed
+2025-12-21T00:59:45.044+08:00  INFO 85788 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Starting SpringAiDemoApplication using Java 17.0.17 with PID 85788 (D:\code\project\AIChatdemo\springAIServe\target\classes started by Chen in D:\code\project\AIChatdemo)
+2025-12-21T00:59:45.047+08:00  INFO 85788 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2025-12-21T00:59:45.810+08:00  INFO 85788 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-21T00:59:45.813+08:00  INFO 85788 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-21T00:59:45.843+08:00  INFO 85788 --- [springAIDemo] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 17 ms. Found 0 Redis repository interfaces.
+2025-12-21T00:59:46.490+08:00  INFO 85788 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-21T00:59:46.500+08:00  INFO 85788 --- [springAIDemo] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-21T00:59:46.501+08:00  INFO 85788 --- [springAIDemo] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.48]
+2025-12-21T00:59:46.541+08:00  INFO 85788 --- [springAIDemo] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-21T00:59:46.542+08:00  INFO 85788 --- [springAIDemo] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1465 ms
+2025-12-21T00:59:47.718+08:00  INFO 85788 --- [springAIDemo] [main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+2025-12-21T00:59:48.066+08:00  INFO 85788 --- [springAIDemo] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-12-21T00:59:48.076+08:00  INFO 85788 --- [springAIDemo] [main] com.chen.SpringAiDemoApplication         : Started SpringAiDemoApplication in 3.407 seconds (process running for 4.129)
+2025-12-21T01:00:08.522+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-21T01:00:08.522+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-21T01:00:08.524+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-12-21T01:00:08.684+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T01:00:09.393+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T01:00:09.394+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-1] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T01:00:10.297+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-3] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T01:00:10.398+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T01:00:10.398+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-3] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T01:00:48.609+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-2] c.c.controller.admin.CompanyController   : 请求查询公司id为：COMP001的详细信息
+2025-12-21T01:00:48.714+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T01:00:48.715+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-2] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T01:01:32.138+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-4] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T01:01:32.654+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T01:01:32.655+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-4] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T01:02:59.191+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-7] c.c.controller.admin.CompanyController   : 请求查询用户,参数为QueryCompanyDTO(name=, type=null, pageSize=10, pageNum=1)
+2025-12-21T01:02:59.778+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : destroy login handler
+2025-12-21T01:02:59.778+08:00  INFO 85788 --- [springAIDemo] [http-nio-8080-exec-7] com.chen.interceptor.LoginInterceptor    : init login handler
+2025-12-21T01:03:21.732+08:00  INFO 85788 --- [springAIDemo] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-21T01:03:22.136+08:00  INFO 85788 --- [springAIDemo] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-12-21T01:03:22.151+08:00  INFO 85788 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closing ...
+2025-12-21T01:03:22.155+08:00  INFO 85788 --- [springAIDemo] [SpringApplicationShutdownHook] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} closed

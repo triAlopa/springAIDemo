@@ -1,8 +1,11 @@
 package com.chen.mapper;
 
+import com.chen.pojo.dto.QueryCompanyDTO;
 import com.chen.pojo.entity.Company;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author Chen
@@ -21,6 +24,9 @@ public interface CompanyMapper {
     @Select("select tc.* from tb_ai_company tc,tb_ai_session ts,tb_ai_model tm" +
             " where ts.model_id=tm.model_id and tm.company_id=tc.company_id and ts.session_id=#{sessionId}")
     Company selectCompanyBySessionId(String sessionId);
+
+    List<Company> queryCompany(QueryCompanyDTO queryCompanyDTO);
+
 }
 
 

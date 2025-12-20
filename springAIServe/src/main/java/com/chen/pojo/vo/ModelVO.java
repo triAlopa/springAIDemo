@@ -32,7 +32,8 @@ public class ModelVO implements Serializable {
      * 用于ai风格 0~2.0 值越大越有创意
      */
     private Double temperature;
-
+    private String openMessage;
+    private String remark;
     private CompanyVO company;
 
     

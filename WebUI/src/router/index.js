@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// 导入路由组件（路由组件建议放 pages/views 文件夹，普通组件放 components）
 import App from '../App.vue';
 import ChatMain from '../page/user/ChatMain.vue';
 import LoginMain from '../page/user/LoginMain.vue';
@@ -10,6 +9,9 @@ import admin from '../page/admin/Admin.vue'
 import UserManage from '../page/admin/user/Manage.vue'
 import UserReport  from '../page/admin/user/Report.vue'
 import UserForm  from '../page/admin/user/Form.vue'
+
+import CompanyManage  from '../page/admin/company/Manage.vue'
+import CompanyForm  from '../page/admin/company/Form.vue'
 
 
 // 创建路由器实例
@@ -58,22 +60,25 @@ const router = createRouter({
                         }
                     ],
                 },
-
-
                 {
-                    path: '',
-                    redirect: 'admin/console'
+                    path: 'company',
+                    name: 'company',
+                    children:[
+                        {
+                            path: 'manage',
+                            name: 'CompanyManage',
+                            component: CompanyManage
+                        },
+                        {
+                            path: 'add',
+                            component: CompanyForm // 同一个表单组件
+                        },
+                        {
+                            path: 'edit/:id', // 动态 ID 路径
+                            component: CompanyForm
+                        }
+                    ],
                 },
-                {
-                    path: 'console',
-                    name: 'Console',
-                    component: ConsoleView
-                },
-                {
-                    path: 'table',
-                    name: 'Table',
-                    component: TableView
-                }
             ]
         }
     ]

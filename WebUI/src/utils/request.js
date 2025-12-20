@@ -57,13 +57,11 @@ request.interceptors.request.use(
 //axios的响应 response 拦截器
 request.interceptors.response.use(
   (response) => { //成功回调
-    if (response.data.code == 401) {
+    if (response.data.code === 401) {
       console.log('@@@@@@@@@@@@@@@401')
       localStorage.removeItem('userToken')
       router.push('/Login')
-      ElMessage.warning({
-        timeout: 3000
-      }, "请先登录！")
+      ElMessage.warning( "请先登录！")
     }
     return response.data
   },
