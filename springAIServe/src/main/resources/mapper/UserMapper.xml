@@ -45,6 +45,12 @@
             <if test="birthday!=null ">
                 birthday=#{birthday},
             </if>
+            <if test="registerTime!=null ">
+                register_time =#{registerTime},
+            </if>
+            <if test="cancelTime!=null ">
+                cancel_time =#{cancelTime},
+            </if>
             <if test="password!=null and password !='' ">
                 password=#{password},
             </if>
@@ -53,7 +59,8 @@
     </update>
     <update id="updateByLogicalDelIds">
         update tb_ai_user
-        set is_del=0
+        set is_del=0,
+       cancel_time=curdate()
         <where>
             id in
         <foreach collection="ids" item="item" open="(" close=")"  separator=",">
@@ -85,8 +92,35 @@
             <if test="  start!= null and   end != null">
                 and register_time between #{start} and #{end}
             </if>
-           and is_del=1
+            <if test="is_del != null ">
+                and  is_del = #{is_del}
+            </if>
         </where>
         order by register_time desc
+    </select>
+    <select id="getUserReport" resultType="com.chen.pojo.vo.report.UserReportVO">
+        SELECT
+            DATE_FORMAT(t.date_range, '%Y-%m-%d') as date,
+            SUM(CASE WHEN type = 'reg' THEN count ELSE 0 END) as regCount,
+            SUM(CASE WHEN type = 'del' THEN count ELSE 0 END) as delCount
+        FROM (
+                 SELECT DATE(register_time) as date_range, COUNT(*) as count, 'reg' as type
+                 FROM tb_ai_user
+                 WHERE register_time &gt;= #{start} GROUP BY date_range
+                 UNION ALL
+                 SELECT DATE(cancel_time) as date_range, COUNT(*) as count, 'del' as type
+                 FROM tb_ai_user
+                 WHERE cancel_time &gt;= #{start} GROUP BY date_range
+             ) t
+        GROUP BY date_range
+        ORDER BY date_range ASC
+    </select>
+    <select id="getEmailReport" resultType="com.chen.pojo.vo.report.EmailReportVO">
+        SELECT
+            SUBSTRING_INDEX(email, '@', -1) as name,
+            COUNT(*) as value
+        FROM tb_ai_user
+        GROUP BY name
+        ORDER BY value DESC
     </select>
 </mapper>

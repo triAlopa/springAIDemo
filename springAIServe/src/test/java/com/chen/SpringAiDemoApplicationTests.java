@@ -365,12 +365,17 @@ class SpringAiDemoApplicationTests {
             String password = DigestUtils.md5DigestAsHex(RandomUtil.randomString(8).getBytes());
             DateTime startDate = DateUtil.parse("2000-01-01");  // 月份从0开始
             DateTime randomDate = RandomUtil.randomDate(startDate, DateField.DAY_OF_YEAR, 1, 360);
-            String[] strings = {"@qq.com","@163.com","@gmail.com","@deu.cn","@gov.cn"};
+            String[] strings = {
+                    "@qq.com","@163.com","@gmail.com","@outlook.com","@edu.cn","@126.com",
+                    "@yahoo.com.cn","@sina.com","@sohu.com"
+            };
             String email = RandomUtil.randomString(10)+strings[RandomUtil.randomInt(0, strings.length)];
 
             String[] images = {"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo1.jpg"
                 ,"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo22.jpg",
-            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo2223.jpg"};
+            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo2223.jpg",
+            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/gfe233.jpg",
+            };
 
             String img = images[RandomUtil.randomInt(0, images.length)];
 
@@ -389,6 +394,16 @@ class SpringAiDemoApplicationTests {
 
             userMapper.insert(user);
         }
+    }
+
+    @Test
+    void testUserReport(){
+
+        List<Map<String, Object>> maps = userMapper.queryTemplateReport();
+
+
+
+        System.out.println(maps);
 
 
     }

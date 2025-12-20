@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
+import static com.chen.constant.UserConstant.NODEL;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class QueryUserDTO {
     private Integer pageSize;
     private Integer pageNum;
     private Integer gender;
+    private Integer is_del=NODEL;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")

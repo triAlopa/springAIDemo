@@ -10,7 +10,6 @@ export const registerApi = (registerForm) => request.post(
         },
         needAuth: false
     },
-
 );
 export const requestCodeAPi = (email, nickName) => request.post(
     `/user/emailCode/${nickName}?email=${email}`,
@@ -58,7 +57,7 @@ export const userInfoApi = () => request.get(
 
 export const userChangePassApi = (passworldForm) => request.post(
     `/user/modifyPass`,
-        passworldForm,
+    passworldForm,
     {
         headers: {
             'Content-Type': 'application/json'
@@ -81,7 +80,7 @@ export const queryAllUserApi = (queryForm) => request.get(
 //admin查询全部用户接口
 export const updateOrSaveApi = (userForm) => request.put(
     `/admin/user`,
-        userForm,
+    userForm,
     {
         headers: {
             'Content-Type': 'application/json'
@@ -120,6 +119,39 @@ export const batchDelUser = (params) => request.delete(
         headers: {
             'Content-Type': 'application/json'
         },
+        needAuth: true
+    }
+);
+
+//admin查询全部用户接口
+export const queryUserReport = (timeStamp) => request.get(
+    `/admin/report/userInfo?timeStamp=${timeStamp}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);
+
+export const getEmailApi = () => request.get(
+        `/admin/report/email`,
+        {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            needAuth: true
+        }
+    );
+
+export const getUserExcel = () => request.post(
+    `/admin/report`,
+    {}, // 如果没有 body 数据，也要传个空对象占位
+    {
+        headers: {
+            'Content-Type': 'application/json' // 请求头通常是 json
+        },
+        responseType: 'blob', // 必须：告诉浏览器这是个二进制文件流
         needAuth: true
     }
 );

@@ -20,6 +20,7 @@ import com.chen.pojo.entity.AISession;
 import com.chen.pojo.entity.User;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.vo.UserVO;
+import com.chen.pojo.vo.report.EmailReportVO;
 import com.chen.service.UserService;
 import com.chen.util.AliyunOSSOperator;
 import com.chen.util.CurrentUserHolder;
@@ -28,8 +29,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -42,8 +48,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -328,7 +339,7 @@ public class UserServiceImpl implements UserService {
         }
         //修改操作
         User user = userMapper.selectById(userDTO.getId());
-        if(userDTO.getPassword()!=null){
+        if (userDTO.getPassword() != null) {
             String password = DigestUtils.md5DigestAsHex(userDTO.getPassword().getBytes());
             userDTO.setPassword(password);
         }
@@ -351,6 +362,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .isDel(ISDEL)
                 .id(id)
+                .cancelTime(LocalDate.now())
                 .build();
 
         handleLogicalDelUserSession(id);
@@ -365,7 +377,7 @@ public class UserServiceImpl implements UserService {
 
         List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
 
-        if(aiSessions!=null&& !aiSessions.isEmpty()){
+        if (aiSessions != null && !aiSessions.isEmpty()) {
             aiSessions.forEach(session -> {
                 session.setIsDel(ISDEL);
             });
@@ -383,6 +395,89 @@ public class UserServiceImpl implements UserService {
         userMapper.updateByLogicalDelIds(ids);
 
         ids.forEach(this::handleLogicalDelUserSession);
+
+    }
+
+    @Override
+    public List queryUserRegisterInfo(LocalDateTime start) {
+
+        return userMapper.getUserReport(start);
+    }
+
+    @Override
+    public List<EmailReportVO> getEmailStats() {
+        return userMapper.getEmailReport();
+    }
+
+    @Override
+    public void getUserReportExcel(HttpServletResponse response) {
+
+        List<Map<String, Object>> maps = userMapper.queryTemplateReport();
+//[{enable=1, is_del=1, count(*)=523}, {enable=0, is_del=0, count(*)=475}, {enable=1, is_del=0, count(*)=5}]
+        Integer userRegCount = 0;
+        Integer userDelCount = 0;
+        Integer userIllegalCount=0;
+        Integer number=0;
+
+        for (Map<String, Object> map : maps) {
+            int enable =(( Integer) map.get("enable") );
+            int isDel =(( Integer) map.get("is_del") );
+            int count =(( Long) map.get("count") ).intValue();
+            number+=count;
+            if(isDel==0) userDelCount+=count;
+            if(enable==0) userIllegalCount+=count;
+        }
+        userRegCount=number-userDelCount;
+
+
+        //导出excel 获得类加载器的输入流,获取资源路径 资源根路径
+        InputStream is = this.getClass().getClassLoader().getResourceAsStream("templates/xlsx/用户模板.xlsx");
+        //创建excel对象
+        try {
+            XSSFWorkbook excel = new XSSFWorkbook(is);
+            //获取模板的标签页
+            XSSFSheet sheet = excel.getSheet("Sheet1");
+            //写入日期
+            sheet.getRow(1).getCell(1).setCellValue("报表日期:" + LocalDate.now() );
+            //获取行
+            XSSFRow row = sheet.getRow(3);
+            row.getCell(2).setCellValue(userRegCount);
+            row.getCell(4).setCellValue(userDelCount);
+            row.getCell(6).setCellValue((userDelCount.doubleValue()/number));
+            //获取行
+            row = sheet.getRow(4);
+            row.getCell(2).setCellValue(userIllegalCount);
+
+            List<User> userList = userMapper.queryAllUser(null);
+
+            //批量加入三十天前每一天的
+            for (int i = 0; i < userList.size(); i++) {
+                //获取行
+                User user = userList.get(i);
+                row = sheet.getRow(7 + i);
+
+                if(row==null){
+                    sheet.createRow(7 + i);
+                }
+
+                row.getCell(1).setCellValue(user.getId());//id
+                row.getCell(2).setCellValue(user.getNickName());//用户名
+                row.getCell(3).setCellValue(user.getEmail());//邮箱
+                row.getCell(4).setCellValue(user.getPoints());//积分
+                row.getCell(5).setCellValue(user.getEnable()==1?"否":"是");//是否违规
+                row.getCell(6).setCellValue(user.getRegisterTime());//注册时间
+            }
+
+            //获取网页端 输出流 写出数据
+            ServletOutputStream os = response.getOutputStream();
+            //关流
+            excel.write(os);
+            os.close();
+            excel.close();
+            is.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
