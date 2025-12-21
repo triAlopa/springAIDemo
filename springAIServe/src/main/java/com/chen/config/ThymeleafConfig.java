@@ -1,5 +1,6 @@
 package com.chen.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -49,13 +50,14 @@ public class ThymeleafConfig {
     }
 
     @Bean
-    public SpringTemplateEngine springTemplateEngine() {
+    public SpringTemplateEngine springTemplateEngine( @Qualifier("iTemplateResolver1") ITemplateResolver iTemplateResolver1,
+                                                      @Qualifier("iTemplateResolver2") ITemplateResolver iTemplateResolver2) {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         Set<ITemplateResolver> resolvers=new HashSet<>();
         //先添加1
-        resolvers.add(iTemplateResolver1());
+        resolvers.add(iTemplateResolver1);
         //在添加2
-        resolvers.add(iTemplateResolver2());
+        resolvers.add(iTemplateResolver2);
         engine.setTemplateResolvers(resolvers);
         return engine;
     }

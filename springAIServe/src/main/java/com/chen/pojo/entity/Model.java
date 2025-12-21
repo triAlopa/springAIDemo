@@ -30,7 +30,7 @@ public class Model implements Serializable {
     /**
      * 人物模型id
      */
-    private Integer modelId;
+    private String modelId;
 
     /**
      * 附属公司id 关联表

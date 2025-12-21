@@ -1,12 +1,11 @@
 package com.chen;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.UUID;
-import cn.hutool.core.net.url.UrlBuilder;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.chen.constant.UserConstant;
 import com.chen.mapper.*;
 import com.chen.pojo.dto.AISessionDTO;
@@ -14,70 +13,34 @@ import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.*;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.properties.TencentMapProperties;
-import com.chen.pojo.vo.AIMessageVO;
 import com.chen.service.UserService;
 import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
 import com.chen.util.TencentMapUtil;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Resource;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validator;
 import lombok.SneakyThrows;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.assertj.core.util.Maps;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.chat.messages.MessageType;
-import org.springframework.ai.document.Document;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.util.DigestUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.templateresolver.DefaultTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
-import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.Flow;
 import java.util.regex.Pattern;
 
-import static com.chen.constant.RedisConstant.USER_LOGIN;
-import static com.chen.constant.TencentConstant.TENCENT_API_KEY;
-import static com.chen.constant.TencentConstant.TENCENT_LOCATION;
+import static com.chen.constant.TencentConstant.*;
 import static com.chen.constant.UserConstant.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -294,6 +257,10 @@ class SpringAiDemoApplicationTests {
 
 
     @Autowired
+    @Qualifier("iTemplateResolver2")
+    private ITemplateResolver iTemplateResolver;
+
+    @Autowired
     private TemplateEngine templateEngine;
 
     @Test
@@ -305,46 +272,48 @@ class SpringAiDemoApplicationTests {
         // 你招聘的工作标签为${model-company-jobTag}，员工福利有${model-company-benefits}。
 
 
-        /*List<Model> models = modelMapper.queryAllModels();
+        templateEngine.setTemplateResolver(iTemplateResolver);
+
+        List<Model> models = modelMapper.queryAllModels();
         for (Model model : models) {
             String companyId = model.getCompanyId();
             Company company = companyMapper.selectCompanyId(companyId);
-            Context ctx=new Context();
+            Context ctx = new Context();
             Map<String, Object> data = new HashMap<>();
             data.put("modelName", model.getName());
-            if(model.getTemperature()>=0.0&&model.getTemperature()<=0.7){
+            if (model.getTemperature() >= 0.0 && model.getTemperature() <= 0.7) {
                 data.put("modelPersonality", "强硬型");
-            }else if(model.getTemperature()>0.7&&model.getTemperature()<=1.5){
+            } else if (model.getTemperature() > 0.7 && model.getTemperature() <= 1.5) {
                 data.put("modelPersonality", "幽默型");
-            }else if(model.getTemperature()>1.5&&model.getTemperature()<=2.0){
+            } else if (model.getTemperature() > 1.5 && model.getTemperature() <= 2.0) {
                 data.put("modelPersonality", "卑微型");
             }
             data.put("modelCompanyName", company.getName());
 
-            Map<String,String> map=new TreeMap<>();
-            map.put(TENCENT_LOCATION,company.getAddress());
+            Map<String, String> map = new TreeMap<>();
+            map.put(TENCENT_LOCATION, company.getAddress());
             String apiKey = tencentMapProperties.getApiKey();
-            map.put(TENCENT_API_KEY,apiKey);
+            map.put(TENCENT_API_KEY, apiKey);
             String address = TencentMapUtil.generateAddress(map, tencentMapProperties.getSecretKey());
             data.put("modelCompanyAddress", address);
             data.put("modelCompanyLowSalary", company.getLowSalary());
             data.put("modelCompanyHighSalary", company.getHighSalary());
-            data.put("modelCompanyJobTag",company.getJobTag());
-            data.put("modelCompanyBenefits",company.getEmployerBenefit());
+            data.put("modelCompanyJobTag", company.getJobTag());
+            data.put("modelCompanyBenefits", company.getEmployerBenefit());
             ctx.setVariables(data);
-            String process = springTemplateEngine.process("ModelPrompt.txt", ctx);
+            String process = templateEngine.process("ModelPrompt.txt", ctx);
             System.out.println(process);
 
             model.setDescription(process);
-            modelMapper.update(model);*/
+            modelMapper.update(model);
 
-        Context ctx = new Context();
+     /*   Context ctx = new Context();
         ctx.setVariable("companyName", "邦邦科技");
         ctx.setVariable("jobTitle", "孔孟");
         ctx.setVariable("salary", "30K");
         String process = templateEngine.process("generateOffer.html", ctx);
-        System.out.println(process);
-
+        System.out.println(process);*/
+        }
     }
 
     @Test
@@ -366,15 +335,15 @@ class SpringAiDemoApplicationTests {
             DateTime startDate = DateUtil.parse("2000-01-01");  // 月份从0开始
             DateTime randomDate = RandomUtil.randomDate(startDate, DateField.DAY_OF_YEAR, 1, 360);
             String[] strings = {
-                    "@qq.com","@163.com","@gmail.com","@outlook.com","@edu.cn","@126.com",
-                    "@yahoo.com.cn","@sina.com","@sohu.com"
+                    "@qq.com", "@163.com", "@gmail.com", "@outlook.com", "@edu.cn", "@126.com",
+                    "@yahoo.com.cn", "@sina.com", "@sohu.com"
             };
-            String email = RandomUtil.randomString(10)+strings[RandomUtil.randomInt(0, strings.length)];
+            String email = RandomUtil.randomString(10) + strings[RandomUtil.randomInt(0, strings.length)];
 
             String[] images = {"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo1.jpg"
-                ,"https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo22.jpg",
-            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo2223.jpg",
-            "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/gfe233.jpg",
+                    , "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo22.jpg",
+                    "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/demo2223.jpg",
+                    "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/gfe233.jpg",
             };
 
             String img = images[RandomUtil.randomInt(0, images.length)];
@@ -397,14 +366,35 @@ class SpringAiDemoApplicationTests {
     }
 
     @Test
-    void testUserReport(){
+    void testUserReport() {
 
         List<Map<String, Object>> maps = userMapper.queryTemplateReport();
 
 
-
         System.out.println(maps);
 
+
+    }
+
+    @Test
+    void testTencentMaps() {
+        Map<String,String> map=new TreeMap<>();
+        map.put(TENCENT_ADDRESS,"北京市东城区正义路");
+        String apiKey = tencentMapProperties.getApiKey();
+        map.put(TENCENT_API_KEY,apiKey);
+        String location = TencentMapUtil.parseAddress(map, tencentMapProperties.getSecretKey());
+        System.out.println(location);
+    }
+
+    @Test
+    void testCompanyTag(){
+
+
+
+        List<String> tag= List.of("数据科学家","算法","数据分析");
+
+        String join = StrUtil.join(" ",tag);
+        System.out.println(join);
 
     }
 

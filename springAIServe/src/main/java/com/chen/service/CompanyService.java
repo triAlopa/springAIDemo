@@ -13,4 +13,11 @@ public interface CompanyService {
 
 
     CompanyVO querySingleInfo(String companyId);
+
+    void updateCompanyWithModels(CompanyVO companyVO);
+
+    void insertCompanyWithModels(CompanyVO companyVO);
+
+    void delCompanyWithModels(String companyId);
+
 }

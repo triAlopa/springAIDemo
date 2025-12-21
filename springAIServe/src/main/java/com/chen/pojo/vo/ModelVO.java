@@ -22,7 +22,7 @@ public class ModelVO implements Serializable {
     /**
      * 人物模型id
      */
-    private Integer modelId;
+    private String modelId;
     /**
      * hr的名称
      */
@@ -35,6 +35,7 @@ public class ModelVO implements Serializable {
     private String openMessage;
     private String remark;
     private CompanyVO company;
+    private Integer enable;
 
     
 }

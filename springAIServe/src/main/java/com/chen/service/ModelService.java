@@ -10,7 +10,7 @@ public interface ModelService {
      * @param modelId
      * @return
      */
-    ModelVO queryModelWithCompany(Integer modelId);
+    ModelVO queryModelWithCompany(String modelId);
 
     void handelCompanyAddress(Company company);
 }

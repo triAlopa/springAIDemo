@@ -25,7 +25,7 @@ public class ModelController {
     @Operation(summary = "用户查询聊天窗口对应的hr及公司信息")
     @GetMapping("/user")
     @LogOperation
-    public Result<ModelVO> queryModelWithCompany(@RequestParam Integer modelId){
+    public Result<ModelVO> queryModelWithCompany(@RequestParam String modelId){
 
         log.info("用户查询 Id为:{}的hr", modelId);
 

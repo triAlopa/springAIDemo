@@ -7,5 +7,7 @@ public class TencentConstant {
     public static final String CONNECT_TENCENT_MAP_ERR="腾讯地图api调用失败";
 
     public static final String TENCENT_LOCATION="location";
+    public static final String TENCENT_ADDRESS="address";
+
     public static final String TENCENT_API_KEY="key";
 }

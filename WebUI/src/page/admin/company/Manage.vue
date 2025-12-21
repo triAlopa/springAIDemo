@@ -3,7 +3,7 @@ import {ref, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
 import {ArrowUp, ArrowDown, Plus, Delete, InfoFilled} from '@element-plus/icons-vue'
 import {ElMessage} from "element-plus"
-import {queryAllCompanyApi, delSingleCompanyApi, batchDelCompanyApi} from '@/api/company.js'
+import {queryAllCompanyApi, DelCompanyApi} from '@/api/company.js'
 
 const isSearchShow = ref(true)
 const tableData = ref([])
@@ -13,7 +13,7 @@ const router = useRouter()
 const queryForm = ref({
   name: '',
   type: '',
-  pageSize: 10,
+  pageSize: 5,
   pageNum: 1
 })
 
@@ -43,7 +43,7 @@ const handleSelectionChange = (val) => {
 }
 
 const confirmDelete = async (companyId) => {
-  const result = await delSingleCompanyApi(companyId)
+  const result = await DelCompanyApi(companyId)
   if (result.code === 200) {
     ElMessage.success("删除成功")
     queryAllCompany()
@@ -101,7 +101,7 @@ onMounted(queryAllCompany)
               <el-tag v-if="scope.row.type===1" type="info" >{{'初创公司'}}</el-tag>
               <el-tag v-else-if="scope.row.type===2" type="success" >{{'上市公司'}}</el-tag>
               <el-tag v-else-if="scope.row.type===3" type="primary" >{{'500强公司'}}</el-tag>
-              <el-tag v-else  type="success" >{{'null型公司'}}</el-tag>
+              <el-tag v-else  type="danger" >{{'null型公司'}}</el-tag>
             </template>
           </el-table-column>
 
@@ -152,7 +152,8 @@ onMounted(queryAllCompany)
             v-model:current-page="queryForm.pageNum"
             v-model:page-size="queryForm.pageSize"
             :total="total"
-            layout="total, prev, pager, next"
+            :page-sizes="[5, 10, 15, 20]"
+            layout="total, sizes, prev, pager, next, jumper"
             @current-change="queryAllCompany"
         />
       </div>

@@ -47,7 +47,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "400", description = "用户填入表单&业务逻辑错误")
     })
-    @LogOperation
     public Result<String> register(@Validated(UserDTO.onRegister.class) @RequestBody @Schema UserDTO user,
                                    HttpServletResponse response) {
 
@@ -71,7 +70,6 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "用户填入表单&业务逻辑错误"),
             @ApiResponse(responseCode = "404", description = "找不到用户")
     })
-    @LogOperation
     public Result<String> login(@Validated(UserDTO.onLogin.class) @RequestBody UserDTO user) {
 
         log.info("用户请求登录：{}", user);
@@ -94,7 +92,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "500", description = "邮件发送者配置错误")
     })
-    @LogOperation
     public Result<String> sendEmailCode(@Schema @PathVariable @NotNull String nickName, @RequestParam("email") @Schema @Email(
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
             message = "邮箱格式错误!"
@@ -113,7 +110,6 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "500", description = "redis繁忙 业务逻辑")
     })
-    @LogOperation
     public Result<String> sendLoginCode(@PathVariable(name = "email") @Email(
             regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
             message = "邮箱格式错误!"

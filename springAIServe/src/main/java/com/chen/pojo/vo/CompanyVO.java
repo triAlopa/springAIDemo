@@ -46,10 +46,11 @@ public class CompanyVO {
      * 职位具体要求
      */
     private String jobDesc;
+    private Integer enable;
     /**
      * 员工福利 用空格隔开
      */
-    private List<String>  employerBenefit;
+    private List<String> employerBenefit;
 
     private List<ModelVO> models;
 

@@ -45,7 +45,7 @@ public class ModelServiceImpl implements ModelService {
      * @return
      */
     @Override
-    public ModelVO queryModelWithCompany(Integer modelId) {
+    public ModelVO queryModelWithCompany(String modelId) {
         Model model = modelMapper.queryModelById(modelId);
 
         if (model == null) {

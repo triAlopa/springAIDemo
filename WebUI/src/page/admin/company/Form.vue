@@ -4,7 +4,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {ArrowLeft, Check, Plus, Delete} from '@element-plus/icons-vue'
 import {ElMessage} from 'element-plus'
 
-import {querySingleCompanyApi} from '@/api/company.js'
+import {querySingleCompanyApi, UpdateCompanyApi, SaveCompanyApi} from '@/api/company.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -12,7 +12,7 @@ const formRef = ref(null)
 const companyId = computed(() => route.params.id)
 const isEdit = computed(() => !!companyId.value)
 
-// 表单数据定义
+
 const companyForm = ref({
   name: '',
   type: 1,
@@ -20,27 +20,26 @@ const companyForm = ref({
   lowSalary: 10,
   highSalary: 20,
   address: '',
-  jobTag: '',
+  jobTag: [],
   jobDesc: '',
-  employerBenefit: '',
-  enable: 1,
-  // 动态 HR 列表 (对应 tb_ai_model)
+  employerBenefit: [],
   models: []
 })
 
-// 添加 HR 行
+
 const addHr = () => {
   companyForm.value.models.push({
     name: '',
     description: '',
     temperature: 1.0,
-    open_message: '',
+    openMessage: '',
     image: '',
-    remark: ''
+    remark: '',
+    enable: 1
   })
 }
 
-// 删除 HR 行
+
 const removeHr = (index) => {
   companyForm.value.models.splice(index, 1)
 }
@@ -50,8 +49,11 @@ const fetchCompanyInfo = async () => {
     const res = await querySingleCompanyApi(companyId.value)
     if (res.code === 200) {
       companyForm.value = res.data
-      // 确保 hrList 存在
       if (!companyForm.value.models) companyForm.value.models = []
+      if (!companyForm.value.jobTag) companyForm.value.jobTag = []
+      if (!companyForm.value.employerBenefit) companyForm.value.employerBenefit = []
+    } else {
+      ElMessage.warning(res.msg)
     }
   }
 }
@@ -59,28 +61,40 @@ const fetchCompanyInfo = async () => {
 const submitForm = async () => {
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      const res = await saveOrUpdateCompanyApi(companyForm.value)
-      if (res.code === 200) {
-        ElMessage.success('操作成功')
-        router.push('/admin/company/manage')
+      if (isEdit.value) {
+        const res = await UpdateCompanyApi(companyForm.value)
+        if (res.code === 200) {
+          ElMessage.success('操作成功')
+          router.push('/admin/company/manage')
+        }
+      }else {
+        const res=await SaveCompanyApi(companyForm.value)
+        if (res.code === 200) {
+          ElMessage.success('操作成功')
+          router.push('/admin/company/manage')
+        }
       }
     }
   })
 }
 
-const handleAvatarSuccess = (response) => {
-
-  userForm.value.image = response.data
-  ElMessage.success('头像上传成功')
+const handleAvatarSuccess = (response, hr) => {
+  if (response.code === 200) {
+    hr.image = response.data
+    ElMessage.success('头像上传成功')
+  }
 }
 
+const rules = {
+  name: [{required: true, message: '请输入用户名', trigger: 'blur'}],
 
+  type: [{required: !isEdit.value, message: '选择规模', trigger: 'blur'}],
 
-// 上传前校验
+  address: [{required: !isEdit.value, message: '请输入地址', trigger: 'blur'}]
+
+}
+
 const beforeAvatarUpload = (rawFile) => {
-
-
-
   const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg']
   if (!allowedTypes.includes(rawFile.type)) {
     ElMessage.error('头像只能是 JPG 或 PNG 格式!')
@@ -92,10 +106,9 @@ const beforeAvatarUpload = (rawFile) => {
   return true
 }
 
-const uploadHeaders=ref({
-  authorization:JSON.parse(localStorage.getItem('userToken'))
+const uploadHeaders = ref({
+  authorization: JSON.parse(localStorage.getItem('userToken'))
 })
-
 
 onMounted(fetchCompanyInfo)
 </script>
@@ -111,13 +124,13 @@ onMounted(fetchCompanyInfo)
         </div>
       </template>
 
-      <el-form ref="formRef" :model="companyForm" label-width="100px" size="large">
+      <el-form ref="formRef" :model="companyForm" label-width="100px" size="large" :rules="rules">
         <h3 class="section-title">基础信息</h3>
         <div class="form-grid">
           <el-form-item label="公司名称" prop="name" required>
             <el-input v-model="companyForm.name"/>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item label="类型" prop="type">
             <el-radio-group v-model="companyForm.type">
               <el-radio :label="1">初创</el-radio>
               <el-radio :label="2">上市</el-radio>
@@ -132,16 +145,27 @@ onMounted(fetchCompanyInfo)
               <span>k</span>
             </div>
           </el-form-item>
-          <el-form-item label="公司地址">
-            <el-input v-model="companyForm.address" placeholder="经纬度或详细地址"/>
+          <el-form-item label="公司地址" prop="address">
+            <el-input v-model="companyForm.address" placeholder="地址"/>
           </el-form-item>
+
           <el-form-item label="职位标签">
-            <el-input v-model="companyForm.jobTag" placeholder="多个标签用空格隔开"/>
+            <el-select
+                v-model="companyForm.jobTag"
+                multiple filterable allow-create default-first-option
+                placeholder="请输入并回车添加"
+                style="width: 100%"
+            />
           </el-form-item>
           <el-form-item label="福利待遇">
-            <el-input v-model="companyForm.employerBenefit" placeholder="多个福利用空格隔开"/>
+            <el-select
+                v-model="companyForm.employerBenefit"
+                multiple filterable allow-create default-first-option
+                placeholder="请输入并回车添加"
+                style="width: 100%"
+            />
           </el-form-item>
-          <el-form-item label="职位描述">
+          <el-form-item label="职位描述" class="full-width">
             <el-input v-model="companyForm.jobDesc" type="textarea" rows="3"/>
           </el-form-item>
         </div>
@@ -165,26 +189,35 @@ onMounted(fetchCompanyInfo)
             <el-form-item label="创意度">
               <el-slider v-model="hr.temperature" :min="0" :max="2.0" :step="0.1" show-input/>
             </el-form-item>
-            <el-form-item label="hr头像">
+
+            <el-form-item label="HR头像">
               <el-upload
                   class="avatar-uploader"
                   action="/api/user/upload"
                   :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
+                  :on-success="(res) => handleAvatarSuccess(res, hr)"
                   :before-upload="beforeAvatarUpload"
                   :headers="uploadHeaders"
               >
                 <img v-if="hr.image" :src="hr.image" class="avatar"/>
-                <el-icon size="large" v-else class="avatar-uploader-icon ">
+                <el-icon v-else class="avatar-uploader-icon">
                   <Plus/>
                 </el-icon>
               </el-upload>
+            </el-form-item>
+
+            <el-form-item label="状态">
+              <el-switch
+                  v-model="hr.enable"
+                  :active-value="1" :inactive-value="0"
+                  active-text="开启" inactive-text="关闭"
+              />
             </el-form-item>
             <el-form-item label="开场白" class="full-width">
               <el-input v-model="hr.openMessage" type="textarea" rows="2" placeholder="AI开场白"/>
             </el-form-item>
             <el-form-item label="备注" class="full-width">
-              <el-input v-model="hr.remark" type="textarea" rows="2" placeholder="描述用于AI提示词"/>
+              <el-input v-model="hr.remark" type="textarea" rows="2" placeholder="备注信息"/>
             </el-form-item>
           </div>
         </div>
@@ -199,6 +232,7 @@ onMounted(fetchCompanyInfo)
 </template>
 
 <style scoped>
+
 .form-page-container {
   padding: 20px;
   background-color: #f5f7fa;
@@ -261,5 +295,31 @@ onMounted(fetchCompanyInfo)
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+
+/* 头像上传特定样式 */
+.avatar-uploader :deep(.el-upload) {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
 }
 </style>

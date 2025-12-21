@@ -9,10 +9,7 @@ import com.chen.service.CompanyService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -48,6 +45,39 @@ public class CompanyController {
         CompanyVO companyVO =companyService.querySingleInfo(companyId);
 
         return Result.success(companyVO);
+    }
+
+    @PutMapping
+    public Result updateCompanyWithModels(@RequestBody CompanyVO companyVO) {
+
+        log.info("请求修改公司以及hr,参数为{}", companyVO);
+
+        companyService.updateCompanyWithModels(companyVO);
+
+        return Result.success();
+
+    }
+
+    @PostMapping
+    public Result insertCompanyWithModels(@RequestBody CompanyVO companyVO) {
+
+        log.info("请求添加公司以及hr,参数为{}", companyVO);
+
+        companyService.insertCompanyWithModels(companyVO);
+
+        return Result.success();
+
+    }
+
+    @DeleteMapping
+    public Result delCompanyWithModels(@RequestParam String companyId) {
+
+        log.info("请求删除公司以及hr,参数为{}", companyId);
+
+        companyService.delCompanyWithModels(companyId);
+
+        return Result.success();
+
     }
 
 }

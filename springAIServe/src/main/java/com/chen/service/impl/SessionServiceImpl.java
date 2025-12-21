@@ -102,9 +102,8 @@ public class SessionServiceImpl implements SessionService {
         if (aiSessions == null || aiSessions.isEmpty()) {
             Model model = models.get(0);
             //model_id
-            Integer modelId = model.getModelId();
-            String id = String.valueOf(modelId);
-            aiSessionDTO.setModelId(id);
+            String modelId = model.getModelId();
+            aiSessionDTO.setModelId(modelId);
             //处理session的标题
             String name = model.getName();
             aiSessionDTO.setSessionTitle(name);
@@ -123,17 +122,17 @@ public class SessionServiceImpl implements SessionService {
                 .collect(Collectors.toList());
 
         Model model = new Model();
-        Optional<Integer> first = models.stream()
+        Optional<String> first = models.stream()
                 .map(Model::getModelId)
                 //😅别指望你的同事 我一个人写类型都不可以保持一致，气笑了
-                .filter(id -> !userModelList.contains(String.valueOf(id)))
+                .filter(id -> !userModelList.contains(id))
                 .findFirst();
 
         if (first.isPresent()) {
             first.ifPresent(id->handleModel(id, model));
         }
         //表示该用户model列表都使用了
-        Integer modelId = model.getModelId();
+        String modelId = model.getModelId();
         if(modelId==null){
             throw new ModelBusinessException(MODEL_NOTFOUND,NOT_FOUND);
         }
@@ -158,7 +157,7 @@ public class SessionServiceImpl implements SessionService {
      * @param modelId
      * @param model
      */
-    private void handleModel(Integer modelId,Model model) {
+    private void handleModel(String modelId,Model model) {
         Model queried= modelMapper.queryModelById(modelId);
         BeanUtil.copyProperties(queried, model);
     }

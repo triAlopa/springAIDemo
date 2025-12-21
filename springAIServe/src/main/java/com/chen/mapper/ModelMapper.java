@@ -1,6 +1,7 @@
 package com.chen.mapper;
 
 import com.chen.pojo.entity.Model;
+import com.chen.pojo.vo.ModelVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -23,7 +24,7 @@ public interface ModelMapper {
     List<Model> queryAllModel();
 
     @Select("select  * from tb_ai_model where model_id=#{modelId}")
-    Model queryModelById(Integer modelId);
+    Model queryModelById(String modelId);
 
     @Select("select * from  tb_ai_model")
     List<Model> queryAllModels();
@@ -31,9 +32,13 @@ public interface ModelMapper {
     @Update("update tb_ai_model set description=#{description}    where model_id=#{modelId}")
     void update(Model model);
 
-    @Select("select  * from tb_ai_model where company_id=#{companyId}")
+    @Select("select  * from tb_ai_model where company_id=#{companyId}  and is_del=1")
     List<Model> selectByCompanyId(String companyId);
- }
+
+    void delByLogical(List<String> ids);
+
+    void batchInsertModel(List<Model> models);
+}
 
 
 

@@ -26,4 +26,35 @@
         temperature,open_message,enable,is_del,remark,
         created_time,update_time,update_user_id
     </sql>
+    <insert id="batchInsertModel">
+        insert into tb_ai_model(model_id, company_id, name,
+                                description, image, temperature, open_message,
+                                enable, is_del, remark,
+                               update_time, update_user_id) VALUES
+        <foreach collection="models" item="model" open="(" close=")"  separator=") , (">
+           #{model.modelId}, #{model.companyId},#{model.name},#{model.description},
+           #{model.image}, #{model.temperature},#{model.openMessage},#{model.enable},
+           #{model.isDel}, #{model.remark},#{model.updateTime},#{model.updateUserId}
+        </foreach>
+#         nto tb_ai_model(model_id, company_id, name,
+        #         description, image, temperature, open_message,
+        #         enable, is_del, remark,
+        #         update_time, update_user_id) VALUES          (
+        #         model.modelId, model.companyId , model.name, model.description, model.image,
+        #         model.temperature, model.openMessage, model.enable, model.isDel,
+        #         model.remark, model.updateTime, model.updateUserId          ,
+        #         model.modelId, model.companyId , model.name, model.description, model.image,
+        #         model.temperature, model.openMessage, model.enable, model.isDel,
+        #         model.remark, model.updateTime, model.updateUserId          )
+    </insert>
+    <update id="delByLogical">
+        update tb_ai_model
+        set is_del=0
+        <where>
+            model_id in
+            <foreach collection="ids" item="item" open="(" close=")"  separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </update>
 </mapper>
