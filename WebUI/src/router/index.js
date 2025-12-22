@@ -13,6 +13,8 @@ import UserForm  from '../page/admin/user/Form.vue'
 import CompanyManage  from '../page/admin/company/Manage.vue'
 import CompanyForm  from '../page/admin/company/Form.vue'
 
+import LogTable  from '../page/admin/log/Table.vue'
+
 
 // 创建路由器实例
 const router = createRouter({
@@ -71,14 +73,18 @@ const router = createRouter({
                         },
                         {
                             path: 'add',
-                            component: CompanyForm // 同一个表单组件
+                            component: CompanyForm
                         },
                         {
-                            path: 'edit/:id', // 动态 ID 路径
+                            path: 'edit/:id',
                             component: CompanyForm
                         }
                     ],
                 },
+                {
+                    path: 'log',
+                    component: LogTable
+                }
             ]
         }
     ]

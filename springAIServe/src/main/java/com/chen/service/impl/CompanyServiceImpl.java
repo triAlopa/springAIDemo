@@ -156,6 +156,7 @@ public class CompanyServiceImpl implements CompanyService {
         company.setJobTag(StrUtil.join(" ", companyVO.getJobTag()));
         company.setEmployerBenefit(StrUtil.join(" ", companyVO.getEmployerBenefit()));
         company.setCompanyId("COMP_"+UUID.randomUUID().toString(true).substring(0,5));
+        companyMapper.insert(company);
 
         if(companyVO.getModels()==null||companyVO.getModels().isEmpty()){
             return;
@@ -176,7 +177,6 @@ public class CompanyServiceImpl implements CompanyService {
                 }).toList();
 
         handleCompanyParseAddress(company);
-        companyMapper.insert(company);
         modelMapper.batchInsertModel(list);
 
 

@@ -22,6 +22,7 @@
           </template>
           <el-menu-item index="company/manage">管理</el-menu-item>
         </el-sub-menu>
+        <el-menu-item index="log">日志</el-menu-item>
       </el-menu>
 
     </el-aside>
@@ -30,12 +31,10 @@
       <el-main style="padding:16px;overflow:auto">
         <div style="margin : 0 0 20px 10px">
           <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/admin/table' }">homepage</el-breadcrumb-item>
-            <el-breadcrumb-item>
-              <a href="/">promotion management</a>
-            </el-breadcrumb-item>
-            <el-breadcrumb-item>promotion list</el-breadcrumb-item>
-            <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/admin/user/manage' }">用户管理</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/admin/company/manage' }">公司管理</el-breadcrumb-item>
+            <el-breadcrumb-item :to="{ path: '/admin/log' }">日志查看</el-breadcrumb-item>
+            <el-breadcrumb-item  >快捷窗口</el-breadcrumb-item>
           </el-breadcrumb>
         </div>
         <router-view/>

@@ -2,6 +2,7 @@ package com.chen.aspect;
 
 import cn.hutool.core.util.StrUtil;
 import com.chen.mapper.OperateLogMapper;
+import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.OperateLog;
 import com.chen.service.UserService;
 import com.chen.util.CurrentUserHolder;
@@ -40,7 +41,8 @@ public class LogAspect   {
 
         // 构建日志对象
         OperateLog operateLog = new OperateLog();
-        operateLog.setOperateId(CurrentUserHolder.getCurrentUser().getId()); // 需要实现 getCurrentUserId 方法
+        UserDTO userDTO = CurrentUserHolder.getCurrentUser();
+        operateLog.setOperateId(userDTO !=null ? userDTO.getId() : null); // 需要实现 getCurrentUserId 方法
         operateLog.setOperateTime(LocalDateTime.now());
         operateLog.setClassName(joinPoint.getTarget().getClass().getName());
         operateLog.setMethodName(joinPoint.getSignature().getName());

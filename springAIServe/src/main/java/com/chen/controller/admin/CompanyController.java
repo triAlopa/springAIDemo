@@ -1,5 +1,6 @@
 package com.chen.controller.admin;
 
+import com.chen.aspect.LogOperation;
 import com.chen.pojo.PageResult;
 import com.chen.pojo.Result;
 import com.chen.pojo.dto.QueryCompanyDTO;
@@ -27,6 +28,7 @@ public class CompanyController {
 
 
     @GetMapping
+    @LogOperation
     public Result<PageResult<List<CompanyVO>>> queryAllCompany(QueryCompanyDTO queryCompanyDTO) {
 
         log.info("请求查询用户,参数为{}", queryCompanyDTO);
@@ -38,6 +40,7 @@ public class CompanyController {
     }
 
     @GetMapping("/single")
+    @LogOperation
     private Result<CompanyVO> querySingleCompany(@RequestParam String companyId) {
 
         log.info("请求查询公司id为：{}的详细信息", companyId);
@@ -48,6 +51,7 @@ public class CompanyController {
     }
 
     @PutMapping
+    @LogOperation
     public Result updateCompanyWithModels(@RequestBody CompanyVO companyVO) {
 
         log.info("请求修改公司以及hr,参数为{}", companyVO);
@@ -59,6 +63,7 @@ public class CompanyController {
     }
 
     @PostMapping
+    @LogOperation
     public Result insertCompanyWithModels(@RequestBody CompanyVO companyVO) {
 
         log.info("请求添加公司以及hr,参数为{}", companyVO);
@@ -70,6 +75,7 @@ public class CompanyController {
     }
 
     @DeleteMapping
+    @LogOperation
     public Result delCompanyWithModels(@RequestParam String companyId) {
 
         log.info("请求删除公司以及hr,参数为{}", companyId);

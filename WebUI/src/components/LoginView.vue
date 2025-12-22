@@ -367,7 +367,7 @@ function sendEmailWithSeconds() {
             </div>
         </div>
 
-        <!-- Right Side: Login/Registration Form.vue -->
+        <!-- Right Side: Login/Registration Table.vue -->
         <!-- Fix: Login box background and border color using darkSurface -->
         <div
             class="w-[15%] min-w-[300px] h-full bg-white/80 dark:bg-darkSurface/90 backdrop-blur-md border-l border-gray-200 dark:border-gray-700 flex flex-col p-6 shadow-2xl z-30">

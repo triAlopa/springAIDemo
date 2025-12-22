@@ -47,6 +47,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "成功"),
             @ApiResponse(responseCode = "400", description = "用户填入表单&业务逻辑错误")
     })
+    @LogOperation
     public Result<String> register(@Validated(UserDTO.onRegister.class) @RequestBody @Schema UserDTO user,
                                    HttpServletResponse response) {
 
@@ -63,6 +64,7 @@ public class UserController {
      * @param user
      * @return
      */
+    @LogOperation
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "用户填入信息获取数据库进行校验")
     @ApiResponses({
@@ -86,6 +88,7 @@ public class UserController {
      * @param email
      * @return
      */
+    @LogOperation
     @PostMapping("/emailCode/{nickName}")
     @Operation(summary = "用户注册邮箱验证", description = "请求发送邮箱验证")
     @ApiResponses({
@@ -104,6 +107,7 @@ public class UserController {
         return Result.success("发送成功，查看你的邮箱");
     }
 
+    @LogOperation
     @GetMapping("/login/{email}")
     @Operation(summary = "用户登录验证码", description = "请求后端绑定对应的验证码")
     @ApiResponses({
@@ -121,6 +125,7 @@ public class UserController {
 
         return Result.success(code);
     }
+
 
     @Operation(summary = "获取用户信息", description = "根据前端请求头携带token,获取用户的信息,返回前端展示")
     @ApiResponses({

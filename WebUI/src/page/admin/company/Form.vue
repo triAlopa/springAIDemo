@@ -67,8 +67,8 @@ const submitForm = async () => {
           ElMessage.success('操作成功')
           router.push('/admin/company/manage')
         }
-      }else {
-        const res=await SaveCompanyApi(companyForm.value)
+      } else {
+        const res = await SaveCompanyApi(companyForm.value)
         if (res.code === 200) {
           ElMessage.success('操作成功')
           router.push('/admin/company/manage')
@@ -90,8 +90,22 @@ const rules = {
 
   type: [{required: !isEdit.value, message: '选择规模', trigger: 'blur'}],
 
-  address: [{required: !isEdit.value, message: '请输入地址', trigger: 'blur'}]
+  address: [{required: !isEdit.value, message: '请输入地址', trigger: 'blur'}],
 
+  salary: [
+    { validator: (rule,value,callback)=>{
+      const {lowSalary,highSalary} =companyForm.value
+      if(!lowSalary || !highSalary) return;
+      if(lowSalary==='' || highSalary ===''){
+        return callback(new Error('请输入薪水'))
+      }
+
+      if(lowSalary>highSalary){
+        return callback(new Error('最低薪水不能大于最高薪水'))
+      }
+      callback();
+      },   trigger: 'blur' }
+  ]
 }
 
 const beforeAvatarUpload = (rawFile) => {
@@ -137,11 +151,11 @@ onMounted(fetchCompanyInfo)
               <el-radio :label="3">500强</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="薪资范围">
+          <el-form-item label="薪资范围" prop="salary">
             <div style="display: flex; align-items: center; gap: 10px">
-              <el-input-number v-model="companyForm.lowSalary" :min="0"/>
+              <el-input-number type="number"  v-model="companyForm.lowSalary" :min="0"/>
               <span>至</span>
-              <el-input-number v-model="companyForm.highSalary" :min="0"/>
+              <el-input-number  type="number"   v-model="companyForm.highSalary" :min="0"/>
               <span>k</span>
             </div>
           </el-form-item>
