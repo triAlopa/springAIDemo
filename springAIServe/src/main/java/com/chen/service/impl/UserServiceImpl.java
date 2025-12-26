@@ -119,7 +119,16 @@ public class UserServiceImpl implements UserService {
 
         String token = generateUserToken(user);
 
-        return token;
+        //保存redis
+        String userTokenKey =USER_TOKEN+user.getId();
+        stringRedisTemplate.opsForValue().set(
+                userTokenKey,
+                token,
+                USER_TOKEN_TTL,
+                TimeUnit.MILLISECONDS
+        );
+
+        return userTokenKey;
     }
 
     private User handleInsertByLogical(UserDTO userDTO) {
@@ -231,7 +240,16 @@ public class UserServiceImpl implements UserService {
         // 生成token 返回
         String token = generateUserToken(usr);
 
-        return token;
+        //保存redis
+        String userTokenKey =USER_TOKEN+usr.getId();
+        stringRedisTemplate.opsForValue().set(
+                userTokenKey,
+                token,
+                USER_TOKEN_TTL,
+                TimeUnit.MILLISECONDS
+        );
+        //返回key
+        return userTokenKey;
     }
 
     @Override
@@ -481,13 +499,14 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
     /**
      * 生成token
      *
      * @param user
      * @return
      */
-    private String generateUserToken(User user) {
+    public String generateUserToken(User user) {
         Map<String, Object> claims = new HashMap<>();
 
         claims.put(USER_ID, user.getId());

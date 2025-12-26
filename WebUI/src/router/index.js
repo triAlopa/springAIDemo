@@ -1,19 +1,21 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import App from '../App.vue';
 import ChatMain from '../page/user/ChatMain.vue';
 import LoginMain from '../page/user/LoginMain.vue';
+import NotFoundPage from '../page/user/404Page.vue';
+
 import ConsoleView from '../page/admin/Console.vue'
 import TableView from '../page/admin/UserPage.vue'
 import admin from '../page/admin/Admin.vue'
 
 import UserManage from '../page/admin/user/Manage.vue'
-import UserReport  from '../page/admin/user/Report.vue'
-import UserForm  from '../page/admin/user/Form.vue'
+import UserReport from '../page/admin/user/Report.vue'
+import UserForm from '../page/admin/user/Form.vue'
 
-import CompanyManage  from '../page/admin/company/Manage.vue'
-import CompanyForm  from '../page/admin/company/Form.vue'
+import CompanyManage from '../page/admin/company/Manage.vue'
+import CompanyForm from '../page/admin/company/Form.vue'
 
-import LogTable  from '../page/admin/log/Table.vue'
+import LogTable from '../page/admin/log/Table.vue'
 
 
 // 创建路由器实例
@@ -22,26 +24,26 @@ const router = createRouter({
     history: createWebHistory(),
     // 路由规则：path 与组件的映射
     routes: [
-        { 
-            path: '/Login', 
+        {
+            path: '/Login',
             component: LoginMain
-         },
-        { 
-            path: '/', 
-            redirect: '/Login' 
-        },
-        { 
-            path: '/chat', 
-            component: ChatMain 
         },
         {
-            path:'/admin',
-            component:admin,
+            path: '/',
+            redirect: '/Login'
+        },
+        {
+            path: '/chat',
+            component: ChatMain
+        },
+        {
+            path: '/admin',
+            component: admin,
             children: [
                 {
                     path: 'user',
                     name: 'user',
-                    children:[
+                    children: [
                         {
                             path: 'manage',
                             name: 'UserManage',
@@ -65,7 +67,7 @@ const router = createRouter({
                 {
                     path: 'company',
                     name: 'company',
-                    children:[
+                    children: [
                         {
                             path: 'manage',
                             name: 'CompanyManage',
@@ -86,6 +88,14 @@ const router = createRouter({
                     component: LogTable
                 }
             ]
+        },
+        {
+            path: '/:pathMatch(.*)*',
+            name: '404page',
+            component: NotFoundPage,
+            meta: {
+                title: '页面不存在'
+            }
         }
     ]
 })

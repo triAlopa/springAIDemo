@@ -18,10 +18,14 @@ import com.chen.util.CurrentUserHolder;
 import com.chen.util.TencentMapUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
@@ -30,10 +34,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.chen.constant.TencentConstant.*;
@@ -41,23 +42,35 @@ import static com.chen.constant.UserConstant.ENABLE;
 import static com.chen.constant.UserConstant.NODEL;
 
 @Service
+@Slf4j
 public class CompanyServiceImpl implements CompanyService {
 
-    @Autowired
-    private CompanyMapper companyMapper;
-
-    @Resource
-    private ModelService modelService;
-
-    @Resource
-    private ModelMapper modelMapper;
 
 
     @Autowired
+    public CompanyServiceImpl(CompanyMapper companyMapper,
+                              ModelService modelService,
+                              ModelMapper modelMapper,
+                              SpringTemplateEngine springTemplateEngine,
+                              TencentMapProperties tencentMapProperties) {
+        this.companyMapper = companyMapper;
+        this.modelService = modelService;
+        this.modelMapper = modelMapper;
+        this.springTemplateEngine = springTemplateEngine;
+        this.tencentMapProperties = tencentMapProperties;
+    }
+
+
+    private final CompanyMapper companyMapper;
+
+    private final ModelService modelService;
+
+    private final ModelMapper modelMapper;
+
     private SpringTemplateEngine springTemplateEngine;
 
-    @Autowired
     private TencentMapProperties tencentMapProperties;
+
 
 
     @Override

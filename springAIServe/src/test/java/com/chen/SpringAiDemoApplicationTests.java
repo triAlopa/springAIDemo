@@ -13,21 +13,32 @@ import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.*;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.properties.TencentMapProperties;
+import com.chen.pojo.vo.AISessionVO;
 import com.chen.service.UserService;
 import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
 import com.chen.util.TencentMapUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
+import com.github.houbb.sensitive.word.bs.SensitiveWordContext;
+import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
+import com.github.houbb.sensitive.word.support.allow.WordAllows;
+import com.github.houbb.sensitive.word.support.deny.WordDenys;
+import com.github.houbb.sensitive.word.support.result.WordLengthResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.json.JSONException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.thymeleaf.TemplateEngine;
@@ -40,6 +51,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static com.chen.constant.RedisConstant.USER_CACHE_SESSION;
 import static com.chen.constant.TencentConstant.*;
 import static com.chen.constant.UserConstant.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -378,25 +390,66 @@ class SpringAiDemoApplicationTests {
 
     @Test
     void testTencentMaps() {
-        Map<String,String> map=new TreeMap<>();
-        map.put(TENCENT_ADDRESS,"北京市东城区正义路");
+        Map<String, String> map = new TreeMap<>();
+        map.put(TENCENT_ADDRESS, "北京市东城区正义路");
         String apiKey = tencentMapProperties.getApiKey();
-        map.put(TENCENT_API_KEY,apiKey);
+        map.put(TENCENT_API_KEY, apiKey);
         String location = TencentMapUtil.parseAddress(map, tencentMapProperties.getSecretKey());
         System.out.println(location);
     }
 
     @Test
-    void testCompanyTag(){
+    void testCompanyTag() {
 
 
+        List<String> tag = List.of("数据科学家", "算法", "数据分析");
 
-        List<String> tag= List.of("数据科学家","算法","数据分析");
-
-        String join = StrUtil.join(" ",tag);
+        String join = StrUtil.join(" ", tag);
         System.out.println(join);
 
     }
 
+
+    @Autowired
+    private SensitiveWordBs sensitiveWordBs;
+
+
+    @Test
+    void testSensitiveWorld() {
+     /*   SensitiveWordBs sensitiveWordBs =
+                SensitiveWordBs.newInstance()
+                        .wordAllow(WordAllows.empty())
+                        .wordDeny(WordDenys.empty())
+                        .init();
+
+        sensitiveWordBs.addWord("幸福");
+
+
+        Assertions.assertTrue(sensitiveWordBs.contains("你幸福吗"));*/
+        String str ="五星红旗迎风飘扬，毛主席的画像屹立在天安门前。";
+
+        List<String> all = sensitiveWordBs.findAll(str);
+        System.out.println(all);
+    }
+
+    @Resource
+    private ObjectMapper objectMapper  ;
+    @Test
+    void testJson() throws JsonProcessingException {
+      /*  AISessionDTO sessionDTO = new AISessionDTO();
+        sessionDTO.setUserId(1);
+
+        List<AISession> list=sessionMapper.queryByUserId(sessionDTO);
+
+        String s = objectMapper.writeValueAsString(list);
+        System.out.println(s);
+
+        List<AISession> list1 = objectMapper.readValue(s, List.class);
+        System.out.println(list1);*/
+
+        String key = USER_CACHE_SESSION + 1;
+        //删除缓存
+        stringRedisTemplate.delete(key);
+    }
 
 }

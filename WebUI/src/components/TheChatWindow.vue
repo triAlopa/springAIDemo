@@ -2,7 +2,7 @@
 import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { marked } from 'marked';
-import { Service, Picture, Promotion } from '@element-plus/icons-vue'; // Service 用于代替 ph-robot
+import { Service, Picture, Promotion } from '@element-plus/icons-vue';
 
 const props = defineProps({
   messages: {
@@ -77,10 +77,10 @@ const send = () => {
 
 const action = (event) => {
 
-  // 查找点击的目标元素及其父级，看是否包含我们定义的 data-action
+
   const target = event.target.closest('[data-action]');
 
-  if (!target) return; // 如果点击的不是按钮，直接返回
+  if (!target) return;
 
   const actionType = target.dataset.action;
 

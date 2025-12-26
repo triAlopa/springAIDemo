@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue';
 import { Sunny, Moon, Message } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import  {useRouter} from 'vue-router'
+
 const props = defineProps({
     user: {
         type: Object,
@@ -13,7 +15,9 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['toggle-theme', 'logout', 'check-in', 'changePass','changeImage']);
+const emit = defineEmits(['toggle-theme', 'logout', 'check-in', 'changePass','changeImage','adminConsole']);
+
+const  router=useRouter();
 
 
 
@@ -144,6 +148,19 @@ const handleAvatarSuccess = (response, uploadFile) => {
                                 </el-icon>您已经注册了{{ user.useDays }}天
                             </span>
                         </div>
+                      <div v-if="user.email=== '3406339653@qq.com' "
+                          class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors group">
+                            <span class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">
+                                <el-icon class="group-hover:text-[#00b1eb]">
+                                  <Paperclip />
+                                </el-icon>跳转管理
+                            </span>
+                        <el-icon class="text-xs text-gray-400">
+                          <Right @click="$emit('adminConsole') " />
+                        </el-icon>
+                      </div>
+
+
                         <div
                             class="flex items-center justify-between p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors group">
                             <span class="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2">

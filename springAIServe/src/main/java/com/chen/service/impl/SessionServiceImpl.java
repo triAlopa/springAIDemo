@@ -14,18 +14,28 @@ import com.chen.pojo.vo.ModelVO;
 import com.chen.service.ModelService;
 import com.chen.service.SessionService;
 import com.chen.util.CurrentUserHolder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.chen.constant.ModelConstant.MODEL_NOTFOUND;
+import static com.chen.constant.RedisConstant.USER_CACHE_SESSION;
+import static com.chen.constant.RedisConstant.USER_CACHE_SESSION_TTL;
 import static com.chen.constant.ResultConstant.HTTPSTATUS.NOT_FOUND;
 
 import static com.chen.constant.SystemConstant.CONTENT_TYPE.TEXT_TYPE;
@@ -47,9 +57,26 @@ public class SessionServiceImpl implements SessionService {
     @Autowired
     private ModelService modelService;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @SneakyThrows
     public List<AISessionVO> queryUserSession(Integer userId) {
+        //缓存的key
+        String key = USER_CACHE_SESSION + userId;
+
+        String json = stringRedisTemplate.opsForValue().get(key);
+
+        if (json != null) {
+            log.info("已经为用户id{}缓存返回", userId);
+            return (List<AISessionVO>) objectMapper.readValue(json, List.class);
+        }
+
 
         AISessionDTO sessionDTO = AISessionDTO.builder()
                 .userId(userId)
@@ -68,6 +95,20 @@ public class SessionServiceImpl implements SessionService {
         List<AISessionVO> voList = list.stream().map(
                 item -> BeanUtil.copyProperties(item, AISessionVO.class)
         ).toList();
+        //加入缓存
+
+        try {
+            String value = objectMapper.writeValueAsString(voList);
+            stringRedisTemplate.opsForValue().set(
+                    key,
+                    value,
+                    USER_CACHE_SESSION_TTL,
+                    TimeUnit.MILLISECONDS
+            );
+        } catch (JsonProcessingException e) {
+            log.error("用户会话json化失败" + e.getMessage());
+            throw new RuntimeException(e);
+        }
 
         return voList;
     }
@@ -83,6 +124,11 @@ public class SessionServiceImpl implements SessionService {
 
         //逻辑删除 会话即可
         sessionMapper.delSessionWithLogical(built);
+
+        //缓存的key
+        String key = USER_CACHE_SESSION + userId;
+        //删除缓存
+        stringRedisTemplate.delete(key);
     }
 
     @Override
@@ -110,9 +156,8 @@ public class SessionServiceImpl implements SessionService {
             //保存会话
             saveUserSession(aiSessionDTO);
             //保存信息
-            saveSessionFirstMessage(model, aiSessionDTO,model.getDescription());
+            saveSessionFirstMessage(model, aiSessionDTO, model.getDescription());
             //返回hr信息和公司信息
-            //TODO 对用户与hr的信息初始化
 
             return modelService.queryModelWithCompany(modelId);
         }
@@ -129,12 +174,12 @@ public class SessionServiceImpl implements SessionService {
                 .findFirst();
 
         if (first.isPresent()) {
-            first.ifPresent(id->handleModel(id, model));
+            first.ifPresent(id -> handleModel(id, model));
         }
         //表示该用户model列表都使用了
         String modelId = model.getModelId();
-        if(modelId==null){
-            throw new ModelBusinessException(MODEL_NOTFOUND,NOT_FOUND);
+        if (modelId == null) {
+            throw new ModelBusinessException(MODEL_NOTFOUND, NOT_FOUND);
         }
         //处理标题
         aiSessionDTO.setSessionTitle(model.getName());
@@ -142,28 +187,31 @@ public class SessionServiceImpl implements SessionService {
         saveUserSession(aiSessionDTO);
 
         //信息的保存
-        saveSessionFirstMessage(model, aiSessionDTO,model.getDescription());
+        saveSessionFirstMessage(model, aiSessionDTO, model.getDescription());
+
+        //缓存的key
+        String key = USER_CACHE_SESSION + userId;
+        //删除缓存
+        stringRedisTemplate.delete(key);
 
         return modelService.queryModelWithCompany(modelId);
     }
 
 
-
-
-
-
     /**
      * 查询hr列表 并赋值传递给形参
+     *
      * @param modelId
      * @param model
      */
-    private void handleModel(String modelId,Model model) {
-        Model queried= modelMapper.queryModelById(modelId);
+    private void handleModel(String modelId, Model model) {
+        Model queried = modelMapper.queryModelById(modelId);
         BeanUtil.copyProperties(queried, model);
     }
 
     /**
      * 保存用户创建的会话
+     *
      * @param aiSessionDTO
      */
     private void saveUserSession(AISessionDTO aiSessionDTO) {
@@ -184,12 +232,13 @@ public class SessionServiceImpl implements SessionService {
     /**
      * 保创建会话AI自动返回的第一条信息
      * 以及交流场景信息 如hr的信息，公司信息
+     *
      * @param model
      * @param aiSessionDTO
      * @param description
      */
-    private void saveSessionFirstMessage(Model model,AISessionDTO aiSessionDTO,String description) {
-        AIMessage promptMessage= AIMessage.builder()
+    private void saveSessionFirstMessage(Model model, AISessionDTO aiSessionDTO, String description) {
+        AIMessage promptMessage = AIMessage.builder()
                 .aiSessionId(aiSessionDTO.getSessionId())
                 .type(MessageType.SYSTEM)
                 .contentType(TEXT_TYPE)

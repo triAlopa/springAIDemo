@@ -640,6 +640,11 @@ const handleOfferClick = async (type) => {
 };
 
 
+const adminConsole=()=>{
+  router.push('/admin')
+  ElMessage.success('跳转成功');
+}
+
 
 
 const userInitInfo = async () => {
@@ -696,7 +701,9 @@ onMounted(async () => {
                         <user-capsule :user="currentUser" :is-dark="isDark" @toggle-theme="toggleTheme"
                             @logout="handleLogout" @check-in="handleCheckIn"
                             @changePass="handleChangUserPassworld"
-                            @changeImage="changeImage"></user-capsule>
+                            @changeImage="changeImage"
+                                      @adminConsole="adminConsole"
+                        ></user-capsule>
                     </template>
                 </the-chat-window>
 

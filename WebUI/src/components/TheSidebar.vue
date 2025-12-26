@@ -16,8 +16,8 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
 <template>
     <div class="w-64 lg:w-72 h-full liquid-sidebar flex flex-col border-r border-white/20 dark:border-gray-700/50 transition-all duration-300">
         <div class="h-16 flex items-center px-6">
-            <div class="w-8 h-8 rounded bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold mr-3">B</div>
-            <span class="font-bold text-xl tracking-tight">BOSS</span>
+            <div class="w-8 h-8 rounded bg-gradient-to-tr from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold mr-3">求</div>
+            <span class="font-bold text-xl tracking-tight">BOSS 求聘</span>
         </div>
 
         <div class="px-4 mb-4">
@@ -52,7 +52,7 @@ defineEmits(['select-chat', 'create-chat', 'delete-chat']);
         </div>
         
         <div class="p-4 text-xs text-center text-gray-400 opacity-50">
-            BOSS AI v1.0.2
+            BOSS 求聘 v1.0.2
         </div>
     </div>
 </template>

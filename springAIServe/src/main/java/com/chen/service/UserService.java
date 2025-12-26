@@ -4,6 +4,7 @@ import com.chen.pojo.PageResult;
 import com.chen.pojo.dto.QueryUserDTO;
 import com.chen.pojo.dto.UserChangePassDTO;
 import com.chen.pojo.dto.UserDTO;
+import com.chen.pojo.entity.User;
 import com.chen.pojo.vo.UserVO;
 import com.chen.pojo.vo.report.EmailReportVO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,4 +45,6 @@ public interface UserService {
 
     void getUserReportExcel(HttpServletResponse response);
 
+
+    String generateUserToken(User user);
 }

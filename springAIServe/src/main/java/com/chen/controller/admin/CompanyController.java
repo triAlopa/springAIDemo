@@ -20,11 +20,8 @@ import java.util.List;
 @Tag(name = "admin端用户接口", description = "公司管理接口")
 public class CompanyController {
 
-    private final CompanyService companyService;
-
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
+    @Autowired
+    private  CompanyService companyService;
 
 
     @GetMapping
@@ -39,9 +36,9 @@ public class CompanyController {
 
     }
 
-    @GetMapping("/single")
     @LogOperation
-    private Result<CompanyVO> querySingleCompany(@RequestParam String companyId) {
+    @GetMapping("/single")
+    public Result<CompanyVO> querySingleCompany(@RequestParam String companyId) {
 
         log.info("请求查询公司id为：{}的详细信息", companyId);
 
