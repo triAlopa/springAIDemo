@@ -20,6 +20,7 @@ public class UserConstant {
     public static final int ISDEL = 0;
 
     public static final int DEFAULT_POINTS = 1000;
+    public static final String DEFAULT_IMAGE = "https://chat-springai-store.oss-cn-beijing.aliyuncs.com/2025/12/20251227020827_43_226.jpg";
 
     public static final String OLD_PASSWORD_ERR="原来的密码错误";
 

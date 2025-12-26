@@ -633,9 +633,8 @@ const handleOfferClick = async (type) => {
         //     return;
         // }
 
-
-
-
+    }else if(type == 'reject'){
+      await handleSendMessage('什么路边一条，就这条件打发谁呢😅')
     }
 };
 
@@ -663,11 +662,7 @@ const userInitInfo = async () => {
 
 onMounted(async () => {
     await userInitInfo();
-    // 检查是否有暗黑模式偏好，并初始化 isDark
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        isDark.value = true;
-        updateThemeClass();
-    }
+
 });
 </script>
 <template>

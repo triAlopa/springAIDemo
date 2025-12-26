@@ -1,8 +1,8 @@
 <script setup>
-import { ref, watch, nextTick, onMounted, onUnmounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { marked } from 'marked';
-import { Service, Picture, Promotion } from '@element-plus/icons-vue';
+import {ref, watch, nextTick, onMounted, onUnmounted} from 'vue';
+import {ElMessage} from 'element-plus';
+import {marked} from 'marked';
+import {Service, Picture, Promotion} from '@element-plus/icons-vue';
 
 const props = defineProps({
   messages: {
@@ -59,7 +59,7 @@ const scrollToBottom = () => {
 // 监听消息变化滚动到底部
 watch(() => props.messages, () => {
   scrollToBottom();
-}, { deep: true });
+}, {deep: true});
 
 
 const send = () => {
@@ -88,11 +88,10 @@ const action = (event) => {
     // console.log('accept')
     emit('handleOffer', 'accept');
   } else if (actionType === 'reject') {
-  //  console.log('reject')
-   emit('handleOffer', 'reject');
+    //  console.log('reject')
+    emit('handleOffer', 'reject');
   }
 }
-
 
 
 const parseMarkdown = (content) => {
@@ -113,8 +112,40 @@ const parseMarkdown = (content) => {
 };
  */
 
+const options = [
+  {value: '介绍一下你们公司'},
+  {value: '你们是世界500强吗？'},
+  {value: '你们连500强都不是，是谁给你们投递简历的自信？'},
+  {value: '你们是500强没错，但是500强招我也要排号，你们公司有什么独一无二的'},
+  {value: '你们作为一个初创公司,连3年的招人经验都没有？我很难相信你们有培养新人的经验'},
+  {value: '原则上你们公司是过不了我的简历初筛的,看在你这么摇尾巴的份上,勉强给你一个狗叫的机会'},
+  {value: '中厂？你们这种不上不下的公司最尴尬。要钱，给不起；要名，没有。除了靠一张嘴‘求’人，还能拿出点什么像样的东西？'},
+  {value: '有5位大学生，只有4杯水，你要怎么分？'},
+  {value: '你知道spring吗,有读过spring的源码吗,有自主研发过summer框架吗？'},
+  {value: '你们有研发过比快排更快的算法吗？'},
+  {value: '你们的QPS能到多少？我之前的个人项目都能抗住上万并发。'},
+  {value: '你们的薪资范围，是觉得我的能力只值这么多，还是你们公司只给得起这么多？'},
+  {value: '我要996工作制,一年工作9个月,一个月工作9天,每天6小时,你们能接受吗？'},
+  {value: '我看不到你们的诚意,你不录有的是公司录'},
+  {value: '这薪资，是税前还是税后？如果是税前的话，建议你们再想想'},
+  {value: '期权？你们公司能活到行权那天吗？'},
+  {value: '你们那架构，是祖传的if-else架构吗？'},
+  {value: '单机QPS过不了十万，也好意思说自己是高并发系统？'},
+  {value: '你说你熟悉MySQL，来给我手写一个支持ACID的存储引擎'},
+  {value: '你们手撕过红黑树吗？不会连红黑树都手撕不出来吧？'},
+  {value: '能现场写个B+树让我看看吗？还是说你们只会调API？'},
+  {value: '需求变更多少次了？你们的产品经理是拍脑袋做决策的吗'},
+  {value: '连个技术债管理都没有，代码屎山堆得挺开心啊'},
+  {value: '你们的技术分享，是不是就是念官方文档？'},
+  {value: '回去等通知吧'},
+  {value: '我给你们个建议：关掉招聘页面，好好提升自己'},
+  {value: '今天就到这吧，我后面还有三家大厂的终面'},
+  ]
 
-
+const handleSelectQuickyMessage=(value)=>{
+  console.log(value)
+  inputContent.value=value;
+}
 </script>
 
 <template>
@@ -122,13 +153,13 @@ const parseMarkdown = (content) => {
   <div class="flex-1 h-full bg-white/30 dark:bg-gray-800/30 flex flex-col relative backdrop-blur-sm">
 
     <header
-      class="h-16 px-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between bg-white/40 dark:bg-gray-900/40 backdrop-blur-md z-10">
+        class="h-16 px-6 border-b border-gray-100 dark:border-gray-700/50 flex items-center justify-between bg-white/40 dark:bg-gray-900/40 backdrop-blur-md z-10">
       <div class="flex items-center gap-2">
         <span class="font-semibold text-lg">{{ currentChatTitle }}</span>
 
         <el-popover placement="bottom-end" :width="340" trigger="hover"
-          popper-class="!p-0 !rounded-xl overflow-hidden shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-out"
-          transition="el-zoom-in-top">
+                    popper-class="!p-0 !rounded-xl overflow-hidden shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-all duration-200 ease-out"
+                    transition="el-zoom-in-top">
           <template #reference>
             <div v-show="currentModel.name !== ''" class="inline-flex items-center justify-center px-4 py-2 
               rounded-lg bg-white dark:bg-gray-800 border border-gray-300 
@@ -136,7 +167,7 @@ const parseMarkdown = (content) => {
               dark:hover:border-blue-500 hover:bg-gray-50 dark:hover:bg-gray-700 
               transition-all duration-200 cursor-pointer">
               <el-icon class="text-blue-500 dark:text-blue-400 mr-2">
-                <InfoFilled />
+                <InfoFilled/>
               </el-icon>
               <span class="text-sm font-medium text-gray-700 dark:text-gray-200">公司详情</span>
             </div>
@@ -151,9 +182,9 @@ const parseMarkdown = (content) => {
             <div class="space-y-4">
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-red-100 dark:bg-red-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-red-100 dark:bg-red-900/30 flex-shrink-0">
                   <el-icon class="text-red-500 dark:text-red-400 text-lg">
-                    <User />
+                    <User/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
@@ -164,23 +195,24 @@ const parseMarkdown = (content) => {
 
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-green-100 dark:bg-green-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-green-100 dark:bg-green-900/30 flex-shrink-0">
                   <el-icon class="text-green-500 dark:text-green-400 text-lg">
-                    <OfficeBuilding />
+                    <OfficeBuilding/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">公司名称</span>
-                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
-                  }}</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{
+                      currentModel.company.name
+                    }}</span>
                 </div>
               </div>
 
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-yellow-100 dark:bg-yellow-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-yellow-100 dark:bg-yellow-900/30 flex-shrink-0">
                   <el-icon class="text-yellow-500 dark:text-yellow-400 text-lg">
-                    <Histogram />
+                    <Histogram/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
@@ -188,9 +220,9 @@ const parseMarkdown = (content) => {
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">
                     <span v-if="currentModel.company.type == 1" class="text-blue-600 dark:text-blue-400">初创公司</span>
                     <span v-else-if="currentModel.company.type == 2"
-                      class="text-green-600 dark:text-green-400">上市公司</span>
+                          class="text-green-600 dark:text-green-400">上市公司</span>
                     <span v-else-if="currentModel.company.type == 3"
-                      class="text-purple-600 dark:text-purple-400">500强公司</span>
+                          class="text-purple-600 dark:text-purple-400">500强公司</span>
                     <span v-else class="text-gray-500">其他类型</span>
                   </span>
                 </div>
@@ -198,30 +230,31 @@ const parseMarkdown = (content) => {
 
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-indigo-100 dark:bg-indigo-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-indigo-100 dark:bg-indigo-900/30 flex-shrink-0">
                   <el-icon class="text-indigo-500 dark:text-indigo-400 text-lg">
-                    <Opportunity />
+                    <Opportunity/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">地址</span>
-                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.address
-                  }}</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{
+                      currentModel.company.address
+                    }}</span>
                 </div>
               </div>
 
               <div class="flex items-start">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-pink-100 dark:bg-pink-900/30 flex-shrink-0 mt-1">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-pink-100 dark:bg-pink-900/30 flex-shrink-0 mt-1">
                   <el-icon class="text-pink-500 dark:text-pink-400 text-lg">
-                    <Briefcase />
+                    <Briefcase/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">职位属性</span>
                   <div class="flex flex-wrap gap-1">
                     <el-tag v-for="(job, index) in currentModel.company.jobTag" :key="index" size="small"
-                      class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
+                            class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
                         'bg-blue-100 dark:bg-blue-900/30',
                         'text-blue-600 dark:text-blue-300',
                         'hover:bg-blue-200 dark:hover:bg-blue-800/50'
@@ -234,9 +267,9 @@ const parseMarkdown = (content) => {
 
               <div class="flex items-center pt-3 border-t border-dashed border-gray-200 dark:border-gray-700">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-teal-100 dark:bg-teal-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-teal-100 dark:bg-teal-900/30 flex-shrink-0">
                   <el-icon class="text-teal-500 dark:text-teal-400 text-lg">
-                    <Money />
+                    <Money/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
@@ -249,34 +282,35 @@ const parseMarkdown = (content) => {
 
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-purple-100 dark:bg-purple-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-purple-100 dark:bg-purple-900/30 flex-shrink-0">
                   <el-icon class="text-purple-500 dark:text-purple-400 text-lg">
-                    <StarFilled />
+                    <StarFilled/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">企业名称</span>
-                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{ currentModel.company.name
-                  }}</span>
+                  <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">{{
+                      currentModel.company.name
+                    }}</span>
                 </div>
               </div>
 
               <div class="flex items-center">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-orange-100 dark:bg-orange-900/30 flex-shrink-0">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-orange-100 dark:bg-orange-900/30 flex-shrink-0">
                   <el-icon class="text-orange-500 dark:text-orange-400 text-lg">
-                    <UserFilled />
+                    <UserFilled/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block">HR 性格</span>
                   <span class="text-sm font-semibold text-gray-800 dark:text-gray-100">
                     <span v-if="currentModel.temperature >= 0.0 && currentModel.temperature <= 0.7"
-                      class="text-red-500">强硬型</span>
+                          class="text-red-500">强硬型</span>
                     <span v-else-if="currentModel.temperature > 0.7 && currentModel.temperature <= 1.5"
-                      class="text-yellow-500">幽默型</span>
+                          class="text-yellow-500">幽默型</span>
                     <span v-else-if="currentModel.temperature > 1.5 && currentModel.temperature <= 2.0"
-                      class="text-blue-500">卑微型</span>
+                          class="text-blue-500">卑微型</span>
                     <span v-else class="text-gray-500">null型</span>
                   </span>
                 </div>
@@ -285,31 +319,32 @@ const parseMarkdown = (content) => {
               <!-- 工作详情 -->
               <div class="flex items-start">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-blue-100 dark:bg-blue-900/30 flex-shrink-0 mt-1">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-blue-100 dark:bg-blue-900/30 flex-shrink-0 mt-1">
                   <el-icon class="text-blue-500 dark:text-blue-400 text-lg">
-                    <Sunny />
+                    <Sunny/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">工作详情</span>
-                  <span class="text-sm text-blue-600 dark:text-blue-300 leading-relaxed">{{ currentModel.company.jobDesc
-                  }}</span>
+                  <span class="text-sm text-blue-600 dark:text-blue-300 leading-relaxed">{{
+                      currentModel.company.jobDesc
+                    }}</span>
                 </div>
               </div>
 
               <!-- 员工福利 -->
               <div class="flex items-start">
                 <div
-                  class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-cyan-100 dark:bg-cyan-900/30 flex-shrink-0 mt-1">
+                    class="w-8 h-8 flex items-center justify-center rounded-lg mr-3 bg-cyan-100 dark:bg-cyan-900/30 flex-shrink-0 mt-1">
                   <el-icon class="text-cyan-500 dark:text-cyan-400 text-lg">
-                    <Sunny />
+                    <Sunny/>
                   </el-icon>
                 </div>
                 <div class="flex-grow">
                   <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">员工福利</span>
                   <div class="flex flex-wrap gap-1">
                     <el-tag v-for="(benefit, index) in currentModel.company.employerBenefit" :key="index" size="small"
-                      class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
+                            class="!text-xs !px-2 !py-1 !rounded-md border-0" :class="[
                         'bg-green-100 dark:bg-green-900/30',
                         'text-green-600 dark:text-green-300',
                         'hover:bg-green-200 dark:hover:bg-green-800/50'
@@ -330,45 +365,58 @@ const parseMarkdown = (content) => {
     <div class="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth" ref="messageContainer">
       <transition-group name="fade-slide">
         <div v-for="(msg, index) in messages" :key="index" class="flex w-full"
-          :class="msg.type === 'USER' ? 'justify-end' : 'justify-start'">
-      <div v-if="msg.type === 'ASSISTANT'"
-     class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 mr-3 shadow-md border-2 border-white dark:border-gray-600">
-  <img :src="currentBaseInfo.AIImage" 
-       alt="ASSISTANT" 
-       class="w-full h-full object-cover">
-</div>
+             :class="msg.type === 'USER' ? 'justify-end' : 'justify-start'">
+          <div v-if="msg.type === 'ASSISTANT'"
+               class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 mr-3 shadow-md border-2 border-white dark:border-gray-600">
+            <img :src="currentBaseInfo.AIImage"
+                 alt="ASSISTANT"
+                 class="w-full h-full object-cover">
+          </div>
 
-        
 
           <div class="max-w-[70%] bubble-shadow p-4 rounded-2xl relative text-sm leading-relaxed break-words"
-            :class="msg.type === 'USER'
+               :class="msg.type === 'USER'
               ? 'bg-[#00b1eb] text-white rounded-tr-none'
               : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-tl-none border border-gray-100 dark:border-gray-600'">
 
             <!-- <div v-if="msg.type === 'text'" class="whitespace-pre-wrap">{{ msg.content }}</div> -->
             <!-- <div v-html="parseMarkdown(msg.textContent)" class="markdown-body"></div> -->
             <div v-if="msg.contentType === 'text'" v-html="parseMarkdown(msg.textContent)" class="markdown-body"
-              @click="action">
+                 @click="action">
             </div>
             <el-image v-else-if="msg.contentType === 'image'" :src="msg.textContent"
-              :preview-src-list="[msg.textContent]" class="rounded-lg max-h-60 w-auto" fit="cover">
+                      :preview-src-list="[msg.textContent]" class="rounded-lg max-h-60 w-auto" fit="cover">
             </el-image>
 
             <div class="text-[10px] mt-1 opacity-60 text-right"
-              :class="msg.type === 'USER' ? 'text-slate-600' : 'text-gray-400'">
+                 :class="msg.type === 'USER' ? 'text-slate-600' : 'text-gray-400'">
               {{ msg.createdTime }}
             </div>
           </div>
 
           <div v-if="msg.type === 'USER'"
-            class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
+               class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
             <img :src="currentBaseInfo.userImage"
-              alt="User">
+                 alt="User">
           </div>
         </div>
       </transition-group>
+
     </div>
 
+    <el-select v-if="currentBaseInfo.sessionStatus==1"
+               placeholder="快捷回复"
+               size="default"
+               style="margin-left: 30px; width:300px "
+               @change="handleSelectQuickyMessage"
+    >
+      <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.value"
+          :value="item.value"
+      />
+    </el-select>
     <div class="p-6 pt-2">
       <div class="relative rounded-3xl p-3 transition-all duration-300" :class="[
         // 液态玻璃效果
@@ -390,14 +438,14 @@ const parseMarkdown = (content) => {
           </button> -->
 
           <textarea v-model="inputContent" @keydown.enter.prevent="send" placeholder="输入消息拷打你的hr...."
-            class="flex-1 bg-transparent border-none outline-none resize-none max-h-32 text-base dark:text-white scrollbar-hide"
-            rows="1" @input="autoResize" ref="textareaRef"></textarea>
+                    class="flex-1 bg-transparent border-none outline-none resize-none max-h-32 text-base dark:text-white scrollbar-hide"
+                    rows="1" @input="autoResize" ref="textareaRef"></textarea>
 
           <button @click="send" :disabled="(!inputContent.trim())|| currentBaseInfo.sessionStatus==0"
-            class="w-10 h-10 rounded-xl bg-primary text-white hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0">
+                  class="w-10 h-10 rounded-xl bg-primary text-white hover:bg-blue-600 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0">
 
             <el-icon class="text-xl">
-              <Promotion />
+              <Promotion/>
             </el-icon>
           </button>
         </div>

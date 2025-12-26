@@ -207,7 +207,7 @@ onMounted(fetchCompanyInfo)
             <el-form-item label="HR头像">
               <el-upload
                   class="avatar-uploader"
-                  action="/api/user/upload"
+                  action="/api/upload/image"
                   :show-file-list="false"
                   :on-success="(res) => handleAvatarSuccess(res, hr)"
                   :before-upload="beforeAvatarUpload"

@@ -1,6 +1,7 @@
 package com.chen.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.chen.exception.ModelBusinessException;
 import com.chen.mapper.AIMessageMapper;
 import com.chen.mapper.AISessionMapper;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -101,8 +103,8 @@ public class SessionServiceImpl implements SessionService {
             String value = objectMapper.writeValueAsString(voList);
             stringRedisTemplate.opsForValue().set(
                     key,
-                    value,
-                    USER_CACHE_SESSION_TTL,
+                    value,//缓存雪崩
+                    USER_CACHE_SESSION_TTL+ RandomUtil.randomInt(1000*60),
                     TimeUnit.MILLISECONDS
             );
         } catch (JsonProcessingException e) {

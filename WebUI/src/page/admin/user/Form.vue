@@ -129,7 +129,7 @@ onMounted(() => {
             <el-form-item label="用户头像">
               <el-upload
                   class="avatar-uploader"
-                  action="/api/user/upload"
+                  action="/api/upload/image"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload"

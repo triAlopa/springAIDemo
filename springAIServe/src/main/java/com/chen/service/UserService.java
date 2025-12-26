@@ -47,4 +47,6 @@ public interface UserService {
 
 
     String generateUserToken(User user);
+
+    String uploadImage(MultipartFile file);
 }

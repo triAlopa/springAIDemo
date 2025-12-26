@@ -155,6 +155,7 @@ public class UserServiceImpl implements UserService {
                 .enable(ENABLE)
                 .isDel(NODEL)
                 .points(DEFAULT_POINTS)
+                .image(DEFAULT_IMAGE)
                 .build();
         BeanUtil.copyProperties(userDTO, user);
 
@@ -298,12 +299,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public String uploadUserImage(MultipartFile file) {
-
-        Integer userId = CurrentUserHolder.getCurrentUser().getId();
-
+    public String uploadImage(MultipartFile file) {
         try {
+
             String suffix = file.getOriginalFilename().substring(file
                     .getOriginalFilename()
                     .lastIndexOf("."));
@@ -314,18 +312,27 @@ public class UserServiceImpl implements UserService {
             String url = aliyunOSSOperator.upload(file.getBytes(), fileName);
 
 
-            User user = User.builder()
-                    .id(userId).image(url).build();
-
-            userMapper.updateUser(user);
-
-//            userMapper.updateUserImage(url,userId);
-
             return url;
         } catch (Exception e) {
+            Integer userId = CurrentUserHolder.getCurrentUser().getId();
             log.error("{}用户上传错误,message:{}", userId, e.getMessage());
             throw new RuntimeException("上传图片失败");
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public String uploadUserImage(MultipartFile file) {
+
+        String url = uploadImage(file);
+        Integer userId = CurrentUserHolder.getCurrentUser().getId();
+
+        User user = User.builder()
+                .id(userId).image(url).build();
+
+        userMapper.updateUser(user);
+
+        return url;
     }
 
     @Override

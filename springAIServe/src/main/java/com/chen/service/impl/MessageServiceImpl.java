@@ -27,6 +27,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -61,6 +62,9 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private JwtProperties jwtProperties;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     private final ChatClient chatClient;
 
     public MessageServiceImpl(ChatClient chatClient) {
@@ -72,7 +76,10 @@ public class MessageServiceImpl implements MessageService {
     public Flux<ServerSentEvent<String>> requestChat(MessageContentDTO content, HttpServletRequest request) {
 
         String userTokenName = jwtProperties.getUserTokenName();
-        String token = request.getHeader(userTokenName);
+
+        String userTokenId = request.getHeader(userTokenName);
+        String token = stringRedisTemplate.opsForValue().get(userTokenId);
+
 
         if (StrUtil.isBlank(token) || "null".equals(token)) {
             return unAuthThrow();
