@@ -348,7 +348,7 @@ function sendEmailWithSeconds() {
             <el-form-item prop="gender" style="margin: 15px 0px;">
               <el-radio-group v-model="form.gender">
                 <el-radio value="1" size="small">男</el-radio>
-                <el-radio value="0" size="small">女</el-radio>
+                <el-radio value="2" size="small">女</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item prop="birthday" style="margin-top: 15px; margin-bottom: -8px;">

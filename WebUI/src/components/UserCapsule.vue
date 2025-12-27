@@ -94,7 +94,7 @@ const handleAvatarSuccess = (response, uploadFile) => {
                         <span class="text-xs font-bold text-gray-700 dark:text-gray-200">{{ user.nickName }}</span>
                         <span class="text-[10px] text-gray-400">
                             <el-tag v-if="user.gender == 1" type="primary" size="small" round>男</el-tag>
-                            <el-tag v-else-if="user.gender == 0" type="danger" size="small" round>女</el-tag>
+                            <el-tag v-else-if="user.gender == 2" type="danger" size="small" round>女</el-tag>
                         </span>
                     </div>
                     <el-icon class="text-xs text-gray-400">

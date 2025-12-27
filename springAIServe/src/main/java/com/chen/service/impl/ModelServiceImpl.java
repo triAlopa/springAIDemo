@@ -25,6 +25,7 @@ import static com.chen.constant.ModelConstant.MODEL_NO_EXIST;
 import static com.chen.constant.ResultConstant.HTTPSTATUS.NOT_FOUND;
 import static com.chen.constant.TencentConstant.TENCENT_API_KEY;
 import static com.chen.constant.TencentConstant.TENCENT_LOCATION;
+import static com.chen.constant.UserConstant.DEFAULT_SESSION_MODEL_ID;
 
 @Service
 public class ModelServiceImpl implements ModelService {
@@ -54,6 +55,9 @@ public class ModelServiceImpl implements ModelService {
         //查询并赋值给vo
         ModelVO modelVO = new ModelVO();
         BeanUtils.copyProperties(model, modelVO);
+        if(DEFAULT_SESSION_MODEL_ID.equals(modelId)){
+            return modelVO;
+        }
         //查询公司相关的信息
         String companyId = model.getCompanyId();
         Company company = companyMapper.selectCompanyId(companyId);

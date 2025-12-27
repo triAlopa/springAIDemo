@@ -1,11 +1,8 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import App from '../App.vue';
 import ChatMain from '../page/user/ChatMain.vue';
 import LoginMain from '../page/user/LoginMain.vue';
 import NotFoundPage from '../page/user/404Page.vue';
 
-import ConsoleView from '../page/admin/Console.vue'
-import TableView from '../page/admin/UserPage.vue'
 import admin from '../page/admin/Admin.vue'
 
 import UserManage from '../page/admin/user/Manage.vue'

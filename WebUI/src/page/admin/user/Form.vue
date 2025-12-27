@@ -11,7 +11,7 @@ const formRef = ref(null)
 
 // 路径参数判断
 const userId = computed(() => route.params.id)
-const isEdit = computed(() => !!userId.value)
+const isEdit = computed(() => userId.value)
 
 // 表单数据定义
 const userForm = ref({
@@ -145,7 +145,7 @@ onMounted(() => {
             <el-form-item label="性别" prop="gender">
               <el-radio-group v-model="userForm.gender">
                 <el-radio :label="1">男</el-radio>
-                <el-radio :label="0">女</el-radio>
+                <el-radio :label="2">女</el-radio>
               </el-radio-group>
             </el-form-item>
 

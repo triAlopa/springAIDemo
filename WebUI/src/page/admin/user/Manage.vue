@@ -135,7 +135,7 @@ onMounted(queryAllUser)
             <el-form-item label="性别">
               <el-select v-model="queryForm.gender" placeholder="选择" style="width: 100px">
                 <el-option label="男" value="1"/>
-                <el-option label="女" value="0"/>
+                <el-option label="女" value="2"/>
               </el-select>
             </el-form-item>
             <el-form-item label="注册时间">
@@ -171,7 +171,11 @@ onMounted(queryAllUser)
           <el-table-column property="nickName" label="用户名" width="120"/>
           <el-table-column label="性别" width="80">
             <template #default="scope">
-              <el-tag :type="scope.row.gender === 0 ? 'danger' : ''">{{ scope.row.gender === 0 ? '女' : '男' }}</el-tag>
+              <el-tag v-if="scope.row.gender===1" type="info">{{'男'}}</el-tag>
+              <el-tag v-else-if="scope.row.gender===2" type="danger">{{'女'}}</el-tag>
+              <el-tag v-else-if="scope.row.gender===0">{{'未知'}}</el-tag>
+              <el-tag v-else-if="scope.row.gender===9">{{'未指定'}}</el-tag>
+              <el-tag v-else>{{'null型'}}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="头像" width="70">

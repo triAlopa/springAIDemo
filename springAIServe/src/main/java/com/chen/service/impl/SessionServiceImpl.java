@@ -74,7 +74,7 @@ public class SessionServiceImpl implements SessionService {
 
         String json = stringRedisTemplate.opsForValue().get(key);
 
-        if (json != null) {
+        if (json != null&&!"[]".equals(json)) {
             log.info("已经为用户id{}缓存返回", userId);
             return (List<AISessionVO>) objectMapper.readValue(json, List.class);
         }
@@ -87,11 +87,14 @@ public class SessionServiceImpl implements SessionService {
 
         List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
 
-        if (list == null) {
-            //TODO 如果新用户可以加入一个默认会话提供给用户指导
+        if ( list.isEmpty()) {
+            // 如果新用户可以加入一个默认会话提供给用户指导
             log.info("查找该:{}用户的会话列表为空", userId);
 //            list= Collections.singletonList()
-            return Collections.emptyList();
+            sessionDTO.setUserId(DEFAULT_SESSION_USERID);
+            return sessionMapper.queryByUserId(sessionDTO).stream().map(
+                    item -> BeanUtil.copyProperties(item, AISessionVO.class)
+            ).toList();
         }
 
         List<AISessionVO> voList = list.stream().map(
@@ -104,7 +107,7 @@ public class SessionServiceImpl implements SessionService {
             stringRedisTemplate.opsForValue().set(
                     key,
                     value,//缓存雪崩
-                    USER_CACHE_SESSION_TTL+ RandomUtil.randomInt(1000*60),
+                    USER_CACHE_SESSION_TTL + RandomUtil.randomInt(1000 * 60),
                     TimeUnit.MILLISECONDS
             );
         } catch (JsonProcessingException e) {
@@ -134,6 +137,7 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
+    @Transactional
     public ModelVO createUserSession(AISessionDTO aiSessionDTO) {
 
         Integer userId = CurrentUserHolder.getCurrentUser().getId();

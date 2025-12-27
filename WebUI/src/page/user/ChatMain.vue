@@ -69,7 +69,7 @@ const currentUser = reactive({
 
 //当前会话id
 const currentBaseInfo = ref({
-    sessionStatus: 1,
+    sessionStatus: 0,
     userImage: '',
     AIImage: '',
 });
@@ -351,7 +351,9 @@ const queryCurrentSessionModel = async (modelId) => {
             if (result.code == 200) {
                 currentModel.value = result.data;
                 // console.log(result)
+
                 currentBaseInfo.value.AIImage = currentModel.value.image
+
             } else {
                 console.log(result.msg)
             }

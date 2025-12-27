@@ -20,7 +20,7 @@ public interface ModelMapper {
 
     @Select("select  model_id, company_id, name, description, " +
             "image, temperature, open_message, enable, is_del," +
-            " remark, created_time from tb_ai_model where is_del=1 and enable=1")
+            " remark, created_time from tb_ai_model where is_del=1 and enable=1 and id>0")
     List<Model> queryAllModel();
 
     @Select("select  * from tb_ai_model where model_id=#{modelId}")

@@ -367,10 +367,11 @@ const handleSelectQuickyMessage=(value)=>{
         <div v-for="(msg, index) in messages" :key="index" class="flex w-full"
              :class="msg.type === 'USER' ? 'justify-end' : 'justify-start'">
           <div v-if="msg.type === 'ASSISTANT'"
-               class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 mr-3 shadow-md border-2 border-white dark:border-gray-600">
+               class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 mr-3 shadow-md border-2 border-white dark:border-gray-600">
             <img :src="currentBaseInfo.AIImage"
                  alt="ASSISTANT"
-                 class="w-full h-full object-cover">
+                 class="w-full h-full scale-150 object-cover"
+                >
           </div>
 
 
@@ -395,7 +396,7 @@ const handleSelectQuickyMessage=(value)=>{
           </div>
 
           <div v-if="msg.type === 'USER'"
-               class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
+               class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 ml-3 shadow-md border-2 border-white dark:border-gray-600">
             <img :src="currentBaseInfo.userImage"
                  alt="User">
           </div>

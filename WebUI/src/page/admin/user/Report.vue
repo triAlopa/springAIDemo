@@ -11,7 +11,7 @@ const isWeek = ref(true) // 布尔型：true 代表一周，false 代表一个�
 const lineBarRef = ref(null)
 const pieRef = ref(null)
 
-// 存储后端原始数据（如果其他地方需要用到）
+// 存储后端原始数据
 const userStats = ref([])
 const emailStats = ref([])
 
