@@ -131,6 +131,7 @@ public class CompanyServiceImpl implements CompanyService {
         company.setJobTag(StrUtil.join(" ", companyVO.getJobTag()));
         company.setEmployerBenefit(StrUtil.join(" ", companyVO.getEmployerBenefit()));
 
+        String address=companyVO.getAddress();
         handleCompanyParseAddress(company);
 
         companyMapper.update(company);
@@ -139,14 +140,14 @@ public class CompanyServiceImpl implements CompanyService {
             return;
         }
 
-        List<String> ids = companyVO.getModels()
+      /*  List<String> ids = companyVO.getModels()
                 .stream()
                 .map(ModelVO::getModelId)
-                .toList();
-        modelMapper.delByLogical(ids);
+                .toList();*/
+        modelMapper.delByLogicalWithCompanyId(companyVO.getCompanyId());
 
 
-
+        company.setAddress(address);
         List<Model> list = companyVO.getModels().stream()
                 .map(bean -> {
                     return batchHandleModelInfo(bean, company);
@@ -169,12 +170,15 @@ public class CompanyServiceImpl implements CompanyService {
         company.setJobTag(StrUtil.join(" ", companyVO.getJobTag()));
         company.setEmployerBenefit(StrUtil.join(" ", companyVO.getEmployerBenefit()));
         company.setCompanyId("COMP_"+UUID.randomUUID().toString(true).substring(0,5));
+
+        String address=companyVO.getAddress();
+        handleCompanyParseAddress(company);
         companyMapper.insert(company);
 
         if(companyVO.getModels()==null||companyVO.getModels().isEmpty()){
             return;
         }
-
+        company.setAddress(address);
         List<Model> list = companyVO.getModels().stream()
                 .map(bean -> {
                     Model model = BeanUtil.copyProperties(bean, Model.class);
@@ -189,7 +193,7 @@ public class CompanyServiceImpl implements CompanyService {
                     return model;
                 }).toList();
 
-        handleCompanyParseAddress(company);
+
         modelMapper.batchInsertModel(list);
 
 

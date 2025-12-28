@@ -422,6 +422,7 @@ const handleCreateChat = async () => {
                 //添加到本地显示
                 chatSessionHistory.value.unshift(newSession);
                 console.log(result.data)
+                currentBaseInfo.value.AIImage=result.data.image;
             } else {
                 console.log('不够你玩的吗，都申请完了😅😅')
                 ElMessage.warning('服务器开了个小差😛~,请一段时间后重试')

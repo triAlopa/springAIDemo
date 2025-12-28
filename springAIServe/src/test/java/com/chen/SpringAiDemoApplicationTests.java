@@ -3,6 +3,7 @@ package com.chen;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.resource.ClassPathResource;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -13,8 +14,11 @@ import com.chen.pojo.dto.UserDTO;
 import com.chen.pojo.entity.*;
 import com.chen.pojo.properties.JwtProperties;
 import com.chen.pojo.properties.TencentMapProperties;
+import com.chen.pojo.vo.AIMessageVO;
 import com.chen.pojo.vo.AISessionVO;
+import com.chen.service.CompanyService;
 import com.chen.service.UserService;
+import com.chen.service.impl.CompanyServiceImpl;
 import com.chen.task.Task2Service;
 import com.chen.util.JwtUtil;
 import com.chen.util.TencentMapUtil;
@@ -28,30 +32,36 @@ import com.github.houbb.sensitive.word.support.deny.WordDenys;
 import com.github.houbb.sensitive.word.support.result.WordLengthResult;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.util.DigestUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import javax.crypto.SecretKey;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
 
 import static com.chen.constant.RedisConstant.USER_CACHE_SESSION;
+import static com.chen.constant.RedisConstant.USER_LOGIN;
 import static com.chen.constant.TencentConstant.*;
 import static com.chen.constant.UserConstant.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,6 +70,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ComponentScan("com.chen")
 class SpringAiDemoApplicationTests {
+
+    @Autowired
+    private TencentMapProperties tencentMapProperties;
+
+    @Test
+    void testAddress() {
+        String address = "中国上海浦东新区张江高科技园区";
+        Map<String, String> map = new TreeMap<>();
+        map.put(TENCENT_ADDRESS, address);
+        String apiKey = tencentMapProperties.getApiKey();
+        map.put(TENCENT_API_KEY, apiKey);
+        String point = TencentMapUtil.parseAddress(map, tencentMapProperties.getSecretKey());
+        System.out.println(point);
+
+    }
 
 
     @Autowired
@@ -75,9 +100,6 @@ class SpringAiDemoApplicationTests {
     private JwtProperties jwtProperties;
 
 
-    /**
-     * 测试用户的jwt生成解析
-     */
     @Test
     void testJwtUtil() {
         String signKey = jwtProperties.getUserSignKey();
@@ -99,7 +121,7 @@ class SpringAiDemoApplicationTests {
         System.out.println(nickName);
 
 
-       /* Map<String, Object> claims = new HashMap<String, Object>();
+ /*Map<String, Object> claims = new HashMap<String, Object>();
         claims.put(UserConstant.NICKNAME, build.getNickName());
         claims.put(UserConstant.EMAIL, build.getEmail());
 
@@ -116,7 +138,8 @@ class SpringAiDemoApplicationTests {
                 .build()
                 .parseSignedClaims(token);
 
-        System.out.println(claimsJws.getPayload().get("nickName", String.class));*/
+        System.out.println(claimsJws.getPayload().get("nickName", String.class));
+*/
 
     }
 
@@ -157,22 +180,24 @@ class SpringAiDemoApplicationTests {
 
     @Test
     void testRedis() {
-     /*  LocalDateTime now = LocalDateTime.now();
-      String key_prefix = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+":";
-      Random r=new Random();
-      String key_suffix="3406339653"+r.nextInt(10)+"@qq.com";
-      String key = key_prefix+key_suffix;
-     stringRedisTemplate.opsForValue().set(key,"1111");*/
+        LocalDateTime now = LocalDateTime.now();
+        String key_prefix = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ":";
+        Random r = new Random();
+        String key_suffix = "3406339653" + r.nextInt(10) + "@qq.com";
+        String key = key_prefix + key_suffix;
+        stringRedisTemplate.opsForValue().set(key, "1111");
+
 
 //      Boolean delete = stringRedisTemplate.delete("2025-12-11:*");
 
-   /*   DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+        DefaultRedisScript<Long> script = new DefaultRedisScript<>();
 
-      script.setLocation(new ClassPathResource("lua/DeleteLoginCode.lua"));
-      script.setResultType(Long.class);
+        // script.setLocation(new ClassPathResource("lua/DeleteLoginCode.lua"));
+        script.setResultType(Long.class);
 
-      Long execute = stringRedisTemplate.execute(script, Collections.emptyList(), "2025-12-11:*");
-      System.out.println(execute);*/
+        Long execute = stringRedisTemplate.execute(script, Collections.emptyList(), "2025-12-11:*");
+        System.out.println(execute);
+
 
     }
 
@@ -185,18 +210,19 @@ class SpringAiDemoApplicationTests {
     void testTask() {
 
         /// ////用于验证....
-      /*for (int i = 0; i < 10; i++) {
-          String code = RandomUtil.randomString(4);
+        for (int i = 0; i < 10; i++) {
+            String code = RandomUtil.randomString(4);
 
-          //生成一天的相同前缀，统一删除
-          String pattern = "yyyy-MM-dd";
-          String time_prefix = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ofPattern(pattern)) + ":";
+            //生成一天的相同前缀，统一删除
+            String pattern = "yyyy-MM-dd";
+            String time_prefix = LocalDateTime.now().plusDays(-1).format(DateTimeFormatter.ofPattern(pattern)) + ":";
 
-          String key = USER_LOGIN + time_prefix + "340633"+i+"9653@qq.com";
-          // 加入防暴力破解的次数限制
-          stringRedisTemplate.opsForValue().set(key, code);
-          System.out.println(code);
-      }*/
+            String key = USER_LOGIN + time_prefix + "340633" + i + "9653@qq.com";
+            // 加入防暴力破解的次数限制
+            stringRedisTemplate.opsForValue().set(key, code);
+            System.out.println(code);
+        }
+
         task2Service.delUserLoginCode();
     }
 
@@ -206,29 +232,29 @@ class SpringAiDemoApplicationTests {
     @Test
     void testMapper() {
 
-      /*AISessionDTO sessionDTO = AISessionDTO
-              .builder()
-              .userId(null)
-              .isDel(1).build();
-      List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
+        AISessionDTO sessionDTO = AISessionDTO
+                .builder()
+                .userId(null)
+                .isDel(1).build();
+        List<AISession> aiSessions = sessionMapper.queryByUserId(sessionDTO);
 
-      aiSessions.stream().filter(session->
-              !"sess_004_20240101".equals(session.getSessionId())
-              ).toList().forEach(System.out::println);*/
+        aiSessions.stream().filter(session ->
+                !"sess_004_20240101".equals(session.getSessionId())
+        ).toList().forEach(System.out::println);
 
 
-     /* List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
-      if (messages == null || messages.isEmpty()) {
-         return Collections.emptyList();
-      }
+     /*   List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
+        if (messages == null || messages.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-      List<AIMessageVO> list = messages.stream().filter(
-                      item -> !MessageType.SYSTEM.equals(item.getType())
-              ).sorted((v1, v2) -> v1.getCreatedTime().isBefore(v2.getCreatedTime()) ? -1 : 1)
-              .map(item -> BeanUtil.copyProperties(item, AIMessageVO.class))
-              .toList();
-      System.out.println(list);
-      */
+        List<AIMessageVO> list = messages.stream().filter(
+                        item -> !MessageType.SYSTEM.equals(item.getType())
+                ).sorted((v1, v2) -> v1.getCreatedTime().isBefore(v2.getCreatedTime()) ? -1 : 1)
+                .map(item -> BeanUtil.copyProperties(item, AIMessageVO.class))
+                .toList();
+        System.out.println(list);
+
 
         AISessionDTO sessionDTO = AISessionDTO.builder()
                 .userId(1)
@@ -236,11 +262,11 @@ class SpringAiDemoApplicationTests {
                 .build();
 
         List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
-        System.out.println(list);
+        System.out.println(list);*/
     }
 
-    @Autowired
-    private TencentMapProperties tencentMapProperties;
+/*    @Autowired
+    private TencentMapProperties tencentMapProperties;*/
 
     @SneakyThrows
     @Test
@@ -275,8 +301,8 @@ class SpringAiDemoApplicationTests {
     @Autowired
     private TemplateEngine templateEngine;
 
-    @Test
-    void testTemplate() {
+//    @Test
+   /* void testTemplate() {
 
         //1.你的名字是${modelName}，你的性格是${model-name}，语言风格要符合这一点。
         //2.你的公司名字是${model-company-name}，其位置在${model-company-address}，
@@ -319,14 +345,15 @@ class SpringAiDemoApplicationTests {
             model.setDescription(process);
             modelMapper.update(model);
 
-     /*   Context ctx = new Context();
-        ctx.setVariable("companyName", "邦邦科技");
-        ctx.setVariable("jobTitle", "孔孟");
-        ctx.setVariable("salary", "30K");
-        String process = templateEngine.process("generateOffer.html", ctx);
-        System.out.println(process);*/
+            Context ctx = new Context();
+            ctx.setVariable("companyName", "邦邦科技");
+            ctx.setVariable("jobTitle", "孔孟");
+            ctx.setVariable("salary", "30K");
+            String process = templateEngine.process("generateOffer.html", ctx);
+            System.out.println(process);
+
         }
-    }
+    }*/
 
     @Test
     void testUUID() {
@@ -341,7 +368,7 @@ class SpringAiDemoApplicationTests {
     @Test
     void testUser() {
         for (int i = 0; i < 1000; i++) {
-            int randomInt = RandomUtil.randomInt(0, 2);
+            int randomInt = RandomUtil.randomInt(1, 3);
             String nickName = RandomUtil.randomString(10);
             String password = DigestUtils.md5DigestAsHex(RandomUtil.randomString(8).getBytes());
             DateTime startDate = DateUtil.parse("2000-01-01");  // 月份从0开始
@@ -416,7 +443,7 @@ class SpringAiDemoApplicationTests {
 
     @Test
     void testSensitiveWorld() {
-     /*   SensitiveWordBs sensitiveWordBs =
+        SensitiveWordBs sensitiveWordBs =
                 SensitiveWordBs.newInstance()
                         .wordAllow(WordAllows.empty())
                         .wordDeny(WordDenys.empty())
@@ -425,27 +452,30 @@ class SpringAiDemoApplicationTests {
         sensitiveWordBs.addWord("幸福");
 
 
-        Assertions.assertTrue(sensitiveWordBs.contains("你幸福吗"));*/
-        String str ="五星红旗迎风飘扬，毛主席的画像屹立在天安门前。";
+        Assertions.assertTrue(sensitiveWordBs.contains("你幸福吗"));
+
+        String str = "五星红旗迎风飘扬，毛主席的画像屹立在天安门前。";
 
         List<String> all = sensitiveWordBs.findAll(str);
         System.out.println(all);
     }
 
     @Resource
-    private ObjectMapper objectMapper  ;
+    private ObjectMapper objectMapper;
+
     @Test
     void testJson() throws JsonProcessingException {
-      /*  AISessionDTO sessionDTO = new AISessionDTO();
+        AISessionDTO sessionDTO = new AISessionDTO();
         sessionDTO.setUserId(1);
 
-        List<AISession> list=sessionMapper.queryByUserId(sessionDTO);
+        List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
 
         String s = objectMapper.writeValueAsString(list);
         System.out.println(s);
 
         List<AISession> list1 = objectMapper.readValue(s, List.class);
-        System.out.println(list1);*/
+        System.out.println(list1);
+
 
         String key = USER_CACHE_SESSION + 1;
         //删除缓存

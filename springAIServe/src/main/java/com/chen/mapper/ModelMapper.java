@@ -38,6 +38,9 @@ public interface ModelMapper {
     void delByLogical(List<String> ids);
 
     void batchInsertModel(List<Model> models);
+
+    @Update("update tb_ai_model set is_del=0 where company_id=#{companyId}")
+    void delByLogicalWithCompanyId(String companyId);
 }
 
 

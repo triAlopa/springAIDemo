@@ -12,7 +12,7 @@ spring:
         repository:
           jdbc:
             initialize-schema: never
-#    邮箱配置
+  #    邮箱配置
   mail:
     host: smtp.163.com
     username: trialopa@163.com
@@ -24,19 +24,24 @@ spring:
           starttls:
             enable: true
             required: true
-# database init
+  # database init
   datasource:
-    name: root
-    password: 06170018
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/aichat
+    #    jdbc:mysql://mysql:3306/tlias
+    url: jdbc:mysql://192.168.100.128:3307/aichat
+    username: root
+    password: 06170018
+    name: root
   data:
     redis:
-      host: localhost
-      port: 6379
-      password: "06170018"
+      host: ${SPRING_REDIS_HOST:redis} # 优先读取环境变量，默认值 redis
+      port: ${SPRING_REDIS_PORT:6379}
+      password: '06170018'
       database: 0
-      connect-timeout: 2000
+      timeout: 10000
+server:
+  port: 8080
+  address: 0.0.0.0  # 允许Docker网络访问
 # log
 logging:
   level:
