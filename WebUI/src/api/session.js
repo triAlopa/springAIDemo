@@ -35,3 +35,14 @@ export const userCreateSessionApi = (session) => request.post(
          needAuth: true
     }
 );
+
+
+export const userSessionReteApi = (sessionId,rate) => request.get(
+    `/user/ai/session/rate?sessionId=${sessionId}&rate=${rate}`,
+    {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        needAuth: true
+    }
+);

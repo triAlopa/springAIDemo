@@ -29,4 +29,11 @@ public interface SessionService {
      * @param sessionDTO
      */
     ModelVO createUserSession(AISessionDTO sessionDTO);
+
+    /**
+     * 用户打分
+     * @param sessionId
+     * @param rate
+     */
+    void responseSessionRate(String sessionId, Integer rate);
 }

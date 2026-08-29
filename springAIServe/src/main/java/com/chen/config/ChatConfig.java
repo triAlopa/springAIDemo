@@ -9,6 +9,7 @@ import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryReposito
 import org.springframework.ai.chat.memory.repository.jdbc.JdbcChatMemoryRepositoryDialect;
 import org.springframework.ai.chat.memory.repository.jdbc.MysqlChatMemoryRepositoryDialect;
 import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,8 +86,8 @@ public class ChatConfig {
 
 
     @Bean
-    public ChatClient chatClient(OpenAiChatModel openAiChatModel, ChatMemory chatMemory) {
-        return ChatClient.builder(openAiChatModel)//模型的选择
+    public ChatClient chatClient(ZhiPuAiChatModel chatModel, ChatMemory chatMemory) {
+        return ChatClient.builder(chatModel)//模型的选择
 //                .defaultSystem(DEFAULT_PROMPT) //系统提示词 每次用户请求推送给大语言
                 .defaultAdvisors(new SimpleLoggerAdvisor(),//log
                         MessageChatMemoryAdvisor.builder(chatMemory).build()

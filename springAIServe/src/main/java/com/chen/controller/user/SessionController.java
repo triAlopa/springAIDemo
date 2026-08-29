@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/user/ai/session")
-@Tag(name = "用户会话",description = "用户相关会话接口")
+@Tag(name = "用户会话", description = "用户相关会话接口")
 public class SessionController {
 
     @Autowired
@@ -53,9 +53,9 @@ public class SessionController {
     @LogOperation
     public Result delUserSession(@NotNull @PathVariable("session_id") String sessionId) {
         Integer userId = CurrentUserHolder.getCurrentUser().getId();
-        log.info("{}用户请求删除: {}的会话信息", userId,sessionId);
+        log.info("{}用户请求删除: {}的会话信息", userId, sessionId);
 
-        sessionService.delUserSession(userId,sessionId);
+        sessionService.delUserSession(userId, sessionId);
 
         return Result.success();
     }
@@ -71,8 +71,24 @@ public class SessionController {
 
         log.info("创建新:{}会话", session);
 
-        ModelVO modelVO =sessionService.createUserSession(session);
+        ModelVO modelVO = sessionService.createUserSession(session);
 
         return Result.success(modelVO);
+    }
+
+    @Operation(summary = "用户打分", description = "根据前端请求头携带token,用户打分,返回前端展示")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "打分成功"),
+            @ApiResponse(responseCode = "500", description = "打分失败")
+    })
+    @GetMapping("/rate")
+    @LogOperation
+    public Result createUserSession(@RequestParam("sessionId") String sessionId, @RequestParam("rate") String rate) {
+
+        log.info("用户评分:{}会话,{}", sessionId, rate);
+
+        sessionService.responseSessionRate(sessionId, Integer.valueOf(rate));
+
+        return Result.success();
     }
 }

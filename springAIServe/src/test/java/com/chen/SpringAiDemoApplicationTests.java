@@ -71,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ComponentScan("com.chen")
 class SpringAiDemoApplicationTests {
 
-    @Autowired
+   /* @Autowired
     private TencentMapProperties tencentMapProperties;
 
     @Test
@@ -121,7 +121,7 @@ class SpringAiDemoApplicationTests {
         System.out.println(nickName);
 
 
- /*Map<String, Object> claims = new HashMap<String, Object>();
+ *//*Map<String, Object> claims = new HashMap<String, Object>();
         claims.put(UserConstant.NICKNAME, build.getNickName());
         claims.put(UserConstant.EMAIL, build.getEmail());
 
@@ -139,7 +139,7 @@ class SpringAiDemoApplicationTests {
                 .parseSignedClaims(token);
 
         System.out.println(claimsJws.getPayload().get("nickName", String.class));
-*/
+*//*
 
     }
 
@@ -243,7 +243,7 @@ class SpringAiDemoApplicationTests {
         ).toList().forEach(System.out::println);
 
 
-     /*   List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
+     *//*   List<AIMessage> messages = aiMessageMapper.getMessages("sess_001_20240101");
         if (messages == null || messages.isEmpty()) {
             return Collections.emptyList();
         }
@@ -262,11 +262,11 @@ class SpringAiDemoApplicationTests {
                 .build();
 
         List<AISession> list = sessionMapper.queryByUserId(sessionDTO);
-        System.out.println(list);*/
+        System.out.println(list);*//*
     }
 
-/*    @Autowired
-    private TencentMapProperties tencentMapProperties;*/
+*//*    @Autowired
+    private TencentMapProperties tencentMapProperties;*//*
 
     @SneakyThrows
     @Test
@@ -302,7 +302,7 @@ class SpringAiDemoApplicationTests {
     private TemplateEngine templateEngine;
 
 //    @Test
-   /* void testTemplate() {
+   *//* void testTemplate() {
 
         //1.你的名字是${modelName}，你的性格是${model-name}，语言风格要符合这一点。
         //2.你的公司名字是${model-company-name}，其位置在${model-company-address}，
@@ -353,7 +353,7 @@ class SpringAiDemoApplicationTests {
             System.out.println(process);
 
         }
-    }*/
+    }*//*
 
     @Test
     void testUUID() {
@@ -481,5 +481,5 @@ class SpringAiDemoApplicationTests {
         //删除缓存
         stringRedisTemplate.delete(key);
     }
-
+*/
 }

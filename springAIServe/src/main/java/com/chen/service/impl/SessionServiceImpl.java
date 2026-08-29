@@ -203,6 +203,14 @@ public class SessionServiceImpl implements SessionService {
         return modelService.queryModelWithCompany(modelId);
     }
 
+    @Override
+    public void responseSessionRate(String sessionId, Integer rate) {
+        Integer userId = CurrentUserHolder.getCurrentUser().getId();
+
+        sessionMapper.handleUserSessionRate(userId,sessionId,rate);
+
+    }
+
 
     /**
      * 查询hr列表 并赋值传递给形参

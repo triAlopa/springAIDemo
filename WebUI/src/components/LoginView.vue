@@ -1,5 +1,5 @@
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
+import {ref, reactive, onMounted, watch, toRefs} from 'vue'
 import {ElMessage} from 'element-plus'
 import {registerApi, requestCodeAPi, loginApi, loginCodeApi} from '@/api/user.js';
 import {useRouter} from 'vue-router'
@@ -8,14 +8,24 @@ const props = defineProps({
   captchaUrl: {
     type: String,
     required: true
+  },
+  LoginRequest: {
+    type: Boolean,
+    required: true
   }
 });
 
+watch(() => props.LoginRequest, (newVal, oldValue) => {
+  // console.log('@@@@@@111')
+  isRegister.value = (newVal && newVal === true);
+  console.log(form)
+  form.confirmPassword= form.password
+}, {deep: true})
 
 // 提交父组件
 const emit = defineEmits(
     ['login-success', 'refreshLoginCode', 'registerHandler'
-      , 'loginUser','requestCodeAPi'])
+      , 'loginUser', 'requestCodeAPi'])
 
 const isRegister = ref(false);
 const typedText = ref('')
@@ -65,7 +75,6 @@ const form = reactive({
   birthday: '',
   loginCode: ''
 })
-
 
 
 const toggleMode = () => {

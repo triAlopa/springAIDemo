@@ -6,6 +6,7 @@ import com.chen.pojo.dto.OfferDTO;
 import com.chen.service.OfferService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class OfferController {
 
     @PostMapping
     @LogOperation
-    public Result responseUser4offer(@RequestBody OfferDTO offerDTO) {
+    public Result responseUser4offer(@Valid @RequestBody OfferDTO offerDTO) {
 
         log.info("用户发出offer响应{}", offerDTO);
 

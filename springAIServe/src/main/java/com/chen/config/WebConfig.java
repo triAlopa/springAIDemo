@@ -27,10 +27,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(refreshTokenInterceptor)
-                .order(Ordered.HIGHEST_PRECEDENCE)
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/user/register",
+                        "/user/ai/chat/stream",
+                        "/user/ai/ai/chat/stream",
                         "/user/emailCode/**",      // 正确：匹配所有/emailCode/下的路径
                         "/user/login",             // 只能匹配 /user/login
                         "/user/login/**",// 匹配 /user/login/xxx，但不包括 /user/login 本身
@@ -67,6 +68,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns(
                         "/user/register",
+                        "/user/ai/chat/stream",
+                        "/user/ai/ai/chat/stream",
                         "/user/emailCode/**",      // 正确：匹配所有/emailCode/下的路径
                         "/user/login",             // 只能匹配 /user/login
                         "/user/login/**",// 匹配 /user/login/xxx，但不包括 /user/login 本身

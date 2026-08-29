@@ -23,6 +23,7 @@ public class ResultConstant {
     public static final String REGISTER_ERROR ="用户注册请求出错" ;
     public static final String USER_IEXIST_EMAIL="用户输入邮箱不存在" ;
     public static final String USER_INPUT_PASS_ERR="用户输入密码不正确" ;
+    public static final String USER_INPUT_LOGIN_CODE="用户输入验证码错误" ;
     public static final String USER_EMAIL_NOT_FOUND="用户邮箱错误" ;
 
 

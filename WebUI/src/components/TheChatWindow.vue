@@ -1,6 +1,6 @@
 <script setup>
-import {ref, watch, nextTick, onMounted, onUnmounted} from 'vue';
-import {ElMessage} from 'element-plus';
+import {ref, watch, nextTick, onMounted, h, vModelText} from 'vue';
+import {ElButton, ElMessage, ElNotification, ElRate} from 'element-plus';
 import {marked} from 'marked';
 import {Service, Picture, Promotion} from '@element-plus/icons-vue';
 
@@ -24,6 +24,10 @@ const props = defineProps({
   currentBaseInfo: {
     type: Object,
     required: true,
+  },
+  isSessionDone: {
+    type: Boolean,
+    required: true,
   }
 });
 
@@ -34,7 +38,7 @@ marked.setOptions({
   gfm: true          // 启用 GitHub 风格的 Markdown
 });
 
-const emit = defineEmits(['send-message', 'handleOffer']);
+const emit = defineEmits(['send-message', 'handleOffer', 'session-rate']);
 
 const inputContent = ref('');
 const textareaRef = ref(null);
@@ -140,11 +144,72 @@ const options = [
   {value: '回去等通知吧'},
   {value: '我给你们个建议：关掉招聘页面，好好提升自己'},
   {value: '今天就到这吧，我后面还有三家大厂的终面'},
-  ]
+]
 
-const handleSelectQuickyMessage=(value)=>{
+const handleSelectQuickyMessage = (value) => {
   console.log(value)
-  inputContent.value=value;
+  inputContent.value = value;
+}
+
+watch(() => props.isSessionDone, (isSessionDone) => {
+  console.log(isSessionDone)
+  if (!isSessionDone || isSessionDone === false) {
+    return;
+  }
+  console.log('session done ', isSessionDone)
+  openFeedBack();
+}, {deep: true,immediate:true})
+
+/*onMounted(() => {
+  openFeedBack()
+})*/
+
+const rate = ref(0)
+const duration=ref(1000 * 10)
+const openFeedBack = () => {
+
+  ElNotification({
+        title: '请为这次会话打分 默认满分 10s后关闭',
+        position: 'bottom-right',
+        offset: 100,
+        type: "primary",
+        message: () => [
+          h(ElRate, {
+            modelValue: rate.value,
+            max: 10,
+            length: 5,
+            showScore: true,
+            colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
+            'onUpdate:modelValue': (val) => {
+              rate.value = val
+            },
+            onChange: (value) => {
+              rate.value = value;
+            }
+          }),
+          h(ElButton, {
+            icon: 'DocumentChecked',
+            type: 'primary',
+            size: 'large',
+            bg: true,
+            color: '#00b5d6',
+            text: '提交',
+            onClick: () => {
+              emit('session-rate', rate.value)
+              const notices = document.querySelectorAll('.el-notification')
+              notices.forEach(notice => {
+                notice.parentNode.removeChild(notice)
+              })
+            }
+          })
+        ],
+        onClose() {
+          console.log(111111)
+          emit('session-rate', rate.value)
+        },
+        duration: duration.value
+      },
+  )
 }
 </script>
 
@@ -371,7 +436,7 @@ const handleSelectQuickyMessage=(value)=>{
             <img :src="currentBaseInfo.AIImage"
                  alt="ASSISTANT"
                  class="w-full h-full scale-150 object-cover"
-                >
+            >
           </div>
 
 
@@ -404,6 +469,7 @@ const handleSelectQuickyMessage=(value)=>{
       </transition-group>
 
     </div>
+
 
     <el-select v-if="currentBaseInfo.sessionStatus==1"
                placeholder="快捷回复"

@@ -12,6 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.zhipuai.ZhiPuAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,20 @@ import java.util.List;
 @Slf4j
 @Tag(name = "用户聊天接口")
 public class MessageController {
+
+    private final ZhiPuAiChatModel chatModel;
+
+    public MessageController(ZhiPuAiChatModel chatModel) {
+        this.chatModel = chatModel;
+    }
+
+    // 流式调用示例（更推荐，体验更好）
+    @GetMapping(value = "/chat/stream", produces = "text/html;charset=utf-8")
+    public Flux<String> chatStream(@RequestParam(value = "message", defaultValue = "你好，请介绍一下自己") String message) {
+        Prompt prompt = new Prompt(new UserMessage(message));
+        return chatModel.stream(prompt)
+                .map(response -> response.getResult().getOutput().getText());
+    }
 
     @Autowired
     private MessageService messageService;

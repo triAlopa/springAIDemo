@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
         String token = generateUserToken(user);
 
         //保存redis
-        String userTokenKey =USER_TOKEN+user.getId();
+        String userTokenKey = USER_TOKEN + user.getId();
         stringRedisTemplate.opsForValue().set(
                 userTokenKey,
                 token,
@@ -218,11 +218,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String querySingleUser(UserDTO user) {
+        String email = user.getEmail();
+        String time_prefix = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + ":";
+        String key = USER_LOGIN + time_prefix + email;
+        String generateCode = stringRedisTemplate.opsForValue().get(key);
+        //校验是否申请验证码
+        if (StrUtil.isBlank(generateCode)) {
+            throw new LoginException(UNCODE, BAD_REQUEST);
+        }
+
         if (user == null || user.getEmail() == null) {
             throw new LoginException(INPUT_PARAMS_ERR);
         }
 
-        String email = user.getEmail();
         User selected = userMapper.selectByEmail(email);
         //邮箱就不存在数据库
         if (selected == null) {
@@ -236,13 +244,20 @@ public class UserServiceImpl implements UserService {
             throw new LoginException(USER_INPUT_PASS_ERR, BAD_REQUEST);
         }
 
+        //校验验证码
+        String loginCode = user.getLoginCode();
+        if (!loginCode.equals(generateCode)) {
+            throw new LoginException(USER_INPUT_LOGIN_CODE, BAD_REQUEST);
+        }
+
+
         User usr = new User();
         BeanUtil.copyProperties(selected, usr);
         // 生成token 返回
         String token = generateUserToken(usr);
 
         //保存redis
-        String userTokenKey =USER_TOKEN+usr.getId();
+        String userTokenKey = USER_TOKEN + usr.getId();
         stringRedisTemplate.opsForValue().set(
                 userTokenKey,
                 token,
@@ -441,18 +456,18 @@ public class UserServiceImpl implements UserService {
 //[{enable=1, is_del=1, count(*)=523}, {enable=0, is_del=0, count(*)=475}, {enable=1, is_del=0, count(*)=5}]
         Integer userRegCount = 0;
         Integer userDelCount = 0;
-        Integer userIllegalCount=0;
-        Integer number=0;
+        Integer userIllegalCount = 0;
+        Integer number = 0;
 
         for (Map<String, Object> map : maps) {
-            int enable =(( Integer) map.get("enable") );
-            int isDel =(( Integer) map.get("is_del") );
-            int count =(( Long) map.get("count") ).intValue();
-            number+=count;
-            if(isDel==0) userDelCount+=count;
-            if(enable==0) userIllegalCount+=count;
+            int enable = ((Integer) map.get("enable"));
+            int isDel = ((Integer) map.get("is_del"));
+            int count = ((Long) map.get("count")).intValue();
+            number += count;
+            if (isDel == 0) userDelCount += count;
+            if (enable == 0) userIllegalCount += count;
         }
-        userRegCount=number-userDelCount;
+        userRegCount = number - userDelCount;
 
 
         //导出excel 获得类加载器的输入流,获取资源路径 资源根路径
@@ -463,12 +478,12 @@ public class UserServiceImpl implements UserService {
             //获取模板的标签页
             XSSFSheet sheet = excel.getSheet("Sheet1");
             //写入日期
-            sheet.getRow(1).getCell(1).setCellValue("报表日期:" + LocalDate.now() );
+            sheet.getRow(1).getCell(1).setCellValue("报表日期:" + LocalDate.now());
             //获取行
             XSSFRow row = sheet.getRow(3);
             row.getCell(2).setCellValue(userRegCount);
             row.getCell(4).setCellValue(userDelCount);
-            row.getCell(6).setCellValue((userDelCount.doubleValue()/number));
+            row.getCell(6).setCellValue((userDelCount.doubleValue() / number));
             //获取行
             row = sheet.getRow(4);
             row.getCell(2).setCellValue(userIllegalCount);
@@ -481,15 +496,15 @@ public class UserServiceImpl implements UserService {
                 User user = userList.get(i);
                 row = sheet.getRow(7 + i);
 
-                if(row==null){
+                if (row == null) {
                     sheet.createRow(7 + i);
                 }
 
                 row.getCell(1).setCellValue(user.getId());//id
                 row.getCell(2).setCellValue(user.getNickName());//用户名
                 row.getCell(3).setCellValue(user.getEmail());//邮箱
-                row.getCell(4).setCellValue(user.getPoints());//积分
-                row.getCell(5).setCellValue(user.getEnable()==1?"否":"是");//是否违规
+                row.getCell(4).setCellValue(user.getPoints() == null ? 0 : user.getPoints());//积分
+                row.getCell(5).setCellValue(user.getEnable() == 1 ? "否" : "是");//是否违规
                 row.getCell(6).setCellValue(user.getRegisterTime());//注册时间
             }
 

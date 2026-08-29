@@ -62,9 +62,16 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
+        String uri = request.getRequestURI();
+        if ("/user/ai/send".equals(uri)) return true;
+
         String userTokenName = jwtProperties.getUserTokenName();
 
         String userTokenId = request.getHeader(userTokenName);
+
+        if (StrUtil.isBlank(userTokenId) || "null".equals(userTokenId)) {
+            return true;
+        }
 
         String token = stringRedisTemplate.opsForValue().get(userTokenId);
    /*     String token = objectMapper.readValue(json, String.class);*/
@@ -72,9 +79,6 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
 /*        String token = request.getHeader(userTokenName);*/
 
         // 对无token的用户处理不够的妥当 cause by SSE
-        String uri = request.getRequestURI();
-        if ("/user/ai/send".equals(uri)) return true;
-
         //没有token
         if (StrUtil.isBlank(token) || "null".equals(token)) {
             return true;
@@ -116,6 +120,7 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         log.info("init refresh handler");
+        CurrentUserHolder.removeCurrentUser();
     }
 
     @Override
